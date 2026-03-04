@@ -18,10 +18,11 @@
 
 ## 3) Scope
 ### In scope (MVP)
-- Build output analysis for dotnet backends and angular, react front ends.
+- Build output analysis for dotnet backends.
 - Only support CoPilot CLI for AI analysis and fix generation.
 
 ### Out of scope (for now)
+- Angular and React frontend log parsing.
 - Support for other languages/frameworks.
 
 ## 4) Core Features

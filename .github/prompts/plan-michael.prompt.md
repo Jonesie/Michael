@@ -7,8 +7,10 @@ _Status legend: [x] complete, [~] in progress, [ ] not started._
 
 - [x] 1. Bootstrap solution structure and projects under [src](src), [tests](tests), with solution file [src/michael.sln](src/michael.sln) and projects in subfolders such as [src/Michael.Cli](src/Michael.Cli), [src/Michael.Parsing](src/Michael.Parsing), [src/Michael.Analysis](src/Michael.Analysis), [src/Michael.Fixes](src/Michael.Fixes); create `Main` and core interfaces (`IParser`, `IAnalyzer`, `IRanker`, `IReportWriter`).
 	- Completed: solution + projects scaffolded, core interfaces added, project references wired, build/test passing.
-- [ ] 2. Implement CLI contract in [src/Michael.Cli](src/Michael.Cli): `--help`, `--version`, `--input`, `--output`, `--analyse-only`, `--apply-fixes`, `--limit`, `--git-branch`, `--ai-tool`, `--ai-model`; block `--apply-fixes` with a clear post-MVP message.
-- [ ] 3. Build deterministic parser pipeline in [src/Michael.Parsing](src/Michael.Parsing) for dotnet/Angular/React logs; normalize to `ParsedIssue` (message, source, optional file path, severity, count); process large logs via streaming.
+- [x] 2. Implement CLI contract in [src/Michael.Cli](src/Michael.Cli): `--help`, `--version`, `--input`, `--output`, `--analyse-only`, `--apply-fixes`, `--limit`, `--git-branch`, `--ai-tool`, `--ai-model`; block `--apply-fixes` with a clear post-MVP message.
+	- Completed: `System.CommandLine` wired up, all options registered, `--apply-fixes` exits 1 with post-MVP message, `--version` and `--help` work, assembly named `Michael`, build passing.
+- [x] 3. Build deterministic parser pipeline in [src/Michael.Parsing](src/Michael.Parsing) for dotnet build logs; normalize to `ParsedIssue` (message, source, optional file path, severity, count); process large logs via streaming.
+	- Completed: implemented streaming parser (`TextReader`) for .NET warning/error lines, normalized and deduplicated issues with counts, and added parser unit tests.
 - [ ] 4. Implement summarization/classification in [src/Michael.Analysis](src/Michael.Analysis) via `IAnalyzer`; group duplicates, map severities, produce concise explanations without requiring AI.
 - [ ] 5. Implement ranking service `IRanker` in [src/Michael.Analysis](src/Michael.Analysis); score by severity/frequency/confidence; support `--limit`; define deterministic tie-breakers.
 - [ ] 6. Implement outputs: write `issues.json` and `summary.md` to `--output`; include metadata (timestamp, input source, version, options).
@@ -31,9 +33,8 @@ _Status legend: [x] complete, [~] in progress, [ ] not started._
 - `dotnet test`
 - `dotnet run --project src/Michael.Cli/Michael.Cli.csproj -- --help`
 - `dotnet run --project src/Michael.Cli/Michael.Cli.csproj -- --version`
-- `dotnet run --project src/Michael.Cli/Michael.Cli.csproj -- --input data/sample-dotnet.log --output out --analyse-only`
-- `dotnet run --project src/Michael.Cli/Michael.Cli.csproj -- --input data/sample-react.log --output out --analyse-only --limit 3`
-- `dotnet run --project src/Michael.Cli/Michael.Cli.csproj -- --input data/sample-angular.log --output out --apply-fixes` (expected post-MVP message)
+- `dotnet run --project src/Michael.Cli/Michael.Cli.csproj -- --input data/build.log --output out --analyse-only`
+- `dotnet run --project src/Michael.Cli/Michael.Cli.csproj -- --input data/build.log --output out --apply-fixes` (expected post-MVP message)
 
 **Decisions**
 - MVP excludes automated fix generation/application (deferred).
