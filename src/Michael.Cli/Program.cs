@@ -1,2 +1,102 @@
-﻿// See https://aka.ms/new-console-template for more information
-Console.WriteLine("Hello, World!");
+﻿using System.CommandLine;
+using System.CommandLine.Invocation;
+using System.Reflection;
+
+var inputOption = new Option<FileInfo?>(
+    name: "--input",
+    description: "Path to the build log file to analyse.");
+
+var outputOption = new Option<DirectoryInfo?>(
+    name: "--output",
+    description: "Directory to write report files (issues.json, summary.md). Defaults to 'out'.");
+
+var analyseOnlyOption = new Option<bool>(
+    name: "--analyse-only",
+    description: "Parse and analyse the log without applying any fixes.");
+
+var applyFixesOption = new Option<bool>(
+    name: "--apply-fixes",
+    description: "Apply generated fixes (post-MVP, currently blocked).");
+
+var limitOption = new Option<int?>(
+    name: "--limit",
+    description: "Maximum number of issues to include in the report.");
+
+var gitBranchOption = new Option<string?>(
+    name: "--git-branch",
+    description: "Git branch name to include in report metadata.");
+
+var aiToolOption = new Option<string?>(
+    name: "--ai-tool",
+    description: "AI tool to use for fix generation (e.g. copilot).");
+
+var aiModelOption = new Option<string?>(
+    name: "--ai-model",
+    description: "AI model to use for fix generation.");
+
+var rootCommand = new RootCommand("Michael – build log analyser and issue reporter.")
+{
+    inputOption,
+    outputOption,
+    analyseOnlyOption,
+    applyFixesOption,
+    limitOption,
+    gitBranchOption,
+    aiToolOption,
+    aiModelOption,
+};
+
+rootCommand.SetHandler((InvocationContext context) =>
+{
+    var input       = context.ParseResult.GetValueForOption(inputOption);
+    var output      = context.ParseResult.GetValueForOption(outputOption);
+    var analyseOnly = context.ParseResult.GetValueForOption(analyseOnlyOption);
+    var applyFixes  = context.ParseResult.GetValueForOption(applyFixesOption);
+    var limit       = context.ParseResult.GetValueForOption(limitOption);
+    var gitBranch   = context.ParseResult.GetValueForOption(gitBranchOption);
+    var aiTool      = context.ParseResult.GetValueForOption(aiToolOption);
+    var aiModel     = context.ParseResult.GetValueForOption(aiModelOption);
+
+    if (applyFixes)
+    {
+        Console.Error.WriteLine(
+            "--apply-fixes is not available in the current MVP release. " +
+            "Fix generation and application is planned for a future version.");
+        context.ExitCode = 1;
+        return;
+    }
+
+    if (input is null)
+    {
+        Console.Error.WriteLine("Error: --input is required.");
+        context.ExitCode = 1;
+        return;
+    }
+
+    if (!input.Exists)
+    {
+        Console.Error.WriteLine($"Error: input file not found: {input.FullName}");
+        context.ExitCode = 1;
+        return;
+    }
+
+    output ??= new DirectoryInfo("out");
+
+    Console.WriteLine($"Michael {GetVersion()} – analysing {input.Name}");
+    Console.WriteLine($"  Output   : {output.FullName}");
+    if (limit.HasValue)   Console.WriteLine($"  Limit    : {limit}");
+    if (gitBranch is not null) Console.WriteLine($"  Branch   : {gitBranch}");
+    if (aiTool is not null)    Console.WriteLine($"  AI tool  : {aiTool}");
+    if (aiModel is not null)   Console.WriteLine($"  AI model : {aiModel}");
+
+    // Parsing, analysis, ranking and reporting are implemented in subsequent steps.
+    Console.WriteLine("Parse → analyse → rank → report pipeline is not yet implemented.");
+});
+
+return await rootCommand.InvokeAsync(args);
+
+static string GetVersion() =>
+    Assembly.GetEntryAssembly()
+            ?.GetCustomAttribute<AssemblyInformationalVersionAttribute>()
+            ?.InformationalVersion
+        ?? "0.0.0";
