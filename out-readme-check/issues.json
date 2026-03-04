@@ -1,0 +1,45 @@
+{
+  "metadata": {
+    "GeneratedAtUtc": "2026-03-04T09:22:06.605832+00:00",
+    "Version": "1.0.0\u002Bf5eefc909373a97df1dcc3d3cd941bf3b5d4634c",
+    "InputSource": "/home/jonesie/dev/Michael/data/sample-dotnet-small.log",
+    "OutputDirectory": "/home/jonesie/dev/Michael/out-readme-check",
+    "AnalyseOnly": true,
+    "Limit": 3,
+    "GitBranch": null,
+    "AiTool": null,
+    "AiModel": null,
+    "ParsedIssueCount": 3,
+    "SummaryCount": 3,
+    "RankedCount": 3
+  },
+  "issues": [
+    {
+      "Rank": 1,
+      "Key": "/usr/lib/dotnet/sdk/9.0.114/Sdks/Microsoft.NET.Sdk/targets/Microsoft.NET.Sdk.targets::MSB4019: The imported project was not found.",
+      "Severity": "error",
+      "Frequency": 1,
+      "Confidence": 0.98,
+      "Score": 208,
+      "Explanation": "MSB4019 appears 1 time(s). This blocks a successful build."
+    },
+    {
+      "Rank": 2,
+      "Key": "/tmp/sample/App.cs::CS0168: The variable \u0027ex\u0027 is declared but never used",
+      "Severity": "warning",
+      "Frequency": 1,
+      "Confidence": 0.88,
+      "Score": 158,
+      "Explanation": "CS0168 appears 1 time(s). This does not block compilation but should be addressed."
+    },
+    {
+      "Rank": 3,
+      "Key": "/tmp/sample/App.csproj::NU1902: Package \u0027RestSharp\u0027 110.2.0 has a known moderate severity vulnerability",
+      "Severity": "warning",
+      "Frequency": 1,
+      "Confidence": 0.88,
+      "Score": 158,
+      "Explanation": "NU1902 appears 1 time(s). This does not block compilation but should be addressed."
+    }
+  ]
+}

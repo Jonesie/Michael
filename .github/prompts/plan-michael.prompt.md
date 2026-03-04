@@ -17,8 +17,10 @@ _Status legend: [x] complete, [~] in progress, [ ] not started._
 	- Completed: added `DeterministicIssueRanker` with deterministic score calculation and tie-breakers, plus limit support and ranking unit tests.
 - [x] 6. Implement outputs: write `issues.json` and `summary.md` to `--output`; include metadata (timestamp, input source, version, options).
 	- Completed: wired CLI parse→analyze→rank pipeline and added file writer that outputs `issues.json` and `summary.md` with report metadata and ranked issues.
-- [ ] 7. Add tests in [tests](tests): parser edge cases, classification, ranking stability, CLI validation; add fixture logs in [data](data); add analysis-only integration tests.
-- [ ] 8. Update [README.md](README.md) with build/run/test instructions and example analysis workflows; document MVP limits and post-MVP fix flow.
+- [x] 7. Add tests in [tests](tests): parser edge cases, classification, ranking stability, CLI validation; add fixture logs in [data](data); add analysis-only integration tests.
+	- Completed: added parser/classification/ranking tests, fixture logs in `data/`, analysis-only integration tests, and CLI validation tests for blocked `--apply-fixes` and invalid `--limit`.
+- [x] 8. Update [README.md](README.md) with build/run/test instructions and example analysis workflows; document MVP limits and post-MVP fix flow.
+	- Completed: documented prerequisites, build/test/run commands, analysis-only workflow examples, generated report files, current MVP scope/limits, and planned post-MVP fix flow.
 - [ ] 9. Add minimal CI (build/test only) under [.github/workflows](.github/workflows) once solution exists; keep pipeline aligned to local `dotnet restore/build/test`.
 - [ ] 10. Post-MVP: implement `IFixGenerator`/`IFixApplier` in [src/Michael.Fixes](src/Michael.Fixes), enable safe preview/apply flow, then activate real `--apply-fixes`.
 
