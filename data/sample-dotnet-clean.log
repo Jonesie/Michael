@@ -1,0 +1,6 @@
+  Determining projects to restore...
+  Restored /tmp/sample/Clean.csproj (in 120 ms).
+  Clean -> /tmp/sample/bin/Debug/net9.0/Clean.dll
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)

@@ -1,0 +1,6 @@
+  Determining projects to restore...
+  Restored /tmp/sample/App.csproj (in 221 ms).
+/tmp/sample/App.csproj : warning NU1902: Package 'RestSharp' 110.2.0 has a known moderate severity vulnerability [/tmp/sample/Sample.sln]
+/tmp/sample/App.cs(15,10): warning CS0168: The variable 'ex' is declared but never used [/tmp/sample/App.csproj]
+/usr/lib/dotnet/sdk/9.0.114/Sdks/Microsoft.NET.Sdk/targets/Microsoft.NET.Sdk.targets(1479,3): error MSB4019: The imported project was not found. [/tmp/sample/App.csproj]
+Build FAILED.
