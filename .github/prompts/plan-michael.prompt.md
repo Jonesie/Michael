@@ -11,7 +11,8 @@ _Status legend: [x] complete, [~] in progress, [ ] not started._
 	- Completed: `System.CommandLine` wired up, all options registered, `--apply-fixes` exits 1 with post-MVP message, `--version` and `--help` work, assembly named `Michael`, build passing.
 - [x] 3. Build deterministic parser pipeline in [src/Michael.Parsing](src/Michael.Parsing) for dotnet build logs; normalize to `ParsedIssue` (message, source, optional file path, severity, count); process large logs via streaming.
 	- Completed: implemented streaming parser (`TextReader`) for .NET warning/error lines, normalized and deduplicated issues with counts, and added parser unit tests.
-- [ ] 4. Implement summarization/classification in [src/Michael.Analysis](src/Michael.Analysis) via `IAnalyzer`; group duplicates, map severities, produce concise explanations without requiring AI.
+- [x] 4. Implement summarization/classification in [src/Michael.Analysis](src/Michael.Analysis) via `IAnalyzer`; group duplicates, map severities, produce concise explanations without requiring AI.
+	- Completed: added `DeterministicIssueAnalyzer` that groups duplicate issues, normalizes severities (`error`/`warning`/`info`), computes deterministic confidence, and generates concise non-AI explanations; added analyzer unit tests.
 - [ ] 5. Implement ranking service `IRanker` in [src/Michael.Analysis](src/Michael.Analysis); score by severity/frequency/confidence; support `--limit`; define deterministic tie-breakers.
 - [ ] 6. Implement outputs: write `issues.json` and `summary.md` to `--output`; include metadata (timestamp, input source, version, options).
 - [ ] 7. Add tests in [tests](tests): parser edge cases, classification, ranking stability, CLI validation; add fixture logs in [data](data); add analysis-only integration tests.
