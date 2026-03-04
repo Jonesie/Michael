@@ -21,7 +21,8 @@ _Status legend: [x] complete, [~] in progress, [ ] not started._
 	- Completed: added parser/classification/ranking tests, fixture logs in `data/`, analysis-only integration tests, and CLI validation tests for blocked `--apply-fixes` and invalid `--limit`.
 - [x] 8. Update [README.md](README.md) with build/run/test instructions and example analysis workflows; document MVP limits and post-MVP fix flow.
 	- Completed: documented prerequisites, build/test/run commands, analysis-only workflow examples, generated report files, current MVP scope/limits, and planned post-MVP fix flow.
-- [ ] 9. Add minimal CI (build/test only) under [.github/workflows](.github/workflows) once solution exists; keep pipeline aligned to local `dotnet restore/build/test`.
+- [x] 9. Add minimal CI (build/test only) under [.github/workflows](.github/workflows) once solution exists; keep pipeline aligned to local `dotnet restore/build/test`.
+	- Completed: added GitHub Actions workflow (`ci.yml`) that runs restore, build, and test for pushes and pull requests.
 - [ ] 10. Post-MVP: implement `IFixGenerator`/`IFixApplier` in [src/Michael.Fixes](src/Michael.Fixes), enable safe preview/apply flow, then activate real `--apply-fixes`.
 
 **Naming Convention**
