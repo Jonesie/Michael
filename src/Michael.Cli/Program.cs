@@ -1,6 +1,10 @@
 ﻿using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.Reflection;
+using Michael.Analysis;
+using Michael.Cli;
+using Michael.Cli.Models;
+using Michael.Parsing;
 
 var inputOption = new Option<FileInfo?>(
     name: "--input",
@@ -80,6 +84,13 @@ rootCommand.SetHandler((InvocationContext context) =>
         return;
     }
 
+    if (limit is <= 0)
+    {
+        Console.Error.WriteLine("Error: --limit must be greater than 0 when provided.");
+        context.ExitCode = 1;
+        return;
+    }
+
     output ??= new DirectoryInfo("out");
 
     Console.WriteLine($"Michael {GetVersion()} – analysing {input.Name}");
@@ -89,8 +100,39 @@ rootCommand.SetHandler((InvocationContext context) =>
     if (aiTool is not null)    Console.WriteLine($"  AI tool  : {aiTool}");
     if (aiModel is not null)   Console.WriteLine($"  AI model : {aiModel}");
 
-    // Parsing, analysis, ranking and reporting are implemented in subsequent steps.
-    Console.WriteLine("Parse → analyse → rank → report pipeline is not yet implemented.");
+    using var stream = input.OpenRead();
+    using var reader = new StreamReader(stream);
+
+    var parser = new DotnetBuildLogParser();
+    var analyzer = new DeterministicIssueAnalyzer();
+    var ranker = new DeterministicIssueRanker();
+    var writer = new FileReportWriter();
+
+    var parsedIssues = parser.Parse(reader);
+    var summaries = analyzer.Summarize(parsedIssues);
+    var rankedIssues = ranker.Rank(summaries, limit);
+
+    var metadata = new ReportMetadata(
+        GeneratedAtUtc: DateTimeOffset.UtcNow,
+        Version: GetVersion(),
+        InputSource: input.FullName,
+        OutputDirectory: output.FullName,
+        AnalyseOnly: analyseOnly,
+        Limit: limit,
+        GitBranch: gitBranch,
+        AiTool: aiTool,
+        AiModel: aiModel,
+        ParsedIssueCount: parsedIssues.Count,
+        SummaryCount: summaries.Count,
+        RankedCount: rankedIssues.Count);
+
+    writer.Write(output.FullName, metadata, rankedIssues);
+
+    Console.WriteLine($"  Parsed   : {parsedIssues.Count}");
+    Console.WriteLine($"  Summaries: {summaries.Count}");
+    Console.WriteLine($"  Ranked   : {rankedIssues.Count}");
+    Console.WriteLine($"  Wrote    : {Path.Combine(output.FullName, "issues.json")}");
+    Console.WriteLine($"  Wrote    : {Path.Combine(output.FullName, "summary.md")}");
 });
 
 return await rootCommand.InvokeAsync(args);

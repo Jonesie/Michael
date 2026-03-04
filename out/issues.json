@@ -1,0 +1,63 @@
+{
+  "metadata": {
+    "GeneratedAtUtc": "2026-03-04T09:14:15.9441228+00:00",
+    "Version": "1.0.0\u002B9942b3c8edf4c501267f5cbffaa976cb2f0a9d79",
+    "InputSource": "/home/jonesie/dev/Michael/data/build.log",
+    "OutputDirectory": "/home/jonesie/dev/Michael/out",
+    "AnalyseOnly": true,
+    "Limit": 5,
+    "GitBranch": null,
+    "AiTool": null,
+    "AiModel": null,
+    "ParsedIssueCount": 107,
+    "SummaryCount": 107,
+    "RankedCount": 5
+  },
+  "issues": [
+    {
+      "Rank": 1,
+      "Key": "/home/jonesie/dev/BARXUI/src/barXui.Api/Controllers/BOSSController.cs::CA2017: Number of parameters supplied in the logging message template do not match the number of named placeholders (https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2017)",
+      "Severity": "warning",
+      "Frequency": 28,
+      "Confidence": 0.98,
+      "Score": 438,
+      "Explanation": "CA2017 appears 28 time(s). This does not block compilation but should be addressed."
+    },
+    {
+      "Rank": 2,
+      "Key": "/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Tables/TableServiceTests.cs::xUnit1048: Support for \u0027async void\u0027 unit tests is being removed from xUnit.net v3. To simplify upgrading, convert the test to \u0027async Task\u0027 instead. (https://xunit.net/xunit.analyzers/rules/xUnit1048)",
+      "Severity": "warning",
+      "Frequency": 28,
+      "Confidence": 0.98,
+      "Score": 438,
+      "Explanation": "xUnit1048 appears 28 time(s). This does not block compilation but should be addressed."
+    },
+    {
+      "Rank": 3,
+      "Key": "/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Files/DBFileIndexStoreTests.cs::xUnit1048: Support for \u0027async void\u0027 unit tests is being removed from xUnit.net v3. To simplify upgrading, convert the test to \u0027async Task\u0027 instead. (https://xunit.net/xunit.analyzers/rules/xUnit1048)",
+      "Severity": "warning",
+      "Frequency": 22,
+      "Confidence": 0.98,
+      "Score": 378,
+      "Explanation": "xUnit1048 appears 22 time(s). This does not block compilation but should be addressed."
+    },
+    {
+      "Rank": 4,
+      "Key": "/home/jonesie/dev/BARXUI/src/barXui.Test.Integration.Data/SerialNumberStoreTests.cs::xUnit1048: Support for \u0027async void\u0027 unit tests is being removed from xUnit.net v3. To simplify upgrading, convert the test to \u0027async Task\u0027 instead. (https://xunit.net/xunit.analyzers/rules/xUnit1048)",
+      "Severity": "warning",
+      "Frequency": 16,
+      "Confidence": 0.98,
+      "Score": 318,
+      "Explanation": "xUnit1048 appears 16 time(s). This does not block compilation but should be addressed."
+    },
+    {
+      "Rank": 5,
+      "Key": "/home/jonesie/dev/BARXUI/src/barXui.Test.Unit.Sharding/ShardServiceTests.cs::CS1998: This async method lacks \u0027await\u0027 operators and will run synchronously. Consider using the \u0027await\u0027 operator to await non-blocking API calls, or \u0027await Task.Run(...)\u0027 to do CPU-bound work on a background thread.",
+      "Severity": "warning",
+      "Frequency": 16,
+      "Confidence": 0.98,
+      "Score": 318,
+      "Explanation": "CS1998 appears 16 time(s). This does not block compilation but should be addressed."
+    }
+  ]
+}

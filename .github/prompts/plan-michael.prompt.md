@@ -13,8 +13,10 @@ _Status legend: [x] complete, [~] in progress, [ ] not started._
 	- Completed: implemented streaming parser (`TextReader`) for .NET warning/error lines, normalized and deduplicated issues with counts, and added parser unit tests.
 - [x] 4. Implement summarization/classification in [src/Michael.Analysis](src/Michael.Analysis) via `IAnalyzer`; group duplicates, map severities, produce concise explanations without requiring AI.
 	- Completed: added `DeterministicIssueAnalyzer` that groups duplicate issues, normalizes severities (`error`/`warning`/`info`), computes deterministic confidence, and generates concise non-AI explanations; added analyzer unit tests.
-- [ ] 5. Implement ranking service `IRanker` in [src/Michael.Analysis](src/Michael.Analysis); score by severity/frequency/confidence; support `--limit`; define deterministic tie-breakers.
-- [ ] 6. Implement outputs: write `issues.json` and `summary.md` to `--output`; include metadata (timestamp, input source, version, options).
+- [x] 5. Implement ranking service `IRanker` in [src/Michael.Analysis](src/Michael.Analysis); score by severity/frequency/confidence; support `--limit`; define deterministic tie-breakers.
+	- Completed: added `DeterministicIssueRanker` with deterministic score calculation and tie-breakers, plus limit support and ranking unit tests.
+- [x] 6. Implement outputs: write `issues.json` and `summary.md` to `--output`; include metadata (timestamp, input source, version, options).
+	- Completed: wired CLI parse→analyze→rank pipeline and added file writer that outputs `issues.json` and `summary.md` with report metadata and ranked issues.
 - [ ] 7. Add tests in [tests](tests): parser edge cases, classification, ranking stability, CLI validation; add fixture logs in [data](data); add analysis-only integration tests.
 - [ ] 8. Update [README.md](README.md) with build/run/test instructions and example analysis workflows; document MVP limits and post-MVP fix flow.
 - [ ] 9. Add minimal CI (build/test only) under [.github/workflows](.github/workflows) once solution exists; keep pipeline aligned to local `dotnet restore/build/test`.
