@@ -31,7 +31,7 @@ jobs:
         run: dotnet build src/Michael.sln --no-restore
 
       - name: Test
-        run: dotnet test src/Michael.sln --no-build --logger "trx;LogFileName=test-results.trx" --results-directory ./TestResults
+        run: dotnet test src/Michael.sln --no-build --logger "trx;LogFileName=test-results.trx" --collect:"XPlat Code Coverage" --results-directory ./TestResults
 
       - name: Upload test results
         if: always()
@@ -49,3 +49,23 @@ jobs:
           path: TestResults/**/*.trx
           reporter: dotnet-trx
           fail-on-error: false
+
+      - name: Publish coverage summary
+        if: always()
+        uses: irongut/CodeCoverageSummary@v1.3.0
+        with:
+          filename: TestResults/**/coverage.cobertura.xml
+          format: markdown
+          output: both
+          badge: true
+        continue-on-error: true
+
+      - name: Upload coverage results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-results
+          path: |
+            TestResults/**/coverage.cobertura.xml
+            code-coverage-results.md
+          if-no-files-found: warn
