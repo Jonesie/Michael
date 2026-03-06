@@ -49,8 +49,17 @@ CLI-first .NET tool to parse build logs, summarize issues, rank them, and write 
 After a successful run, the output directory contains:
 
 - `issues.json` – machine-readable metadata and ranked issues.
-- `summary.md` – human-readable report with metadata and ranked table.
-- `summary.html` - preview-friendly report with metadata and ranked table.
+- `summary.md` - markdown summary with a ranked table and a single `Details` column per row.
+- `summary.html` - preview-friendly interactive report with the same ranked data.
+
+### Report details behavior
+
+- `Details` column format:
+	- `Error Message` heading + truncated issue message.
+	- expandable `Files` section (collapsed by default).
+- File entries are clickable links using VS Code URI schema (`vscode://file/...`).
+- When line/column data exists in logs, links include location suffixes (for example `:127:23`).
+- `summary.html` is recommended when you want stable expand/collapse behavior while opening links.
 
 ## CLI Options
 
