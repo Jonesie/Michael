@@ -10,6 +10,8 @@ on:
 permissions:
   contents: read
   checks: write
+  pages: write
+  id-token: write
 
 jobs:
   build-test:
@@ -83,6 +85,12 @@ jobs:
           path: CoverageReport/**
           if-no-files-found: warn
 
+      - name: Upload Pages artifact
+        if: github.event_name == 'push' && (github.ref_name == 'main' || github.ref_name == 'master')
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: CoverageReport
+
       - name: Upload coverage results
         if: always()
         uses: actions/upload-artifact@v4
@@ -92,3 +100,15 @@ jobs:
             TestResults/current/**/coverage.cobertura.xml
             code-coverage-results.md
           if-no-files-found: warn
+
+  deploy-coverage-pages:
+    if: github.event_name == 'push' && (github.ref_name == 'main' || github.ref_name == 'master')
+    needs: build-test
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
