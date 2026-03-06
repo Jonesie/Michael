@@ -17,7 +17,7 @@ CLI-first .NET tool to parse build logs, summarize issues, rank them, and write 
 
 ## Prerequisites
 
-- .NET SDK 9.0+
+- .NET SDK 10.0+
 - Linux/macOS/Windows shell
 
 ## Build and Test
