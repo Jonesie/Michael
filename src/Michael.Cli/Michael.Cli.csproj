@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Michael.Analysis\Michael.Analysis.csproj" />
+    <ProjectReference Include="..\Michael.Fixes\Michael.Fixes.csproj" />
     <ProjectReference Include="..\Michael.Parsing\Michael.Parsing.csproj" />
   </ItemGroup>
 

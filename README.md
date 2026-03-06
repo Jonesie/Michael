@@ -12,8 +12,7 @@ CLI-first .NET tool to parse build logs, summarize issues, rank them, and write 
 ## MVP Status
 
 - Implemented: parse (.NET logs), summarize, rank, and write reports (`issues.json`, `summary.md`, `summary.html`).
-- Implemented: CLI options `--help`, `--version`, `--input`, `--output`, `--analyse-only`, `--limit`, `--git-branch`, `--ai-tool`, `--ai-model`.
-- MVP limitation: `--apply-fixes` is intentionally blocked and returns a post-MVP message.
+- Implemented: CLI options `--help`, `--version`, `--input`, `--output`, `--analyse-only` (alias `--analysis-only`), `--limit`, `--git-branch`, `--ai-tool`, `--ai-model`.
 - Current parsing scope: .NET build logs only (Angular/React parsing is out of MVP scope).
 
 ## Prerequisites
@@ -37,26 +36,30 @@ CLI-first .NET tool to parse build logs, summarize issues, rank them, and write 
 - Version:
 	- `dotnet run --project src/Michael.Cli/Michael.Cli.csproj -- --version`
 
-### Analyze a build log
+### Analyse a build log
 
 - Example with provided fixture:
 	- `dotnet run --project src/Michael.Cli/Michael.Cli.csproj -- --input data/build.log --output out --analyse-only`
 - Example with result limit:
 	- `dotnet run --project src/Michael.Cli/Michael.Cli.csproj -- --input data/build.log --output out --analyse-only --limit 5`
+- Example generating fix scripts (default behavior):
+	- `dotnet run --project src/Michael.Cli/Michael.Cli.csproj -- --input data/build.log --output out`
 
 ### Output files
 
 After a successful run, the output directory contains:
 
 - `issues.json` – machine-readable metadata and ranked issues.
-- `summary.md` - markdown summary with a ranked table and a single `Details` column per row.
+- `summary.md` - Markdown summary with a ranked table and a single `Details` column per row.
 - `summary.html` - preview-friendly interactive report with the same ranked data.
+- `fix-rank-<n>.ps1` - one PowerShell script per ranked issue by default (not generated when using `--analyse-only`) that calls `copilot` with issue context.
 
 ### Report details behavior
 
 - `Details` column format:
 	- `Error Message` heading + truncated issue message.
 	- expandable `Files` section (collapsed by default).
+	- `Fix` section with generated fix script file name (or `(not generated)` in `--analyse-only` mode).
 - File entries are clickable links using VS Code URI schema (`vscode://file/...`).
 - When line/column data exists in logs, links include location suffixes (for example `:127:23`).
 - `summary.html` is recommended when you want stable expand/collapse behavior while opening links.
@@ -65,19 +68,18 @@ After a successful run, the output directory contains:
 
 - `--input <file>`: required path to build log.
 - `--output <dir>`: output directory (default: `out`).
-- `--analyse-only`: run parse/analyze/rank/report flow without fixes.
-- `--apply-fixes`: blocked in MVP; exits with message and code `1`.
-- `--limit <n>`: max number of ranked issues written (`n > 0`).
+- `--analyse-only` / `--analysis-only`: run parse/analyze/rank/report flow without generating fix scripts.
+- `--limit <n>`: maximum number of ranked issues written (`n > 0`).
 - `--git-branch <name>`: included in report metadata.
 - `--ai-tool <name>`: included in report metadata.
 - `--ai-model <name>`: included in report metadata.
 
-## Post-MVP Fix Flow (Planned)
+## Post-MVP Generation Flow (Planned)
 
-Planned later phases will add safe fix generation and apply flow:
+Planned later phases will continue expanding safe fix generation and review flow:
 
 1. Generate fix candidates for selected ranked issues.
-2. Preview changes before apply.
-3. Optionally apply fixes in bulk (branch-aware).
+2. Preview and refine generated fixes before use.
+3. Improve ranking and context quality for generated fix scripts.
 
 Until then, use reports to prioritize manual remediation.

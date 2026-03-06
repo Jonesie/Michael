@@ -18,7 +18,11 @@ public sealed class FileReportWriter : IReportWriter
         WriteIndented = true
     };
 
-    public void Write(string outputDirectory, ReportMetadata metadata, IReadOnlyList<RankedIssue> rankedIssues)
+    public void Write(
+        string outputDirectory,
+        ReportMetadata metadata,
+        IReadOnlyList<RankedIssue> rankedIssues,
+        IReadOnlyDictionary<int, string>? fixScriptFileNamesByRank = null)
     {
         Directory.CreateDirectory(outputDirectory);
 
@@ -33,11 +37,14 @@ public sealed class FileReportWriter : IReportWriter
         };
 
         File.WriteAllText(jsonPath, JsonSerializer.Serialize(payload, JsonOptions));
-        File.WriteAllText(markdownPath, BuildMarkdown(metadata, rankedIssues));
-        File.WriteAllText(htmlPath, BuildHtml(metadata, rankedIssues));
+        File.WriteAllText(markdownPath, BuildMarkdown(metadata, rankedIssues, fixScriptFileNamesByRank));
+        File.WriteAllText(htmlPath, BuildHtml(metadata, rankedIssues, fixScriptFileNamesByRank));
     }
 
-    private static string BuildMarkdown(ReportMetadata metadata, IReadOnlyList<RankedIssue> rankedIssues)
+    private static string BuildMarkdown(
+        ReportMetadata metadata,
+        IReadOnlyList<RankedIssue> rankedIssues,
+        IReadOnlyDictionary<int, string>? fixScriptFileNamesByRank)
     {
         var builder = new StringBuilder();
         builder.AppendLine("# Michael Analysis Summary");
@@ -75,7 +82,9 @@ public sealed class FileReportWriter : IReportWriter
                 ? "<details><summary><strong>Files</strong></summary>(no-file)</details>"
                 : BuildFilesDetailsMarkdown(issue.Files);
 
-            var details = $"<strong>Error Message</strong><br/>{EscapePipe(Truncate(issue.Message, 90))}<br/>{filesDetails}";
+            var fixDetails = BuildFixDetailsMarkdown(issue.Rank, metadata.OutputDirectory, fixScriptFileNamesByRank);
+
+            var details = $"<strong>Error Message</strong><br/>{EscapePipe(Truncate(issue.Message, 90))}<br/>{filesDetails}<br/>{fixDetails}";
             builder.AppendLine($"| {issue.Rank} | {issue.Severity} | {issue.Frequency} | {details} |");
         }
 
@@ -136,7 +145,10 @@ public sealed class FileReportWriter : IReportWriter
         return builder.ToString();
     }
 
-    private static string BuildHtml(ReportMetadata metadata, IReadOnlyList<RankedIssue> rankedIssues)
+    private static string BuildHtml(
+        ReportMetadata metadata,
+        IReadOnlyList<RankedIssue> rankedIssues,
+        IReadOnlyDictionary<int, string>? fixScriptFileNamesByRank)
     {
         var builder = new StringBuilder();
         builder.AppendLine("<!doctype html>");
@@ -196,7 +208,9 @@ public sealed class FileReportWriter : IReportWriter
                 var filesDetails = issue.Files.Count == 0
                     ? "<details><summary><strong>Files</strong></summary><div>(no-file)</div></details>"
                     : BuildFilesDetailsHtml(issue.Files);
-                var details = $"<strong>Error Message</strong><br/>{HtmlEncode(Truncate(issue.Message, 140))}<br/>{filesDetails}";
+
+                var fixDetails = BuildFixDetailsHtml(issue.Rank, metadata.OutputDirectory, fixScriptFileNamesByRank);
+                var details = $"<strong>Error Message</strong><br/>{HtmlEncode(Truncate(issue.Message, 140))}<br/>{filesDetails}<br/>{fixDetails}";
 
                 builder.AppendLine("        <tr>");
                 builder.AppendLine($"          <td class=\"num\">{issue.Rank}</td>");
@@ -303,5 +317,49 @@ public sealed class FileReportWriter : IReportWriter
             : null;
 
         return (filePath, line, column);
+    }
+
+    private static string BuildFixDetailsMarkdown(
+        int rank,
+        string outputDirectory,
+        IReadOnlyDictionary<int, string>? fixScriptFileNamesByRank)
+    {
+        if (fixScriptFileNamesByRank is null || !fixScriptFileNamesByRank.TryGetValue(rank, out var fileName))
+        {
+            return "<strong>Fix</strong><br/>(not generated)";
+        }
+
+        var fullPath = Path.Combine(outputDirectory, fileName);
+        var uri = BuildFileUri(fullPath);
+        var encodedName = HtmlEncode(fileName);
+
+        if (string.IsNullOrEmpty(uri))
+        {
+            return $"<strong>Fix</strong><br/>{encodedName}";
+        }
+
+        return $"<strong>Fix</strong><br/><a href=\"{HtmlEncode(uri)}\" target=\"_blank\" rel=\"noopener noreferrer\">{encodedName}</a>";
+    }
+
+    private static string BuildFixDetailsHtml(
+        int rank,
+        string outputDirectory,
+        IReadOnlyDictionary<int, string>? fixScriptFileNamesByRank)
+    {
+        if (fixScriptFileNamesByRank is null || !fixScriptFileNamesByRank.TryGetValue(rank, out var fileName))
+        {
+            return "<strong>Fix</strong><br/>(not generated)";
+        }
+
+        var fullPath = Path.Combine(outputDirectory, fileName);
+        var uri = BuildFileUri(fullPath);
+        var encodedName = HtmlEncode(fileName);
+
+        if (string.IsNullOrEmpty(uri))
+        {
+            return $"<strong>Fix</strong><br/>{encodedName}";
+        }
+
+        return $"<strong>Fix</strong><br/><a href=\"{HtmlEncode(uri)}\" target=\"_blank\" rel=\"noopener noreferrer\">{encodedName}</a>";
     }
 }

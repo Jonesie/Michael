@@ -4,6 +4,7 @@ using System.Reflection;
 using Michael.Analysis;
 using Michael.Cli;
 using Michael.Cli.Models;
+using Michael.Fixes;
 using Michael.Parsing;
 
 var inputOption = new Option<FileInfo?>(
@@ -17,10 +18,7 @@ var outputOption = new Option<DirectoryInfo?>(
 var analyseOnlyOption = new Option<bool>(
     name: "--analyse-only",
     description: "Parse and analyse the log without applying any fixes.");
-
-var applyFixesOption = new Option<bool>(
-    name: "--apply-fixes",
-    description: "Apply generated fixes (post-MVP, currently blocked).");
+analyseOnlyOption.AddAlias("--analysis-only");
 
 var limitOption = new Option<int?>(
     name: "--limit",
@@ -43,7 +41,6 @@ var rootCommand = new RootCommand("Michael – build log analyser and issue repo
     inputOption,
     outputOption,
     analyseOnlyOption,
-    applyFixesOption,
     limitOption,
     gitBranchOption,
     aiToolOption,
@@ -55,20 +52,10 @@ rootCommand.SetHandler((InvocationContext context) =>
     var input       = context.ParseResult.GetValueForOption(inputOption);
     var output      = context.ParseResult.GetValueForOption(outputOption);
     var analyseOnly = context.ParseResult.GetValueForOption(analyseOnlyOption);
-    var applyFixes  = context.ParseResult.GetValueForOption(applyFixesOption);
     var limit       = context.ParseResult.GetValueForOption(limitOption);
     var gitBranch   = context.ParseResult.GetValueForOption(gitBranchOption);
     var aiTool      = context.ParseResult.GetValueForOption(aiToolOption);
     var aiModel     = context.ParseResult.GetValueForOption(aiModelOption);
-
-    if (applyFixes)
-    {
-        Console.Error.WriteLine(
-            "--apply-fixes is not available in the current MVP release. " +
-            "Fix generation and application is planned for a future version.");
-        context.ExitCode = 1;
-        return;
-    }
 
     if (input is null)
     {
@@ -92,10 +79,12 @@ rootCommand.SetHandler((InvocationContext context) =>
     }
 
     output ??= new DirectoryInfo("out");
+    var generateFixes = !analyseOnly;
 
     Console.WriteLine($"Michael {GetVersion()} – analysing {input.Name}");
     Console.WriteLine($"  Output   : {output.FullName}");
     if (limit.HasValue)   Console.WriteLine($"  Limit    : {limit}");
+    Console.WriteLine($"  Generate fixes: {generateFixes}");
     if (gitBranch is not null) Console.WriteLine($"  Branch   : {gitBranch}");
     if (aiTool is not null)    Console.WriteLine($"  AI tool  : {aiTool}");
     if (aiModel is not null)   Console.WriteLine($"  AI model : {aiModel}");
@@ -112,6 +101,13 @@ rootCommand.SetHandler((InvocationContext context) =>
     var summaries = analyzer.Summarize(parsedIssues);
     var rankedIssues = ranker.Rank(summaries, limit);
 
+    IReadOnlyDictionary<int, string> fixScriptFileNamesByRank = new Dictionary<int, string>();
+    if (generateFixes)
+    {
+        var fixScriptGenerator = new CopilotCliFixScriptGenerator();
+        fixScriptFileNamesByRank = fixScriptGenerator.Generate(output.FullName, rankedIssues);
+    }
+
     var metadata = new ReportMetadata(
         GeneratedAtUtc: DateTimeOffset.UtcNow,
         Version: GetVersion(),
@@ -126,11 +122,12 @@ rootCommand.SetHandler((InvocationContext context) =>
         SummaryCount: summaries.Count,
         RankedCount: rankedIssues.Count);
 
-    writer.Write(output.FullName, metadata, rankedIssues);
+    writer.Write(output.FullName, metadata, rankedIssues, fixScriptFileNamesByRank);
 
     Console.WriteLine($"  Parsed   : {parsedIssues.Count}");
     Console.WriteLine($"  Summaries: {summaries.Count}");
     Console.WriteLine($"  Ranked   : {rankedIssues.Count}");
+    Console.WriteLine($"  Fixes    : {fixScriptFileNamesByRank.Count}");
     Console.WriteLine($"  Wrote    : {Path.Combine(output.FullName, "issues.json")}");
     Console.WriteLine($"  Wrote    : {Path.Combine(output.FullName, "summary.md")}");
     Console.WriteLine($"  Wrote    : {Path.Combine(output.FullName, "summary.html")}");

@@ -35,7 +35,13 @@ public class FileReportWriterTests
                 new RankedIssue(2, "CS0168: Unused variable", "CS0168: Unused variable", new[] {"/tmp/c.cs"}, "warning", 3, 0.90, 180.0, "warn")
             };
 
-            writer.Write(tempDir, metadata, ranked);
+            var fixFileNamesByRank = new Dictionary<int, string>
+            {
+                [1] = "fix-rank-1.ps1",
+                [2] = "fix-rank-2.ps1"
+            };
+
+            writer.Write(tempDir, metadata, ranked, fixFileNamesByRank);
 
             var summaryPath = Path.Combine(tempDir, "summary.md");
             var htmlPath = Path.Combine(tempDir, "summary.html");
@@ -44,6 +50,7 @@ public class FileReportWriterTests
 
             var markdown = File.ReadAllText(summaryPath);
             var html = File.ReadAllText(htmlPath);
+            var expectedFixUri = $"vscode://file/{string.Join('/', Path.Combine(tempDir, "fix-rank-1.ps1").Replace('\\', '/').Split('/').Select(Uri.EscapeDataString))}";
             Assert.Contains("| Rank | Severity | Frequency | Details |", markdown, StringComparison.Ordinal);
             Assert.Contains("<strong>Error Message</strong><br/>MSB4019: Missing targets", markdown, StringComparison.Ordinal);
             Assert.Contains("<summary><strong>Files</strong> (2)</summary>", markdown, StringComparison.Ordinal);
@@ -51,10 +58,12 @@ public class FileReportWriterTests
             Assert.Contains("<a href=\"vscode://file//tmp/b.csproj\" target=\"_blank\" rel=\"noopener noreferrer\">/tmp/b.csproj</a>", markdown, StringComparison.Ordinal);
             Assert.Contains("<summary><strong>Files</strong> (1)</summary>", markdown, StringComparison.Ordinal);
             Assert.Contains("<a href=\"vscode://file//tmp/c.cs\" target=\"_blank\" rel=\"noopener noreferrer\">/tmp/c.cs</a>", markdown, StringComparison.Ordinal);
+            Assert.Contains($"<strong>Fix</strong><br/><a href=\"{expectedFixUri}\" target=\"_blank\" rel=\"noopener noreferrer\">fix-rank-1.ps1</a>", markdown, StringComparison.Ordinal);
             Assert.Contains("<title>Michael Analysis Summary</title>", html, StringComparison.Ordinal);
             Assert.Contains("<th>Details</th>", html, StringComparison.Ordinal);
             Assert.Contains("<details><summary><strong>Files</strong> (2)</summary><ul>", html, StringComparison.Ordinal);
             Assert.Contains("<li><a href=\"vscode://file//tmp/a.csproj\" target=\"_blank\" rel=\"noopener noreferrer\">/tmp/a.csproj</a></li>", html, StringComparison.Ordinal);
+            Assert.Contains($"<strong>Fix</strong><br/><a href=\"{expectedFixUri}\" target=\"_blank\" rel=\"noopener noreferrer\">fix-rank-1.ps1</a>", html, StringComparison.Ordinal);
             Assert.DoesNotContain("<details open", markdown, StringComparison.OrdinalIgnoreCase);
             Assert.DoesNotContain("<details open", html, StringComparison.OrdinalIgnoreCase);
 

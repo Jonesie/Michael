@@ -5,5 +5,9 @@ namespace Michael.Cli.Abstractions;
 
 public interface IReportWriter
 {
-    void Write(string outputDirectory, ReportMetadata metadata, IReadOnlyList<RankedIssue> rankedIssues);
+    void Write(
+        string outputDirectory,
+        ReportMetadata metadata,
+        IReadOnlyList<RankedIssue> rankedIssues,
+        IReadOnlyDictionary<int, string>? fixScriptFileNamesByRank = null);
 }
