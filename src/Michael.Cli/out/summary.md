@@ -2,8 +2,8 @@
 
 ## Metadata
 
-- Generated (UTC): 2026-03-06T09:11:58.6489374+00:00
-- Version: 1.0.0+0ca2a322145d25806c0bb1146a25b5526ceb42fd
+- Generated (UTC): 2026-03-06T20:26:21.8189937+00:00
+- Version: 1.0.0+03defd075f258ddf4542a73c391314fc74a467a6
 - Input: /home/jonesie/build.log
 - Output: /home/jonesie/dev/Michael/src/Michael.Cli/out
 - Analyse only: False

@@ -81,13 +81,15 @@ rootCommand.SetHandler((InvocationContext context) =>
     output ??= new DirectoryInfo("out");
     var generateFixes = !analyseOnly;
 
-    Console.WriteLine($"Michael {GetVersion()} – analysing {input.Name}");
-    Console.WriteLine($"  Output   : {output.FullName}");
-    if (limit.HasValue)   Console.WriteLine($"  Limit    : {limit}");
-    Console.WriteLine($"  Generate fixes: {generateFixes}");
-    if (gitBranch is not null) Console.WriteLine($"  Branch   : {gitBranch}");
-    if (aiTool is not null)    Console.WriteLine($"  AI tool  : {aiTool}");
-    if (aiModel is not null)   Console.WriteLine($"  AI model : {aiModel}");
+    PrintBanner(
+        GetVersion(),
+        input.Name,
+        output.FullName,
+        limit,
+        generateFixes,
+        gitBranch,
+        aiTool,
+        aiModel);
 
     using var stream = input.OpenRead();
     using var reader = new StreamReader(stream);
@@ -140,3 +142,32 @@ static string GetVersion() =>
             ?.GetCustomAttribute<AssemblyInformationalVersionAttribute>()
             ?.InformationalVersion
         ?? "0.0.0";
+
+static void PrintBanner(
+    string version,
+    string inputName,
+    string outputDirectory,
+    int? limit,
+    bool generateFixes,
+    string? gitBranch,
+    string? aiTool,
+    string? aiModel)
+{
+    Console.WriteLine("  ███╗   ███╗██╗ ██████╗██╗  ██╗ █████╗ ███████╗██╗     ");
+    Console.WriteLine("  ████╗ ████║██║██╔════╝██║  ██║██╔══██╗██╔════╝██║     ");
+    Console.WriteLine("  ██╔████╔██║██║██║     ███████║███████║█████╗  ██║     ");
+    Console.WriteLine("  ██║╚██╔╝██║██║██║     ██╔══██║██╔══██║██╔══╝  ██║     ");
+    Console.WriteLine("  ██║ ╚═╝ ██║██║╚██████╗██║  ██║██║  ██║███████╗███████╗");
+    Console.WriteLine("  ╚═╝     ╚═╝╚═╝ ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚══════╝");
+    Console.WriteLine("  GitHub: https://github.com/Jonesie/Michael");
+    Console.WriteLine();
+    Console.WriteLine($"  Michael {version}");
+    Console.WriteLine($"  Analysing: {inputName}");
+    Console.WriteLine($"  Output   : {outputDirectory}");
+    if (limit.HasValue) Console.WriteLine($"  Limit    : {limit}");
+    Console.WriteLine($"  Generate fixes: {generateFixes}");
+    if (gitBranch is not null) Console.WriteLine($"  Branch   : {gitBranch}");
+    if (aiTool is not null) Console.WriteLine($"  AI tool  : {aiTool}");
+    if (aiModel is not null) Console.WriteLine($"  AI model : {aiModel}");
+    Console.WriteLine();
+}
