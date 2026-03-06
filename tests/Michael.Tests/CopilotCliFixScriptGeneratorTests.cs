@@ -97,4 +97,86 @@ public class CopilotCliFixScriptGeneratorTests
             }
         }
     }
+
+    [Fact]
+    public void Generate_WithNoConcreteTargets_ProducesCountZeroAndNoSampleMessage()
+    {
+        var tempDir = Path.Combine(Path.GetTempPath(), $"michael-fixes-empty-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(tempDir);
+
+        try
+        {
+            var generator = new CopilotCliFixScriptGenerator();
+            var rankedIssues = new[]
+            {
+                new RankedIssue(
+                    Rank: 1,
+                    Key: "NOFILE",
+                    Message: "CS0000: No target files available",
+                    Files: new[] { "(no-file)", "   ", "relative/path/File.cs(5,1)" },
+                    Severity: "warning",
+                    Frequency: 1,
+                    Confidence: 0.80,
+                    Score: 120,
+                    Explanation: "No files")
+            };
+
+            var filesByRank = generator.Generate(tempDir, rankedIssues);
+            var scriptPath = Path.Combine(tempDir, filesByRank[1]);
+            var script = File.ReadAllText(scriptPath);
+
+            Assert.Contains("# Target files: 1", script, StringComparison.Ordinal);
+            Assert.Contains("Files that need fixing (apply to all listed files if confirmed):", script, StringComparison.Ordinal);
+            Assert.Contains("- relative/path/File.cs(5,1)", script, StringComparison.Ordinal);
+            Assert.Contains("- No source file sample was available.", script, StringComparison.Ordinal);
+        }
+        finally
+        {
+            if (Directory.Exists(tempDir))
+            {
+                Directory.Delete(tempDir, recursive: true);
+            }
+        }
+    }
+
+    [Fact]
+    public void Generate_HandlesMissingSourceFiles_WithoutFailing()
+    {
+        var tempDir = Path.Combine(Path.GetTempPath(), $"michael-fixes-missing-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(tempDir);
+
+        try
+        {
+            var generator = new CopilotCliFixScriptGenerator();
+            var missingPath = Path.Combine(tempDir, "DoesNotExist.cs");
+            var rankedIssues = new[]
+            {
+                new RankedIssue(
+                    Rank: 1,
+                    Key: "MISSING",
+                    Message: "CS1001: Identifier expected",
+                    Files: new[] { $"{missingPath}(10,1)" },
+                    Severity: "error",
+                    Frequency: 1,
+                    Confidence: 0.95,
+                    Score: 220,
+                    Explanation: "Missing source")
+            };
+
+            var filesByRank = generator.Generate(tempDir, rankedIssues);
+            var scriptPath = Path.Combine(tempDir, filesByRank[1]);
+            var script = File.ReadAllText(scriptPath);
+
+            Assert.Contains("# Target files: 1", script, StringComparison.Ordinal);
+            Assert.Contains($"- {missingPath}(10,1)", script, StringComparison.Ordinal);
+            Assert.Contains("- No source file sample was available.", script, StringComparison.Ordinal);
+        }
+        finally
+        {
+            if (Directory.Exists(tempDir))
+            {
+                Directory.Delete(tempDir, recursive: true);
+            }
+        }
+    }
 }

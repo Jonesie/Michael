@@ -30,15 +30,20 @@ jobs:
       - name: Build
         run: dotnet build src/Michael.sln --no-restore
 
+      - name: Clean test results directory
+        run: |
+          rm -rf TestResults/current
+          mkdir -p TestResults/current
+
       - name: Test
-        run: dotnet test src/Michael.sln --no-build --logger "trx;LogFileName=test-results.trx" --collect:"XPlat Code Coverage" --results-directory ./TestResults
+        run: dotnet test src/Michael.sln --no-build --logger "trx;LogFileName=test-results.trx" --collect:"XPlat Code Coverage" --results-directory ./TestResults/current
 
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: test-results
-          path: TestResults/**/*.trx
+          path: TestResults/current/**/*.trx
           if-no-files-found: warn
 
       - name: Publish test report
@@ -46,7 +51,7 @@ jobs:
         uses: dorny/test-reporter@v1
         with:
           name: Unit Test Results
-          path: TestResults/**/*.trx
+          path: TestResults/current/**/*.trx
           reporter: dotnet-trx
           fail-on-error: false
 
@@ -54,11 +59,29 @@ jobs:
         if: always()
         uses: irongut/CodeCoverageSummary@v1.3.0
         with:
-          filename: TestResults/**/coverage.cobertura.xml
+          filename: TestResults/current/**/coverage.cobertura.xml
           format: markdown
           output: both
           badge: true
         continue-on-error: true
+
+      - name: Generate coverage HTML report
+        if: always()
+        run: |
+          dotnet tool install --global dotnet-reportgenerator-globaltool --version 5.*
+          export PATH="$PATH:$HOME/.dotnet/tools"
+          reportgenerator \
+            -reports:"TestResults/current/**/coverage.cobertura.xml" \
+            -targetdir:"CoverageReport" \
+            -reporttypes:"Html;MarkdownSummaryGithub"
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: CoverageReport/**
+          if-no-files-found: warn
 
       - name: Upload coverage results
         if: always()
@@ -66,6 +89,6 @@ jobs:
         with:
           name: coverage-results
           path: |
-            TestResults/**/coverage.cobertura.xml
+            TestResults/current/**/coverage.cobertura.xml
             code-coverage-results.md
           if-no-files-found: warn

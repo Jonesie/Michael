@@ -5,6 +5,16 @@ namespace Michael.Tests;
 public class DotnetBuildLogParserTests
 {
     [Fact]
+    public void Parse_WithNullContent_ReturnsEmpty()
+    {
+        var parser = new DotnetBuildLogParser();
+
+        var issues = parser.Parse((string)null!);
+
+        Assert.Empty(issues);
+    }
+
+    [Fact]
     public void Parse_ExtractsWarningsAndErrors_WithCountAndNormalizedFields()
     {
         var log = """
@@ -63,5 +73,50 @@ public class DotnetBuildLogParserTests
         var issues = parser.Parse(log);
 
         Assert.Empty(issues);
+    }
+
+    [Fact]
+    public void Parse_RemovesProjectSuffix_AndHandlesUppercaseSeverity()
+    {
+        var log = """
+            /tmp/app/Alpha.cs(10,2): ERROR CS1002: ; expected [/tmp/app/Alpha.csproj]
+            /tmp/app/Beta.cs(4,1): Warning CS0168: The variable 'x' is declared but never used [/tmp/app/Beta.csproj]
+            """;
+
+        var parser = new DotnetBuildLogParser();
+
+        var issues = parser.Parse(log);
+
+        Assert.Equal(2, issues.Count);
+
+        var error = Assert.Single(issues, issue => issue.Severity == "error");
+        Assert.Equal("CS1002: ; expected", error.Message);
+        Assert.Equal("/tmp/app/Alpha.cs(10,2)", error.FilePath);
+
+        var warning = Assert.Single(issues, issue => issue.Severity == "warning");
+        Assert.Equal("CS0168: The variable 'x' is declared but never used", warning.Message);
+        Assert.Equal("/tmp/app/Beta.cs(4,1)", warning.FilePath);
+    }
+
+    [Fact]
+    public void Parse_SortsByCountThenSeverityThenFileThenMessage()
+    {
+        var log = """
+            /tmp/app/Zeta.cs(1,1): warning CS1000: Message B [/tmp/app/App.csproj]
+            /tmp/app/Alpha.cs(1,1): error CS1001: Message A [/tmp/app/App.csproj]
+            /tmp/app/Zeta.cs(1,1): warning CS1000: Message B [/tmp/app/App.csproj]
+            /tmp/app/Beta.cs(1,1): warning CS1002: Message C [/tmp/app/App.csproj]
+            """;
+
+        var parser = new DotnetBuildLogParser();
+
+        var issues = parser.Parse(log);
+
+        Assert.Equal(3, issues.Count);
+        Assert.Equal("CS1000: Message B", issues[0].Message);
+        Assert.Equal(2, issues[0].Count);
+
+        Assert.Equal("warning", issues[1].Severity);
+        Assert.Equal("error", issues[2].Severity);
     }
 }
