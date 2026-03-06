@@ -1,19 +1,16 @@
 
 ```text
- __  __ _      _                _
-|  \/  (_) ___| |__   __ _  ___| |
-| |\/| | |/ __| '_ \ / _` |/ _ \ |
-| |  | | | (__| | | | (_| |  __/ |
-|_|  |_|_|\___|_| |_|\__,_|\___|_|
+	███╗   ███╗██╗ ██████╗██╗  ██╗ █████╗ ███████╗██╗     
+	████╗ ████║██║██╔════╝██║  ██║██╔══██╗██╔════╝██║     
+	██╔████╔██║██║██║     ███████║███████║█████╗  ██║     
+	██║╚██╔╝██║██║██║     ██╔══██║██╔══██║██╔══╝  ██║     
+	██║ ╚═╝ ██║██║╚██████╗██║  ██║██║  ██║███████╗███████╗
+	╚═╝     ╚═╝╚═╝ ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚══════╝
 ```
 
 CLI-first .NET tool to parse build logs, summarize issues, rank them, and write local reports.
 
-## MVP Status
-
-- Implemented: parse (.NET logs), summarize, rank, and write reports (`issues.json`, `summary.md`, `summary.html`).
-- Implemented: CLI options `--help`, `--version`, `--input`, `--output`, `--analyse-only` (alias `--analysis-only`), `--limit`, `--git-branch`, `--ai-tool`, `--ai-model`.
-- Current parsing scope: .NET build logs only (Angular/React parsing is out of MVP scope).
+Supports .NET build logs only and uses Copilot CLI only for generated fix scripts.
 
 ## Prerequisites
 
@@ -70,16 +67,3 @@ After a successful run, the output directory contains:
 - `--output <dir>`: output directory (default: `out`).
 - `--analyse-only` / `--analysis-only`: run parse/analyze/rank/report flow without generating fix scripts.
 - `--limit <n>`: maximum number of ranked issues written (`n > 0`).
-- `--git-branch <name>`: included in report metadata.
-- `--ai-tool <name>`: included in report metadata.
-- `--ai-model <name>`: included in report metadata.
-
-## Post-MVP Generation Flow (Planned)
-
-Planned later phases will continue expanding safe fix generation and review flow:
-
-1. Generate fix candidates for selected ranked issues.
-2. Preview and refine generated fixes before use.
-3. Improve ranking and context quality for generated fix scripts.
-
-Until then, use reports to prioritize manual remediation.

@@ -57,9 +57,6 @@ public sealed class FileReportWriter : IReportWriter
         builder.AppendLine($"- Output: {metadata.OutputDirectory}");
         builder.AppendLine($"- Analyse only: {metadata.AnalyseOnly}");
         builder.AppendLine($"- Limit: {(metadata.Limit.HasValue ? metadata.Limit.Value : "none")}");
-        builder.AppendLine($"- Git branch: {metadata.GitBranch ?? "(not set)"}");
-        builder.AppendLine($"- AI tool: {metadata.AiTool ?? "(not set)"}");
-        builder.AppendLine($"- AI model: {metadata.AiModel ?? "(not set)"}");
         builder.AppendLine($"- Parsed issues: {metadata.ParsedIssueCount}");
         builder.AppendLine($"- Summaries: {metadata.SummaryCount}");
         builder.AppendLine($"- Ranked issues: {metadata.RankedCount}");
@@ -181,9 +178,6 @@ public sealed class FileReportWriter : IReportWriter
         builder.AppendLine($"    <li><strong>Output:</strong> {HtmlEncode(metadata.OutputDirectory)}</li>");
         builder.AppendLine($"    <li><strong>Analyse only:</strong> {metadata.AnalyseOnly}</li>");
         builder.AppendLine($"    <li><strong>Limit:</strong> {(metadata.Limit.HasValue ? metadata.Limit.Value : "none")}</li>");
-        builder.AppendLine($"    <li><strong>Git branch:</strong> {HtmlEncode(metadata.GitBranch ?? "(not set)")}</li>");
-        builder.AppendLine($"    <li><strong>AI tool:</strong> {HtmlEncode(metadata.AiTool ?? "(not set)")}</li>");
-        builder.AppendLine($"    <li><strong>AI model:</strong> {HtmlEncode(metadata.AiModel ?? "(not set)")}</li>");
         builder.AppendLine($"    <li><strong>Parsed issues:</strong> {metadata.ParsedIssueCount}</li>");
         builder.AppendLine($"    <li><strong>Summaries:</strong> {metadata.SummaryCount}</li>");
         builder.AppendLine($"    <li><strong>Ranked issues:</strong> {metadata.RankedCount}</li>");

@@ -7,9 +7,6 @@ public sealed record ReportMetadata(
     string OutputDirectory,
     bool AnalyseOnly,
     int? Limit,
-    string? GitBranch,
-    string? AiTool,
-    string? AiModel,
     int ParsedIssueCount,
     int SummaryCount,
     int RankedCount);

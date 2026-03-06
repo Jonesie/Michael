@@ -22,9 +22,6 @@ public class FileReportWriterTests
                 tempDir,
                 true,
                 2,
-                null,
-                null,
-                null,
                 10,
                 2,
                 2);

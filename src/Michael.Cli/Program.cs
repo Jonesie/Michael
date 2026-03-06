@@ -24,27 +24,12 @@ var limitOption = new Option<int?>(
     name: "--limit",
     description: "Maximum number of issues to include in the report.");
 
-var gitBranchOption = new Option<string?>(
-    name: "--git-branch",
-    description: "Git branch name to include in report metadata.");
-
-var aiToolOption = new Option<string?>(
-    name: "--ai-tool",
-    description: "AI tool to use for fix generation (e.g. copilot).");
-
-var aiModelOption = new Option<string?>(
-    name: "--ai-model",
-    description: "AI model to use for fix generation.");
-
 var rootCommand = new RootCommand("Michael – build log analyser and issue reporter.")
 {
     inputOption,
     outputOption,
     analyseOnlyOption,
     limitOption,
-    gitBranchOption,
-    aiToolOption,
-    aiModelOption,
 };
 
 rootCommand.SetHandler((InvocationContext context) =>
@@ -53,9 +38,6 @@ rootCommand.SetHandler((InvocationContext context) =>
     var output      = context.ParseResult.GetValueForOption(outputOption);
     var analyseOnly = context.ParseResult.GetValueForOption(analyseOnlyOption);
     var limit       = context.ParseResult.GetValueForOption(limitOption);
-    var gitBranch   = context.ParseResult.GetValueForOption(gitBranchOption);
-    var aiTool      = context.ParseResult.GetValueForOption(aiToolOption);
-    var aiModel     = context.ParseResult.GetValueForOption(aiModelOption);
 
     if (input is null)
     {
@@ -86,10 +68,7 @@ rootCommand.SetHandler((InvocationContext context) =>
         input.Name,
         output.FullName,
         limit,
-        generateFixes,
-        gitBranch,
-        aiTool,
-        aiModel);
+        generateFixes);
 
     using var stream = input.OpenRead();
     using var reader = new StreamReader(stream);
@@ -117,9 +96,6 @@ rootCommand.SetHandler((InvocationContext context) =>
         OutputDirectory: output.FullName,
         AnalyseOnly: analyseOnly,
         Limit: limit,
-        GitBranch: gitBranch,
-        AiTool: aiTool,
-        AiModel: aiModel,
         ParsedIssueCount: parsedIssues.Count,
         SummaryCount: summaries.Count,
         RankedCount: rankedIssues.Count);
@@ -148,10 +124,7 @@ static void PrintBanner(
     string inputName,
     string outputDirectory,
     int? limit,
-    bool generateFixes,
-    string? gitBranch,
-    string? aiTool,
-    string? aiModel)
+    bool generateFixes)
 {
     Console.WriteLine("  ███╗   ███╗██╗ ██████╗██╗  ██╗ █████╗ ███████╗██╗     ");
     Console.WriteLine("  ████╗ ████║██║██╔════╝██║  ██║██╔══██╗██╔════╝██║     ");
@@ -166,8 +139,5 @@ static void PrintBanner(
     Console.WriteLine($"  Output   : {outputDirectory}");
     if (limit.HasValue) Console.WriteLine($"  Limit    : {limit}");
     Console.WriteLine($"  Generate fixes: {generateFixes}");
-    if (gitBranch is not null) Console.WriteLine($"  Branch   : {gitBranch}");
-    if (aiTool is not null) Console.WriteLine($"  AI tool  : {aiTool}");
-    if (aiModel is not null) Console.WriteLine($"  AI model : {aiModel}");
     Console.WriteLine();
 }
