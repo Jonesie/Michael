@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Michael Analysis Summary</title>
+  <style>
+    body { font-family: Arial, Helvetica, sans-serif; margin: 24px; color: #1f2937; }
+    h1, h2 { margin-bottom: 8px; }
+    ul { margin-top: 0; }
+    .table-wrap { overflow-x: auto; }
+    table { border-collapse: collapse; width: 100%; min-width: 900px; }
+    th, td { border: 1px solid #d1d5db; padding: 8px; vertical-align: top; text-align: left; }
+    th { background: #f3f4f6; }
+    td.num { text-align: right; white-space: nowrap; }
+    .files { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12px; }
+    details > summary { cursor: pointer; } 
+    details ul { margin-top: 8px; padding-left: 20px; } 
+  </style>
+</head>
+<body>
+  <h1>Michael Analysis Summary</h1>
+  <h2>Metadata</h2>
+  <ul>
+    <li><strong>Generated (UTC):</strong> 2026-03-06T08:09:05.5429628+00:00</li>
+    <li><strong>Version:</strong> 1.0.0+ab3ac1ca8df8ad28b44aa42b814321e67cea249b</li>
+    <li><strong>Input:</strong> /home/jonesie/build.log</li>
+    <li><strong>Output:</strong> /home/jonesie/dev/Michael/src/Michael.Cli/out</li>
+    <li><strong>Analyse only:</strong> False</li>
+    <li><strong>Limit:</strong> none</li>
+    <li><strong>Git branch:</strong> (not set)</li>
+    <li><strong>AI tool:</strong> (not set)</li>
+    <li><strong>AI model:</strong> (not set)</li>
+    <li><strong>Parsed issues:</strong> 219</li>
+    <li><strong>Summaries:</strong> 65</li>
+    <li><strong>Ranked issues:</strong> 65</li>
+  </ul>
+  <h2>Ranked Issues</h2>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Rank</th><th>Severity</th><th>Frequency</th><th>Details</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="num">1</td>
+          <td>warning</td>
+          <td class="num">166</td>
+          <td class="files"><strong>Error Message</strong><br/>xUnit1048: Support for &#39;async void&#39; unit tests is being removed from xUnit.net v3. To simplify upgrading, convert the test to &#39;async Task&#39; …<br/><details><summary><strong>Files</strong> (83)</summary><ul><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Integration.Data/S3BinaryFileServiceTests.cs:127:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Integration.Data/S3BinaryFileServiceTests.cs(127,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Integration.Data/S3BinaryFileServiceTests.cs:160:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Integration.Data/S3BinaryFileServiceTests.cs(160,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Integration.Data/S3BinaryFileServiceTests.cs:98:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Integration.Data/S3BinaryFileServiceTests.cs(98,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Integration.Data/S3FileStoreTests.cs:113:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Integration.Data/S3FileStoreTests.cs(113,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Integration.Data/S3FileStoreTests.cs:47:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Integration.Data/S3FileStoreTests.cs(47,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Integration.Data/S3FileStoreTests.cs:59:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Integration.Data/S3FileStoreTests.cs(59,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Integration.Data/S3FileStoreTests.cs:79:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Integration.Data/S3FileStoreTests.cs(79,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Integration.Data/SerialNumberStoreTests.cs:129:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Integration.Data/SerialNumberStoreTests.cs(129,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Integration.Data/SerialNumberStoreTests.cs:163:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Integration.Data/SerialNumberStoreTests.cs(163,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Integration.Data/SerialNumberStoreTests.cs:201:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Integration.Data/SerialNumberStoreTests.cs(201,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Integration.Data/SerialNumberStoreTests.cs:235:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Integration.Data/SerialNumberStoreTests.cs(235,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Integration.Data/SerialNumberStoreTests.cs:269:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Integration.Data/SerialNumberStoreTests.cs(269,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Integration.Data/SerialNumberStoreTests.cs:34:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Integration.Data/SerialNumberStoreTests.cs(34,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Integration.Data/SerialNumberStoreTests.cs:65:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Integration.Data/SerialNumberStoreTests.cs(65,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Integration.Data/SerialNumberStoreTests.cs:98:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Integration.Data/SerialNumberStoreTests.cs(98,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Integration.Services/SerialNumberServiceTests.cs:115:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Integration.Services/SerialNumberServiceTests.cs(115,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Integration.Services/SerialNumberServiceTests.cs:151:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Integration.Services/SerialNumberServiceTests.cs(151,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Integration.Services/SerialNumberServiceTests.cs:48:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Integration.Services/SerialNumberServiceTests.cs(48,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Integration.Services/SerialNumberServiceTests.cs:81:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Integration.Services/SerialNumberServiceTests.cs(81,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit.Sharding/ShardServiceTests.cs:71:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit.Sharding/ShardServiceTests.cs(71,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Files/DBFileIndexStoreTests.cs:112:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Files/DBFileIndexStoreTests.cs(112,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Files/DBFileIndexStoreTests.cs:135:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Files/DBFileIndexStoreTests.cs(135,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Files/DBFileIndexStoreTests.cs:163:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Files/DBFileIndexStoreTests.cs(163,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Files/DBFileIndexStoreTests.cs:185:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Files/DBFileIndexStoreTests.cs(185,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Files/DBFileIndexStoreTests.cs:200:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Files/DBFileIndexStoreTests.cs(200,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Files/DBFileIndexStoreTests.cs:226:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Files/DBFileIndexStoreTests.cs(226,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Files/DBFileIndexStoreTests.cs:253:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Files/DBFileIndexStoreTests.cs(253,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Files/DBFileIndexStoreTests.cs:279:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Files/DBFileIndexStoreTests.cs(279,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Files/DBFileIndexStoreTests.cs:301:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Files/DBFileIndexStoreTests.cs(301,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Files/DBFileIndexStoreTests.cs:322:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Files/DBFileIndexStoreTests.cs(322,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Files/DBFileIndexStoreTests.cs:94:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Files/DBFileIndexStoreTests.cs(94,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Files/LocalBinaryFileServiceTests.cs:129:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Files/LocalBinaryFileServiceTests.cs(129,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Files/LocalBinaryFileServiceTests.cs:164:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Files/LocalBinaryFileServiceTests.cs(164,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Files/LocalBinaryFileServiceTests.cs:99:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Files/LocalBinaryFileServiceTests.cs(99,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Files/LocalFileStoreTests.cs:37:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Files/LocalFileStoreTests.cs(37,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Files/LocalFileStoreTests.cs:56:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Files/LocalFileStoreTests.cs(56,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Files/LocalFileStoreTests.cs:89:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Files/LocalFileStoreTests.cs(89,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Labels/LabelServiceTests.cs:64:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Labels/LabelServiceTests.cs(64,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Scripting/FormattedExpressionDatasourceTests.cs:17:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Scripting/FormattedExpressionDatasourceTests.cs(17,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Scripting/FormattedExpressionDatasourceTests.cs:44:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Scripting/FormattedExpressionDatasourceTests.cs(44,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Scripting/FormattedExpressionDatasourceTests.cs:63:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Scripting/FormattedExpressionDatasourceTests.cs(63,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Scripting/FormattedExpressionDatasourceTests.cs:82:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Scripting/FormattedExpressionDatasourceTests.cs(82,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Scripting/FormattedExpressionTransformTests.cs:100:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Scripting/FormattedExpressionTransformTests.cs(100,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Scripting/FormattedExpressionTransformTests.cs:138:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Scripting/FormattedExpressionTransformTests.cs(138,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Scripting/FormattedExpressionTransformTests.cs:19:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Scripting/FormattedExpressionTransformTests.cs(19,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Scripting/FormattedExpressionTransformTests.cs:191:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Scripting/FormattedExpressionTransformTests.cs(191,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Scripting/FormattedExpressionTransformTests.cs:259:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Scripting/FormattedExpressionTransformTests.cs(259,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Scripting/FormattedExpressionTransformTests.cs:39:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Scripting/FormattedExpressionTransformTests.cs(39,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Scripting/FormattedExpressionTransformTests.cs:67:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Scripting/FormattedExpressionTransformTests.cs(67,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Scripting/SimpleExpressionEvalTests.cs:15:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Scripting/SimpleExpressionEvalTests.cs(15,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Scripting/SimpleExpressionEvalTests.cs:26:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Scripting/SimpleExpressionEvalTests.cs(26,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Scripting/SimpleExpressionEvalTests.cs:37:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Scripting/SimpleExpressionEvalTests.cs(37,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Tables/LookupDataServiceTests.cs:36:21" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Tables/LookupDataServiceTests.cs(36,21)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Tables/TableServiceTests.cs:104:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Tables/TableServiceTests.cs(104,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Tables/TableServiceTests.cs:126:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Tables/TableServiceTests.cs(126,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Tables/TableServiceTests.cs:148:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Tables/TableServiceTests.cs(148,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Tables/TableServiceTests.cs:196:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Tables/TableServiceTests.cs(196,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Tables/TableServiceTests.cs:217:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Tables/TableServiceTests.cs(217,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Tables/TableServiceTests.cs:249:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Tables/TableServiceTests.cs(249,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Tables/TableServiceTests.cs:278:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Tables/TableServiceTests.cs(278,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Tables/TableServiceTests.cs:307:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Tables/TableServiceTests.cs(307,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Tables/TableServiceTests.cs:363:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Tables/TableServiceTests.cs(363,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Tables/TableServiceTests.cs:399:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Tables/TableServiceTests.cs(399,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Tables/TableServiceTests.cs:430:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Tables/TableServiceTests.cs(430,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Tables/TableServiceTests.cs:450:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Tables/TableServiceTests.cs(450,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Tables/TableServiceTests.cs:472:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Tables/TableServiceTests.cs(472,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Tables/TableServiceTests.cs:493:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Tables/TableServiceTests.cs(493,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Tables/TableStoreTest.cs:103:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Tables/TableStoreTest.cs(103,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Tables/TableStoreTest.cs:125:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Tables/TableStoreTest.cs(125,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Tables/TableStoreTest.cs:173:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Tables/TableStoreTest.cs(173,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Tables/TableStoreTest.cs:194:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Tables/TableStoreTest.cs(194,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Tables/TableStoreTest.cs:226:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Tables/TableStoreTest.cs(226,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Tables/TableStoreTest.cs:285:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Tables/TableStoreTest.cs(285,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Tables/TableStoreTest.cs:321:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Tables/TableStoreTest.cs(321,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Tables/TableStoreTest.cs:87:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Tables/TableStoreTest.cs(87,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/hexcom.MessageHub.API.Serverless.Tests/DataStoreIntegrationTests.cs:21:21" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/hexcom.MessageHub.API.Serverless.Tests/DataStoreIntegrationTests.cs(21,21)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/hexcom.MessageHub.API.Serverless.Tests/DataStoreIntegrationTests.cs:50:21" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/hexcom.MessageHub.API.Serverless.Tests/DataStoreIntegrationTests.cs(50,21)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/hexcom.MessageHub.API.Serverless.Tests/DataStoreIntegrationTests.cs:73:21" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/hexcom.MessageHub.API.Serverless.Tests/DataStoreIntegrationTests.cs(73,21)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/hexcom.MessageHub.API.Serverless.Tests/DataStoreIntegrationTests.cs:97:21" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/hexcom.MessageHub.API.Serverless.Tests/DataStoreIntegrationTests.cs(97,21)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/hexcom.Payments.Test.Unit/CustomerTests.cs:36:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/hexcom.Payments.Test.Unit/CustomerTests.cs(36,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/hexcom.Payments.Test.Unit/CustomerTests.cs:65:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/hexcom.Payments.Test.Unit/CustomerTests.cs(65,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/hexcom.Payments.Test.Unit/ProductTests.cs:35:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/hexcom.Payments.Test.Unit/ProductTests.cs(35,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/hexcom.Payments.Test.Unit/SubscriptionTests.cs:51:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/hexcom.Payments.Test.Unit/SubscriptionTests.cs(51,23)</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">2</td>
+          <td>warning</td>
+          <td class="num">52</td>
+          <td class="files"><strong>Error Message</strong><br/>CS1998: This async method lacks &#39;await&#39; operators and will run synchronously. Consider using the &#39;await&#39; operator to await non-blocking API…<br/><details><summary><strong>Files</strong> (26)</summary><ul><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.AddOn.Consoles/Console1AddOn.cs:80:50" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.AddOn.Consoles/Console1AddOn.cs(80,50)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.AddOn.Consoles/Console2AddOn.cs:47:43" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.AddOn.Consoles/Console2AddOn.cs(47,43)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.AddOn.Consoles/Console2AddOn.cs:99:24" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.AddOn.Consoles/Console2AddOn.cs(99,24)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.AddOn.Shopify/ShopifyAddOn.cs:34:43" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.AddOn.Shopify/ShopifyAddOn.cs(34,43)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.AddOn.Shopify/ShopifyAddOn.cs:41:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.AddOn.Shopify/ShopifyAddOn.cs(41,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.AddOn.Shopify/ShopifyAddOn.cs:46:47" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.AddOn.Shopify/ShopifyAddOn.cs(46,47)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.AddOn.Shopify/ShopifyAddOn.cs:51:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.AddOn.Shopify/ShopifyAddOn.cs(51,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.AddOn.Shopify/ShopifyAddOn.cs:61:39" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.AddOn.Shopify/ShopifyAddOn.cs(61,39)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.AddOn.TablePrint/TablePrintAddOn.cs:58:43" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.AddOn.TablePrint/TablePrintAddOn.cs(58,43)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.AddOn.Xero/XeroAddOn.cs:191:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.AddOn.Xero/XeroAddOn.cs(191,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.AddOn.Xero/XeroAddOn.cs:71:31" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.AddOn.Xero/XeroAddOn.cs(71,31)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Api/Controllers/PdfController.cs:49:36" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Api/Controllers/PdfController.cs(49,36)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Api/Startup.cs:773:45" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Api/Startup.cs(773,45)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.MQTT/RealTimeMessagePublisher.cs:42:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.MQTT/RealTimeMessagePublisher.cs(42,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Services/Data/LocalJSONFileStore.cs:113:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Services/Data/LocalJSONFileStore.cs(113,23)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Services/LabelService.cs:716:24" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Services/LabelService.cs(716,24)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit.Sharding/ShardServiceTests.cs:167:62" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit.Sharding/ShardServiceTests.cs(167,62)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit.Sharding/ShardServiceTests.cs:261:75" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit.Sharding/ShardServiceTests.cs(261,75)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit.Sharding/ShardServiceTests.cs:262:93" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit.Sharding/ShardServiceTests.cs(262,93)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit.Sharding/ShardServiceTests.cs:286:56" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit.Sharding/ShardServiceTests.cs(286,56)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit.Sharding/ShardServiceTests.cs:289:85" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit.Sharding/ShardServiceTests.cs(289,85)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit.Sharding/ShardServiceTests.cs:290:106" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit.Sharding/ShardServiceTests.cs(290,106)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit.Sharding/ShardServiceTests.cs:307:81" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit.Sharding/ShardServiceTests.cs(307,81)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit.Sharding/ShardServiceTests.cs:313:100" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit.Sharding/ShardServiceTests.cs(313,100)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/hexcom.Payment.API.Serverless/Program.cs:192:45" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/hexcom.Payment.API.Serverless/Program.cs(192,45)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/hexcom.Services/Payments/PaymentCustomerService.cs:255:29" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/hexcom.Services/Payments/PaymentCustomerService.cs(255,29)</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">3</td>
+          <td>warning</td>
+          <td class="num">30</td>
+          <td class="files"><strong>Error Message</strong><br/>CA2017: Number of parameters supplied in the logging message template do not match the number of named placeholders (https://learn.microsof…<br/><details><summary><strong>Files</strong> (15)</summary><ul><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Api/Controllers/BOSSController.cs:102:24" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Api/Controllers/BOSSController.cs(102,24)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Api/Controllers/BOSSController.cs:110:26" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Api/Controllers/BOSSController.cs(110,26)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Api/Controllers/BOSSController.cs:132:26" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Api/Controllers/BOSSController.cs(132,26)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Api/Controllers/BOSSController.cs:151:26" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Api/Controllers/BOSSController.cs(151,26)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Api/Controllers/BOSSController.cs:177:26" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Api/Controllers/BOSSController.cs(177,26)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Api/Controllers/BOSSController.cs:203:26" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Api/Controllers/BOSSController.cs(203,26)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Api/Controllers/BOSSController.cs:228:26" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Api/Controllers/BOSSController.cs(228,26)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Api/Controllers/BOSSController.cs:253:26" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Api/Controllers/BOSSController.cs(253,26)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Api/Controllers/BOSSController.cs:42:26" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Api/Controllers/BOSSController.cs(42,26)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Api/Controllers/BOSSController.cs:51:24" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Api/Controllers/BOSSController.cs(51,24)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Api/Controllers/BOSSController.cs:59:26" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Api/Controllers/BOSSController.cs(59,26)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Api/Controllers/BOSSController.cs:68:24" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Api/Controllers/BOSSController.cs(68,24)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Api/Controllers/BOSSController.cs:76:26" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Api/Controllers/BOSSController.cs(76,26)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Api/Controllers/BOSSController.cs:93:26" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Api/Controllers/BOSSController.cs(93,26)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Api/Controllers/FELogs.cs:40:26" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Api/Controllers/FELogs.cs(40,26)</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">4</td>
+          <td>warning</td>
+          <td class="num">12</td>
+          <td class="files"><strong>Error Message</strong><br/>CS4014: Because this call is not awaited, execution of the current method continues before the call is completed. Consider applying the &#39;aw…<br/><details><summary><strong>Files</strong> (6)</summary><ul><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Api/Controllers/PrintController.cs:291:13" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Api/Controllers/PrintController.cs(291,13)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Api/Controllers/PublicApi/PrintController.cs:253:9" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Api/Controllers/PublicApi/PrintController.cs(253,9)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Services/LabelService.cs:133:7" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Services/LabelService.cs(133,7)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Services/LabelService.cs:134:7" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Services/LabelService.cs(134,7)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Services/LabelService.cs:143:9" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Services/LabelService.cs(143,9)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Services/LabelService.cs:144:9" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Services/LabelService.cs(144,9)</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">5</td>
+          <td>warning</td>
+          <td class="num">12</td>
+          <td class="files"><strong>Error Message</strong><br/>CS8602: Dereference of a possibly null reference.<br/><details><summary><strong>Files</strong> (6)</summary><ul><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Services/PrintService.cs:267:17" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Services/PrintService.cs(267,17)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/hexcom.MessageHub.API.Serverless/FunctionsSendMessage.cs:141:19" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/hexcom.MessageHub.API.Serverless/FunctionsSendMessage.cs(141,19)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/hexcom.Payment.API.Serverless/Program.cs:141:29" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/hexcom.Payment.API.Serverless/Program.cs(141,29)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/hexcom.Payment.API.Serverless/Program.cs:309:7" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/hexcom.Payment.API.Serverless/Program.cs(309,7)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/hexcom.Payment.API.Serverless/Program.cs:312:46" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/hexcom.Payment.API.Serverless/Program.cs(312,46)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/hexcom.Utilities/Middleware/ApiExceptionHandler.cs:49:49" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/hexcom.Utilities/Middleware/ApiExceptionHandler.cs(49,49)</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">6</td>
+          <td>warning</td>
+          <td class="num">12</td>
+          <td class="files"><strong>Error Message</strong><br/>xUnit1031: Test methods should not use blocking task operations, as they can cause deadlocks. Use an async test method and await instead. (…<br/><details><summary><strong>Files</strong> (6)</summary><ul><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Files/LocalBinaryFileServiceTests.cs:121:11" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Files/LocalBinaryFileServiceTests.cs(121,11)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Files/LocalBinaryFileServiceTests.cs:122:24" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Files/LocalBinaryFileServiceTests.cs(122,24)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Files/LocalBinaryFileServiceTests.cs:151:11" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Files/LocalBinaryFileServiceTests.cs(151,11)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Files/LocalBinaryFileServiceTests.cs:152:24" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Files/LocalBinaryFileServiceTests.cs(152,24)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Files/LocalBinaryFileServiceTests.cs:189:13" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Files/LocalBinaryFileServiceTests.cs(189,13)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Files/LocalBinaryFileServiceTests.cs:190:26" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Files/LocalBinaryFileServiceTests.cs(190,26)</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">7</td>
+          <td>error</td>
+          <td class="num">6</td>
+          <td class="files"><strong>Error Message</strong><br/>MSB4019: The imported project &quot;/usr/lib/dotnet/sdk/9.0.114/Sdks/Microsoft.NET.Sdk.WindowsDesktop/targets/Microsoft.NET.Sdk.WindowsDesktop.t…<br/><details><summary><strong>Files</strong> (1)</summary><ul><li><a href="vscode://file//usr/lib/dotnet/sdk/9.0.114/Sdks/Microsoft.NET.Sdk/targets/Microsoft.NET.Sdk.targets:1479:3" target="_blank" rel="noopener noreferrer">/usr/lib/dotnet/sdk/9.0.114/Sdks/Microsoft.NET.Sdk/targets/Microsoft.NET.Sdk.targets(1479,3)</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">8</td>
+          <td>warning</td>
+          <td class="num">10</td>
+          <td class="files"><strong>Error Message</strong><br/>CS8603: Possible null reference return.<br/><details><summary><strong>Files</strong> (5)</summary><ul><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/hexcom.Payment.API.Serverless/Program.cs:314:5" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/hexcom.Payment.API.Serverless/Program.cs(314,5)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/hexcom.Payment.API.Serverless/Program.cs:322:5" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/hexcom.Payment.API.Serverless/Program.cs(322,5)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/hexcom.Utilities/EncryptionService.cs:27:16" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/hexcom.Utilities/EncryptionService.cs(27,16)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/hexcom.Utilities/EncryptionService.cs:78:16" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/hexcom.Utilities/EncryptionService.cs(78,16)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/hexcom.Utilities/Middleware/ApiExceptionHandler.cs:84:16" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/hexcom.Utilities/Middleware/ApiExceptionHandler.cs(84,16)</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">9</td>
+          <td>warning</td>
+          <td class="num">10</td>
+          <td class="files"><strong>Error Message</strong><br/>NU1902: Package &#39;RestSharp&#39; 110.2.0 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-4rr6-2v9v-wcpc<br/><details><summary><strong>Files</strong> (3)</summary><ul><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Agent.Services/barXui.Agent.Services.csproj" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Agent.Services/barXui.Agent.Services.csproj</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Agent/barXui.Agent.csproj" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Agent/barXui.Agent.csproj</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/hexcom.Services/hexcom.Services.csproj" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/hexcom.Services/hexcom.Services.csproj</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">10</td>
+          <td>warning</td>
+          <td class="num">6</td>
+          <td class="files"><strong>Error Message</strong><br/>CA1416: This call site is reachable on all platforms. &#39;Image.Height&#39; is only supported on: &#39;windows&#39; 6.1 and later. (https://learn.microsof…<br/><details><summary><strong>Files</strong> (3)</summary><ul><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Print/PrinterDrivers/Thermal/ThermalPrinterDriver.cs:174:82" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Print/PrinterDrivers/Thermal/ThermalPrinterDriver.cs(174,82)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Print/PrinterDrivers/Thermal/ThermalPrinterDriver.cs:186:47" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Print/PrinterDrivers/Thermal/ThermalPrinterDriver.cs(186,47)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Print/PrinterDrivers/Thermal/ThermalPrinterDriver.cs:196:16" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Print/PrinterDrivers/Thermal/ThermalPrinterDriver.cs(196,16)</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">11</td>
+          <td>warning</td>
+          <td class="num">6</td>
+          <td class="files"><strong>Error Message</strong><br/>CS0168: The variable &#39;ex&#39; is declared but never used<br/><details><summary><strong>Files</strong> (3)</summary><ul><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Scripting/ScriptEvaluator.cs:108:24" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Scripting/ScriptEvaluator.cs(108,24)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Scripting/ScriptEvaluator.cs:61:24" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Scripting/ScriptEvaluator.cs(61,24)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Services/AgentIoTProvisionerService.cs:302:24" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Services/AgentIoTProvisionerService.cs(302,24)</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">12</td>
+          <td>warning</td>
+          <td class="num">6</td>
+          <td class="files"><strong>Error Message</strong><br/>CS8632: The annotation for nullable reference types should only be used in code within a &#39;#nullable&#39; annotations context.<br/><details><summary><strong>Files</strong> (3)</summary><ul><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Contracts/Options/SampleDataSettings.cs:13:16" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Contracts/Options/SampleDataSettings.cs(13,16)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Models/Design/Settings.cs:16:27" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Models/Design/Settings.cs(16,27)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Models/Design/Settings.cs:4:11" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Models/Design/Settings.cs(4,11)</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">13</td>
+          <td>warning</td>
+          <td class="num">4</td>
+          <td class="files"><strong>Error Message</strong><br/>CA1416: This call site is reachable on all platforms. &#39;BitmapData.Stride&#39; is only supported on: &#39;windows&#39; 6.1 and later. (https://learn.mic…<br/><details><summary><strong>Files</strong> (2)</summary><ul><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Print/PrinterDrivers/Thermal/ThermalPrinterDriver.cs:186:28" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Print/PrinterDrivers/Thermal/ThermalPrinterDriver.cs(186,28)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Print/PrinterDrivers/Thermal/ThermalPrinterDriver.cs:194:16" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Print/PrinterDrivers/Thermal/ThermalPrinterDriver.cs(194,16)</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">14</td>
+          <td>warning</td>
+          <td class="num">4</td>
+          <td class="files"><strong>Error Message</strong><br/>CA1416: This call site is reachable on all platforms. &#39;Image.Width&#39; is only supported on: &#39;windows&#39; 6.1 and later. (https://learn.microsoft…<br/><details><summary><strong>Files</strong> (2)</summary><ul><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Print/PrinterDrivers/Thermal/ThermalPrinterDriver.cs:172:21" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Print/PrinterDrivers/Thermal/ThermalPrinterDriver.cs(172,21)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Print/PrinterDrivers/Thermal/ThermalPrinterDriver.cs:195:15" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Print/PrinterDrivers/Thermal/ThermalPrinterDriver.cs(195,15)</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">15</td>
+          <td>warning</td>
+          <td class="num">4</td>
+          <td class="files"><strong>Error Message</strong><br/>CA1416: This call site is reachable on all platforms. &#39;PixelFormat.Format32bppArgb&#39; is only supported on: &#39;windows&#39; 6.1 and later. (https:/…<br/><details><summary><strong>Files</strong> (2)</summary><ul><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Print/PrinterDrivers/Thermal/ThermalPrinterDriver.cs:168:56" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Print/PrinterDrivers/Thermal/ThermalPrinterDriver.cs(168,56)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Print/PrinterDrivers/Thermal/ThermalPrinterDriver.cs:169:154" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Print/PrinterDrivers/Thermal/ThermalPrinterDriver.cs(169,154)</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">16</td>
+          <td>warning</td>
+          <td class="num">4</td>
+          <td class="files"><strong>Error Message</strong><br/>CS0168: The variable &#39;nex&#39; is declared but never used<br/><details><summary><strong>Files</strong> (2)</summary><ul><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Scripting/ExpressionService.cs:179:37" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Scripting/ExpressionService.cs(179,37)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Scripting/ExpressionService.cs:88:39" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Scripting/ExpressionService.cs(88,39)</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">17</td>
+          <td>warning</td>
+          <td class="num">4</td>
+          <td class="files"><strong>Error Message</strong><br/>CS0618: &#39;ReceiveMessageRequest.AttributeNames&#39; is obsolete: &#39;AttributeNames has been replaced by MessageSystemAttributeNames&#39;<br/><details><summary><strong>Files</strong> (2)</summary><ul><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Queues.AWS/Queue.cs:199:9" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Queues.AWS/Queue.cs(199,9)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Queues.AWS/Queue.cs:259:9" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Queues.AWS/Queue.cs(259,9)</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">18</td>
+          <td>warning</td>
+          <td class="num">4</td>
+          <td class="files"><strong>Error Message</strong><br/>CS8604: Possible null reference argument for parameter &#39;invoice&#39; in &#39;Task StripeController.ProcessInvoicePayment(Invoice invoice)&#39;.<br/><details><summary><strong>Files</strong> (2)</summary><ul><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/hexcom.Payment.API.Serverless/Controllers/StripeController.cs:52:39" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/hexcom.Payment.API.Serverless/Controllers/StripeController.cs(52,39)</a></li><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/hexcom.Payment.API.Serverless/Controllers/StripeController.cs:56:39" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/hexcom.Payment.API.Serverless/Controllers/StripeController.cs(56,39)</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">19</td>
+          <td>warning</td>
+          <td class="num">4</td>
+          <td class="files"><strong>Error Message</strong><br/>NU1902: Package &#39;SixLabors.ImageSharp&#39; 3.1.5 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-rxmq-m78w-7wmc<br/><details><summary><strong>Files</strong> (1)</summary><ul><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.ImageProcessing/barXui.ImageProcessing.csproj" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.ImageProcessing/barXui.ImageProcessing.csproj</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">20</td>
+          <td>warning</td>
+          <td class="num">4</td>
+          <td class="files"><strong>Error Message</strong><br/>NU1903: Package &#39;SixLabors.ImageSharp&#39; 3.1.5 has a known high severity vulnerability, https://github.com/advisories/GHSA-2cmq-823j-5qj8<br/><details><summary><strong>Files</strong> (1)</summary><ul><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.ImageProcessing/barXui.ImageProcessing.csproj" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.ImageProcessing/barXui.ImageProcessing.csproj</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">21</td>
+          <td>warning</td>
+          <td class="num">2</td>
+          <td class="files"><strong>Error Message</strong><br/>ASP0001: The call to UseAuthorization should appear between app.UseRouting() and app.UseEndpoints(..) for authorization to be correctly eva…<br/><details><summary><strong>Files</strong> (1)</summary><ul><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Api/Startup.cs:257:5" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Api/Startup.cs(257,5)</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">22</td>
+          <td>warning</td>
+          <td class="num">2</td>
+          <td class="files"><strong>Error Message</strong><br/>ASP0014: Suggest using top level route registrations instead of UseEndpoints (https://aka.ms/aspnet/analyzers)<br/><details><summary><strong>Files</strong> (1)</summary><ul><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/hexcom.Payment.API.Serverless/Program.cs:291:7" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/hexcom.Payment.API.Serverless/Program.cs(291,7)</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">23</td>
+          <td>warning</td>
+          <td class="num">2</td>
+          <td class="files"><strong>Error Message</strong><br/>ASP0019: Use IHeaderDictionary.Append or the indexer to append or set headers. IDictionary.Add will throw an ArgumentException when attempt…<br/><details><summary><strong>Files</strong> (1)</summary><ul><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Api/Helpers/TempPhysicalFileResult.cs:36:9" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Api/Helpers/TempPhysicalFileResult.cs(36,9)</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">24</td>
+          <td>warning</td>
+          <td class="num">2</td>
+          <td class="files"><strong>Error Message</strong><br/>CA1416: This call site is reachable on all platforms. &#39;Bitmap&#39; is only supported on: &#39;windows&#39; 6.1 and later. (https://learn.microsoft.com/…<br/><details><summary><strong>Files</strong> (1)</summary><ul><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Print/PrinterDrivers/Thermal/ThermalPrinterDriver.cs:169:36" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Print/PrinterDrivers/Thermal/ThermalPrinterDriver.cs(169,36)</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">25</td>
+          <td>warning</td>
+          <td class="num">2</td>
+          <td class="files"><strong>Error Message</strong><br/>CA1416: This call site is reachable on all platforms. &#39;Bitmap.Clone(Rectangle, PixelFormat)&#39; is only supported on: &#39;windows&#39; 6.1 and later.…<br/><details><summary><strong>Files</strong> (1)</summary><ul><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Print/PrinterDrivers/Thermal/ThermalPrinterDriver.cs:175:23" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Print/PrinterDrivers/Thermal/ThermalPrinterDriver.cs(175,23)</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">26</td>
+          <td>warning</td>
+          <td class="num">2</td>
+          <td class="files"><strong>Error Message</strong><br/>CA1416: This call site is reachable on all platforms. &#39;Bitmap.LockBits(Rectangle, ImageLockMode, PixelFormat)&#39; is only supported on: &#39;windo…<br/><details><summary><strong>Files</strong> (1)</summary><ul><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Print/PrinterDrivers/Thermal/ThermalPrinterDriver.cs:179:21" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Print/PrinterDrivers/Thermal/ThermalPrinterDriver.cs(179,21)</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">27</td>
+          <td>warning</td>
+          <td class="num">2</td>
+          <td class="files"><strong>Error Message</strong><br/>CA1416: This call site is reachable on all platforms. &#39;Bitmap.UnlockBits(BitmapData)&#39; is only supported on: &#39;windows&#39; 6.1 and later. (https…<br/><details><summary><strong>Files</strong> (1)</summary><ul><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Print/PrinterDrivers/Thermal/ThermalPrinterDriver.cs:198:7" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Print/PrinterDrivers/Thermal/ThermalPrinterDriver.cs(198,7)</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">28</td>
+          <td>warning</td>
+          <td class="num">2</td>
+          <td class="files"><strong>Error Message</strong><br/>CA1416: This call site is reachable on all platforms. &#39;BitmapData.Scan0&#39; is only supported on: &#39;windows&#39; 6.1 and later. (https://learn.micr…<br/><details><summary><strong>Files</strong> (1)</summary><ul><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Print/PrinterDrivers/Thermal/ThermalPrinterDriver.cs:183:20" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Print/PrinterDrivers/Thermal/ThermalPrinterDriver.cs(183,20)</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">29</td>
+          <td>warning</td>
+          <td class="num">2</td>
+          <td class="files"><strong>Error Message</strong><br/>CA1416: This call site is reachable on all platforms. &#39;Image.Dispose()&#39; is only supported on: &#39;windows&#39; 6.1 and later. (https://learn.micro…<br/><details><summary><strong>Files</strong> (1)</summary><ul><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Print/PrinterDrivers/Thermal/ThermalPrinterDriver.cs:200:7" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Print/PrinterDrivers/Thermal/ThermalPrinterDriver.cs(200,7)</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">30</td>
+          <td>warning</td>
+          <td class="num">2</td>
+          <td class="files"><strong>Error Message</strong><br/>CA1416: This call site is reachable on all platforms. &#39;Image.GetPixelFormatSize(PixelFormat)&#39; is only supported on: &#39;windows&#39; 6.1 and later…<br/><details><summary><strong>Files</strong> (1)</summary><ul><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Print/PrinterDrivers/Thermal/ThermalPrinterDriver.cs:145:26" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Print/PrinterDrivers/Thermal/ThermalPrinterDriver.cs(145,26)</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">31</td>
+          <td>warning</td>
+          <td class="num">2</td>
+          <td class="files"><strong>Error Message</strong><br/>CA1416: This call site is reachable on all platforms. &#39;Image.PixelFormat&#39; is only supported on: &#39;windows&#39; 6.1 and later. (https://learn.mic…<br/><details><summary><strong>Files</strong> (1)</summary><ul><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Print/PrinterDrivers/Thermal/ThermalPrinterDriver.cs:180:20" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Print/PrinterDrivers/Thermal/ThermalPrinterDriver.cs(180,20)</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">32</td>
+          <td>warning</td>
+          <td class="num">2</td>
+          <td class="files"><strong>Error Message</strong><br/>CA1416: This call site is reachable on all platforms. &#39;ImageLockMode.ReadWrite&#39; is only supported on: &#39;windows&#39; 6.1 and later. (https://lea…<br/><details><summary><strong>Files</strong> (1)</summary><ul><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Print/PrinterDrivers/Thermal/ThermalPrinterDriver.cs:179:48" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Print/PrinterDrivers/Thermal/ThermalPrinterDriver.cs(179,48)</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">33</td>
+          <td>warning</td>
+          <td class="num">2</td>
+          <td class="files"><strong>Error Message</strong><br/>CA1416: This call site is reachable on all platforms. &#39;PixelFormat.Format1bppIndexed&#39; is only supported on: &#39;windows&#39; 6.1 and later. (https…<br/><details><summary><strong>Files</strong> (1)</summary><ul><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Print/PrinterDrivers/Thermal/ThermalPrinterDriver.cs:175:45" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Print/PrinterDrivers/Thermal/ThermalPrinterDriver.cs(175,45)</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">34</td>
+          <td>warning</td>
+          <td class="num">2</td>
+          <td class="files"><strong>Error Message</strong><br/>CA2200: Re-throwing caught exception changes stack information (https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules…<br/><details><summary><strong>Files</strong> (1)</summary><ul><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Scripting/FormattedExpressionDatasourceTests.cs:39:9" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Test.Unit/Scripting/FormattedExpressionDatasourceTests.cs(39,9)</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">35</td>
+          <td>warning</td>
+          <td class="num">2</td>
+          <td class="files"><strong>Error Message</strong><br/>CS0169: The field &#39;FeatureFlagService._config&#39; is never used<br/><details><summary><strong>Files</strong> (1)</summary><ul><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/hexcom.Services/FeatureFlagService.cs:18:35" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/hexcom.Services/FeatureFlagService.cs(18,35)</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">36</td>
+          <td>warning</td>
+          <td class="num">2</td>
+          <td class="files"><strong>Error Message</strong><br/>CS0169: The field &#39;FileLastUsedBgWorker._dbContext&#39; is never used<br/><details><summary><strong>Files</strong> (1)</summary><ul><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Services/FileLastUsedBGWorker.cs:20:36" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Services/FileLastUsedBGWorker.cs(20,36)</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">37</td>
+          <td>warning</td>
+          <td class="num">2</td>
+          <td class="files"><strong>Error Message</strong><br/>CS0169: The field &#39;LookupDataService._serviceProvider&#39; is never used<br/><details><summary><strong>Files</strong> (1)</summary><ul><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Services/Data/LookupDataService.cs:14:37" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Services/Data/LookupDataService.cs(14,37)</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">38</td>
+          <td>warning</td>
+          <td class="num">2</td>
+          <td class="files"><strong>Error Message</strong><br/>CS0169: The field &#39;TenantService._inviteSettings&#39; is never used<br/><details><summary><strong>Files</strong> (1)</summary><ul><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Services/TenantService.cs:36:37" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Services/TenantService.cs(36,37)</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">39</td>
+          <td>warning</td>
+          <td class="num">2</td>
+          <td class="files"><strong>Error Message</strong><br/>CS0219: The variable &#39;lineHeight&#39; is assigned but its value is never used<br/><details><summary><strong>Files</strong> (1)</summary><ul><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.HEXObjects/HEXNutritional.cs:481:11" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.HEXObjects/HEXNutritional.cs(481,11)</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">40</td>
+          <td>warning</td>
+          <td class="num">2</td>
+          <td class="files"><strong>Error Message</strong><br/>CS0219: The variable &#39;maxFilledRow&#39; is assigned but its value is never used<br/><details><summary><strong>Files</strong> (1)</summary><ul><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Services/TableService.cs:859:9" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Services/TableService.cs(859,9)</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">41</td>
+          <td>warning</td>
+          <td class="num">2</td>
+          <td class="files"><strong>Error Message</strong><br/>CS0612: &#39;Settings.DefaultCopies&#39; is obsolete<br/><details><summary><strong>Files</strong> (1)</summary><ul><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Models/Design/Settings.cs:37:22" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Models/Design/Settings.cs(37,22)</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">42</td>
+          <td>warning</td>
+          <td class="num">2</td>
+          <td class="files"><strong>Error Message</strong><br/>CS0612: &#39;Settings.DefaultPrinter&#39; is obsolete<br/><details><summary><strong>Files</strong> (1)</summary><ul><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Models/Design/Settings.cs:36:17" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Models/Design/Settings.cs(36,17)</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">43</td>
+          <td>warning</td>
+          <td class="num">2</td>
+          <td class="files"><strong>Error Message</strong><br/>CS0618: &#39;AuthenticationHandler&lt;AuthenticationSchemeOptions&gt;.AuthenticationHandler(IOptionsMonitor&lt;AuthenticationSchemeOptions&gt;, ILoggerFact…<br/><details><summary><strong>Files</strong> (1)</summary><ul><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Api/TokenAuthenticationHandler.cs:27:5" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Api/TokenAuthenticationHandler.cs(27,5)</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">44</td>
+          <td>warning</td>
+          <td class="num">2</td>
+          <td class="files"><strong>Error Message</strong><br/>CS0618: &#39;FluentValidationMvcConfiguration.RegisterValidatorsFromAssemblyContaining&lt;T&gt;(Func&lt;AssemblyScanner.AssemblyScanResult, bool&gt;, Servi…<br/><details><summary><strong>Files</strong> (1)</summary><ul><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Api/Startup.cs:278:35" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Api/Startup.cs(278,35)</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">45</td>
+          <td>warning</td>
+          <td class="num">2</td>
+          <td class="files"><strong>Error Message</strong><br/>CS0618: &#39;FluentValidationMvcExtensions.AddFluentValidation(IMvcCoreBuilder, Action&lt;FluentValidationMvcConfiguration&gt;)&#39; is obsolete: &#39;Callin…<br/><details><summary><strong>Files</strong> (1)</summary><ul><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Api/Startup.cs:269:5" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Api/Startup.cs(269,5)</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">46</td>
+          <td>warning</td>
+          <td class="num">2</td>
+          <td class="files"><strong>Error Message</strong><br/>CS0618: &#39;ICoreAmazonS3.DoesS3BucketExistAsync(string)&#39; is obsolete: &#39;This method is deprecated: its behavior is inconsistent and always use…<br/><details><summary><strong>Files</strong> (1)</summary><ul><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Services/Data/S3JSONFileStore.cs:273:32" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Services/Data/S3JSONFileStore.cs(273,32)</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">47</td>
+          <td>warning</td>
+          <td class="num">2</td>
+          <td class="files"><strong>Error Message</strong><br/>CS0618: &#39;ISystemClock&#39; is obsolete: &#39;Use TimeProvider instead.&#39;<br/><details><summary><strong>Files</strong> (1)</summary><ul><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Api/TokenAuthenticationHandler.cs:24:5" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Api/TokenAuthenticationHandler.cs(24,5)</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">48</td>
+          <td>warning</td>
+          <td class="num">2</td>
+          <td class="files"><strong>Error Message</strong><br/>CS8073: The result of the expression is always &#39;true&#39; since a value of type &#39;Guid&#39; is never equal to &#39;null&#39; of type &#39;Guid?&#39;<br/><details><summary><strong>Files</strong> (1)</summary><ul><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Services/Data/DBTableStore.cs:389:15" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Services/Data/DBTableStore.cs(389,15)</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">49</td>
+          <td>warning</td>
+          <td class="num">2</td>
+          <td class="files"><strong>Error Message</strong><br/>CS8604: Possible null reference argument for parameter &#39;bxConnectionId&#39; in &#39;Task IDDBDataStore.UpdateConnectionDetails(string connectionId,…<br/><details><summary><strong>Files</strong> (1)</summary><ul><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/hexcom.MessageHub.API.Serverless/FunctionsSetConnection.cs:44:61" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/hexcom.MessageHub.API.Serverless/FunctionsSetConnection.cs(44,61)</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">50</td>
+          <td>warning</td>
+          <td class="num">2</td>
+          <td class="files"><strong>Error Message</strong><br/>CS8604: Possible null reference argument for parameter &#39;implementationInstance&#39; in &#39;IServiceCollection ServiceCollectionServiceExtensions.A…<br/><details><summary><strong>Files</strong> (1)</summary><ul><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/hexcom.Payment.API.Serverless/Program.cs:84:57" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/hexcom.Payment.API.Serverless/Program.cs(84,57)</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">51</td>
+          <td>warning</td>
+          <td class="num">2</td>
+          <td class="files"><strong>Error Message</strong><br/>CS8604: Possible null reference argument for parameter &#39;invoice&#39; in &#39;Task StripeController.ProcessInvoiceDeleted(Invoice invoice)&#39;.<br/><details><summary><strong>Files</strong> (1)</summary><ul><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/hexcom.Payment.API.Serverless/Controllers/StripeController.cs:60:39" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/hexcom.Payment.API.Serverless/Controllers/StripeController.cs(60,39)</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">52</td>
+          <td>warning</td>
+          <td class="num">2</td>
+          <td class="files"><strong>Error Message</strong><br/>CS8604: Possible null reference argument for parameter &#39;invoice&#39; in &#39;Task StripeController.ProcessInvoiceUpdated(Invoice invoice)&#39;.<br/><details><summary><strong>Files</strong> (1)</summary><ul><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/hexcom.Payment.API.Serverless/Controllers/StripeController.cs:47:39" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/hexcom.Payment.API.Serverless/Controllers/StripeController.cs(47,39)</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">53</td>
+          <td>warning</td>
+          <td class="num">2</td>
+          <td class="files"><strong>Error Message</strong><br/>CS8604: Possible null reference argument for parameter &#39;item&#39; in &#39;void ICollection&lt;string&gt;.Add(string item)&#39;.<br/><details><summary><strong>Files</strong> (1)</summary><ul><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/hexcom.Payment.API.Serverless/Program.cs:213:18" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/hexcom.Payment.API.Serverless/Program.cs(213,18)</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">54</td>
+          <td>warning</td>
+          <td class="num">2</td>
+          <td class="files"><strong>Error Message</strong><br/>CS8604: Possible null reference argument for parameter &#39;name&#39; in &#39;PropertyEnricher.PropertyEnricher(string name, object? value, bool destru…<br/><details><summary><strong>Files</strong> (1)</summary><ul><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/hexcom.Utilities/Middleware/ApiExceptionHandler.cs:88:45" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/hexcom.Utilities/Middleware/ApiExceptionHandler.cs(88,45)</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">55</td>
+          <td>warning</td>
+          <td class="num">2</td>
+          <td class="files"><strong>Error Message</strong><br/>CS8604: Possible null reference argument for parameter &#39;sql&#39; in &#39;Task&lt;IEnumerable&lt;(TableRow row, TableRow? childRow, User user)&gt;&gt; SqlMapper…<br/><details><summary><strong>Files</strong> (1)</summary><ul><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Services/Data/DBQueryStore.cs:456:21" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Services/Data/DBQueryStore.cs(456,21)</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">56</td>
+          <td>warning</td>
+          <td class="num">2</td>
+          <td class="files"><strong>Error Message</strong><br/>CS8604: Possible null reference argument for parameter &#39;sql&#39; in &#39;Task&lt;IEnumerable&lt;(TableRow row, TableRow? childRow, User user)&gt;&gt; SqlMapper…<br/><details><summary><strong>Files</strong> (1)</summary><ul><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Services/Data/DBQueryStore.cs:466:19" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Services/Data/DBQueryStore.cs(466,19)</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">57</td>
+          <td>warning</td>
+          <td class="num">2</td>
+          <td class="files"><strong>Error Message</strong><br/>CS8604: Possible null reference argument for parameter &#39;sql&#39; in &#39;Task&lt;IEnumerable&lt;dynamic&gt;&gt; SqlMapper.QueryAsync(IDbConnection cnn, string …<br/><details><summary><strong>Files</strong> (1)</summary><ul><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Services/Data/DBQueryStore.cs:522:46" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Services/Data/DBQueryStore.cs(522,46)</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">58</td>
+          <td>warning</td>
+          <td class="num">2</td>
+          <td class="files"><strong>Error Message</strong><br/>CS8604: Possible null reference argument for parameter &#39;sql&#39; in &#39;Task&lt;int&gt; SqlMapper.QuerySingleAsync&lt;int&gt;(IDbConnection cnn, string sql, o…<br/><details><summary><strong>Files</strong> (1)</summary><ul><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Services/Data/DBQueryStore.cs:439:58" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Services/Data/DBQueryStore.cs(439,58)</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">59</td>
+          <td>warning</td>
+          <td class="num">2</td>
+          <td class="files"><strong>Error Message</strong><br/>CS8607: A possible null value may not be used for a type marked with [NotNull] or [DisallowNull]<br/><details><summary><strong>Files</strong> (1)</summary><ul><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/hexcom.Utilities/ConcurrentHashSet.cs:278:45" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/hexcom.Utilities/ConcurrentHashSet.cs(278,45)</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">60</td>
+          <td>warning</td>
+          <td class="num">2</td>
+          <td class="files"><strong>Error Message</strong><br/>CS8618: Non-nullable property &#39;BarXuiProductID&#39; must contain a non-null value when exiting constructor. Consider adding the &#39;required&#39; modi…<br/><details><summary><strong>Files</strong> (1)</summary><ul><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/hexcom.Payment.API.Serverless/Options/PricingServiceSettings.cs:7:17" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/hexcom.Payment.API.Serverless/Options/PricingServiceSettings.cs(7,17)</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">61</td>
+          <td>warning</td>
+          <td class="num">2</td>
+          <td class="files"><strong>Error Message</strong><br/>CS8618: Non-nullable property &#39;StripeKey&#39; must contain a non-null value when exiting constructor. Consider adding the &#39;required&#39; modifier o…<br/><details><summary><strong>Files</strong> (1)</summary><ul><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/hexcom.Payment.API.Serverless/Options/PricingServiceSettings.cs:5:17" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/hexcom.Payment.API.Serverless/Options/PricingServiceSettings.cs(5,17)</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">62</td>
+          <td>warning</td>
+          <td class="num">2</td>
+          <td class="files"><strong>Error Message</strong><br/>CS8618: Non-nullable property &#39;Uri&#39; must contain a non-null value when exiting constructor. Consider adding the &#39;required&#39; modifier or decl…<br/><details><summary><strong>Files</strong> (1)</summary><ul><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.WSMessaging/WSMessagingServiceOptions.cs:5:17" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.WSMessaging/WSMessagingServiceOptions.cs(5,17)</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">63</td>
+          <td>warning</td>
+          <td class="num">2</td>
+          <td class="files"><strong>Error Message</strong><br/>CS8625: Cannot convert null literal to non-nullable reference type.<br/><details><summary><strong>Files</strong> (1)</summary><ul><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.WSMessaging/WSMessagingService.cs:100:15" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.WSMessaging/WSMessagingService.cs(100,15)</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">64</td>
+          <td>warning</td>
+          <td class="num">2</td>
+          <td class="files"><strong>Error Message</strong><br/>MSB3243: No way to resolve conflict between &quot;System.ServiceProcess, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a&quot; and …<br/><details><summary><strong>Files</strong> (1)</summary><ul><li><a href="vscode://file//usr/lib/dotnet/sdk/9.0.114/Microsoft.Common.CurrentVersion.targets:2413:5" target="_blank" rel="noopener noreferrer">/usr/lib/dotnet/sdk/9.0.114/Microsoft.Common.CurrentVersion.targets(2413,5)</a></li></ul></details></td>
+        </tr>
+        <tr>
+          <td class="num">65</td>
+          <td>warning</td>
+          <td class="num">2</td>
+          <td class="files"><strong>Error Message</strong><br/>SYSLIB0001: &#39;Encoding.UTF7&#39; is obsolete: &#39;The UTF-7 encoding is insecure and should not be used. Consider using UTF-8 instead.&#39; (https://ak…<br/><details><summary><strong>Files</strong> (1)</summary><ul><li><a href="vscode://file//home/jonesie/dev/BARXUI/src/barXui.Api/Controllers/FileController.cs:679:34" target="_blank" rel="noopener noreferrer">/home/jonesie/dev/BARXUI/src/barXui.Api/Controllers/FileController.cs(679,34)</a></li></ul></details></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>

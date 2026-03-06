@@ -4,5 +4,8 @@
         "**/*.rpa": true,
         "**/*.rpymc": true,
         "**/cache/": true
+    },
+    "chat.tools.terminal.autoApprove": {
+        "dotnet run": true
     }
 }

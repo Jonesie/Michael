@@ -33,6 +33,8 @@ public sealed class DeterministicIssueRanker : IRanker
             .Select((item, index) => new RankedIssue(
                 index + 1,
                 item.Summary.Key,
+                item.Summary.Message,
+                item.Summary.Files,
                 item.Summary.Severity,
                 item.Summary.Frequency,
                 item.Summary.Confidence,

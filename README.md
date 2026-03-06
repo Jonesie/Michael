@@ -11,7 +11,7 @@ CLI-first .NET tool to parse build logs, summarize issues, rank them, and write 
 
 ## MVP Status
 
-- Implemented: parse (.NET logs), summarize, rank, and write reports (`issues.json`, `summary.md`).
+- Implemented: parse (.NET logs), summarize, rank, and write reports (`issues.json`, `summary.md`, `summary.html`).
 - Implemented: CLI options `--help`, `--version`, `--input`, `--output`, `--analyse-only`, `--limit`, `--git-branch`, `--ai-tool`, `--ai-model`.
 - MVP limitation: `--apply-fixes` is intentionally blocked and returns a post-MVP message.
 - Current parsing scope: .NET build logs only (Angular/React parsing is out of MVP scope).
@@ -50,6 +50,7 @@ After a successful run, the output directory contains:
 
 - `issues.json` – machine-readable metadata and ranked issues.
 - `summary.md` – human-readable report with metadata and ranked table.
+- `summary.html` - preview-friendly report with metadata and ranked table.
 
 ## CLI Options
 

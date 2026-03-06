@@ -27,7 +27,7 @@ public class DotnetBuildLogParserTests
         Assert.Equal(2, nuIssue.Count);
 
         var csIssue = Assert.Single(issues, issue => issue.Message.StartsWith("CS8602:", StringComparison.Ordinal));
-        Assert.Equal("/tmp/app/Bar.cs", csIssue.FilePath);
+        Assert.Equal("/tmp/app/Bar.cs(42,13)", csIssue.FilePath);
         Assert.Equal(1, csIssue.Count);
 
         var msbIssue = Assert.Single(issues, issue => issue.Message.StartsWith("MSB4019:", StringComparison.Ordinal));

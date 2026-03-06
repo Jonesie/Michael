@@ -12,7 +12,7 @@ var inputOption = new Option<FileInfo?>(
 
 var outputOption = new Option<DirectoryInfo?>(
     name: "--output",
-    description: "Directory to write report files (issues.json, summary.md). Defaults to 'out'.");
+    description: "Directory to write report files (issues.json, summary.md, summary.html). Defaults to 'out'.");
 
 var analyseOnlyOption = new Option<bool>(
     name: "--analyse-only",
@@ -133,6 +133,7 @@ rootCommand.SetHandler((InvocationContext context) =>
     Console.WriteLine($"  Ranked   : {rankedIssues.Count}");
     Console.WriteLine($"  Wrote    : {Path.Combine(output.FullName, "issues.json")}");
     Console.WriteLine($"  Wrote    : {Path.Combine(output.FullName, "summary.md")}");
+    Console.WriteLine($"  Wrote    : {Path.Combine(output.FullName, "summary.html")}");
 });
 
 return await rootCommand.InvokeAsync(args);

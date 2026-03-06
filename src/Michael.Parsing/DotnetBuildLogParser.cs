@@ -53,14 +53,7 @@ public sealed partial class DotnetBuildLogParser : IParser
 
 	private static string NormalizeFilePath(string location)
 	{
-		var trimmed = location.Trim();
-		var lineInfoStartIndex = trimmed.IndexOf('(');
-		if (lineInfoStartIndex > 0 && trimmed.EndsWith(')'))
-		{
-			return trimmed[..lineInfoStartIndex];
-		}
-
-		return trimmed;
+		return location.Trim();
 	}
 
 	private static string CleanMessage(string message)

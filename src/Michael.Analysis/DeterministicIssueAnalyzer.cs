@@ -21,7 +21,7 @@ public sealed class DeterministicIssueAnalyzer : IAnalyzer
 			})
 			.GroupBy(entry => new
 			{
-				Key = BuildKey(entry.Issue),
+				Message = entry.Issue.Message.Trim(),
 				entry.NormalizedSeverity
 			});
 
@@ -30,11 +30,19 @@ public sealed class DeterministicIssueAnalyzer : IAnalyzer
 			{
 				var sample = group.First().Issue;
 				var frequency = group.Sum(entry => Math.Max(1, entry.Issue.Count));
-				var key = group.Key.Key;
+				var message = group.Key.Message;
+				var files = group
+					.Select(entry => string.IsNullOrWhiteSpace(entry.Issue.FilePath) ? "(no-file)" : entry.Issue.FilePath!)
+					.Distinct(StringComparer.Ordinal)
+					.OrderBy(path => path, StringComparer.Ordinal)
+					.ToArray();
+				var key = BuildKey(message);
 				var confidence = CalculateConfidence(group.Key.NormalizedSeverity, frequency, sample.Message);
 
 				return new IssueSummary(
 					key,
+					message,
+					files,
 					group.Key.NormalizedSeverity,
 					BuildExplanation(sample.Message, group.Key.NormalizedSeverity, frequency),
 					frequency,
@@ -46,13 +54,9 @@ public sealed class DeterministicIssueAnalyzer : IAnalyzer
 			.ToArray();
 	}
 
-	private static string BuildKey(ParsedIssue issue)
+	private static string BuildKey(string message)
 	{
-		var location = string.IsNullOrWhiteSpace(issue.FilePath)
-			? "(no-file)"
-			: issue.FilePath;
-
-		return $"{location}::{issue.Message.Trim()}";
+		return message;
 	}
 
 	private static string NormalizeSeverity(string severity)
