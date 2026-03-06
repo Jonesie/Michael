@@ -7,6 +7,10 @@ on:
       - master
   pull_request:
 
+permissions:
+  contents: read
+  checks: write
+
 jobs:
   build-test:
     runs-on: ubuntu-latest
@@ -27,4 +31,21 @@ jobs:
         run: dotnet build src/Michael.sln --no-restore
 
       - name: Test
-        run: dotnet test src/Michael.sln --no-build
+        run: dotnet test src/Michael.sln --no-build --logger "trx;LogFileName=test-results.trx" --results-directory ./TestResults
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: TestResults/**/*.trx
+          if-no-files-found: warn
+
+      - name: Publish test report
+        if: always()
+        uses: dorny/test-reporter@v1
+        with:
+          name: Unit Test Results
+          path: TestResults/**/*.trx
+          reporter: dotnet-trx
+          fail-on-error: false
