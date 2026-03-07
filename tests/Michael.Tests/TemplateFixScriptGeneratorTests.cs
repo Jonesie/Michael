@@ -82,8 +82,8 @@ public class TemplateFixScriptGeneratorTests
             Assert.Contains("Rank: 1", firstScript, StringComparison.Ordinal);
             Assert.Contains("Error: CS0219: The variable 'value' is assigned but its value is never used", firstScript, StringComparison.Ordinal);
             Assert.Contains("Files that need fixing (apply to all listed files if confirmed):", firstScript, StringComparison.Ordinal);
-            Assert.Contains($"- {sourceFile}(7,9)", firstScript, StringComparison.Ordinal);
-            Assert.Contains($"- {secondSourceFile}(6,9)", firstScript, StringComparison.Ordinal);
+            Assert.Contains($"- {sourceFile}", firstScript, StringComparison.Ordinal);
+            Assert.Contains($"- {secondSourceFile}", firstScript, StringComparison.Ordinal);
             Assert.Contains("Ask for confirmation before making edits", firstScript, StringComparison.Ordinal);
             Assert.Contains("Apply the fix across all listed target files only if the user confirms", firstScript, StringComparison.Ordinal);
             Assert.Contains($"File: {sourceFile}", firstScript, StringComparison.Ordinal);
@@ -127,7 +127,7 @@ public class TemplateFixScriptGeneratorTests
 
             Assert.Contains("# Target files: 1", script, StringComparison.Ordinal);
             Assert.Contains("Files that need fixing (apply to all listed files if confirmed):", script, StringComparison.Ordinal);
-            Assert.Contains("- relative/path/File.cs(5,1)", script, StringComparison.Ordinal);
+            Assert.Contains("- relative/path/File.cs", script, StringComparison.Ordinal);
             Assert.Contains("- No source file sample was available.", script, StringComparison.Ordinal);
         }
         finally
@@ -168,7 +168,7 @@ public class TemplateFixScriptGeneratorTests
             var script = File.ReadAllText(scriptPath);
 
             Assert.Contains("# Target files: 1", script, StringComparison.Ordinal);
-            Assert.Contains($"- {missingPath}(10,1)", script, StringComparison.Ordinal);
+            Assert.Contains($"- {missingPath}", script, StringComparison.Ordinal);
             Assert.Contains("- No source file sample was available.", script, StringComparison.Ordinal);
         }
         finally
@@ -222,7 +222,7 @@ copilot -i "agent --prompt $Prompt"
             Assert.Contains("rank=1", script, StringComparison.Ordinal);
             Assert.Contains("targets=1", script, StringComparison.Ordinal);
             Assert.Contains("- Rank: 1", script, StringComparison.Ordinal);
-            Assert.Contains("- C:/repo/src/File.cs(10,5)", script, StringComparison.Ordinal);
+            Assert.Contains("- C:/repo/src/File.cs", script, StringComparison.Ordinal);
             Assert.Contains("- No source file sample was available.", script, StringComparison.Ordinal);
             Assert.Contains("copilot -i \"agent --prompt $Prompt\"", script, StringComparison.Ordinal);
             Assert.DoesNotContain("[[issueDetails]]", script, StringComparison.Ordinal);
@@ -365,5 +365,72 @@ copilot -i "agent --prompt $Prompt"
                 Directory.Delete(tempDir, recursive: true);
             }
         }
+    }
+
+    [Fact]
+    public void Generate_WithDuplicateLocationsInSameFile_EmitsSingleSampleBlock()
+    {
+        var tempDir = Path.Combine(Path.GetTempPath(), $"michael-fixes-sample-dedupe-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(tempDir);
+
+        var sourceFile = Path.Combine(tempDir, "Sample.cs");
+        File.WriteAllLines(sourceFile, new[]
+        {
+            "namespace Demo;",
+            "",
+            "public class Sample",
+            "{",
+            "    public void Run()",
+            "    {",
+            "        var value1 = 1;",
+            "        var value2 = 2;",
+            "    }",
+            "}"
+        });
+
+        try
+        {
+            var generator = new TemplateFixScriptGenerator();
+            var rankedIssues = new[]
+            {
+                new RankedIssue(
+                    Rank: 1,
+                    Key: "DEDUPE",
+                    Message: "Duplicate locations in same file",
+                    Files: new[] { $"{sourceFile}(8,9)", $"{sourceFile}(7,9)" },
+                    Severity: "warning",
+                    Frequency: 1,
+                    Confidence: 0.90,
+                    Score: 100,
+                    Explanation: "Sample dedupe")
+            };
+
+            var filesByRank = generator.Generate(tempDir, rankedIssues);
+            var script = File.ReadAllText(Path.Combine(tempDir, filesByRank[1]));
+
+            Assert.Equal(1, CountOccurrences(script, $"- File: {sourceFile}"));
+            Assert.Contains("L5:     public void Run()", script, StringComparison.Ordinal);
+        }
+        finally
+        {
+            if (Directory.Exists(tempDir))
+            {
+                Directory.Delete(tempDir, recursive: true);
+            }
+        }
+    }
+
+    private static int CountOccurrences(string text, string value)
+    {
+        var count = 0;
+        var index = 0;
+
+        while ((index = text.IndexOf(value, index, StringComparison.Ordinal)) >= 0)
+        {
+            count++;
+            index += value.Length;
+        }
+
+        return count;
     }
 }

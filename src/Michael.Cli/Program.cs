@@ -30,6 +30,10 @@ var configOption = new Option<FileInfo?>(
     name: "--config",
     description: "Path to CLI JSON config file. Defaults to 'michael.config.json' next to the executable.");
 
+var clearExistingOutputOption = new Option<bool>(
+    name: "--clear-existing-output",
+    description: "Automatically clear existing files in the output directory before writing reports.");
+
 var rootCommand = new RootCommand("Michael – build log analyser and issue reporter.")
 {
     inputOption,
@@ -37,6 +41,7 @@ var rootCommand = new RootCommand("Michael – build log analyser and issue repo
     analyseOnlyOption,
     limitOption,
     configOption,
+    clearExistingOutputOption,
 };
 
 rootCommand.SetHandler((InvocationContext context) =>
@@ -46,6 +51,7 @@ rootCommand.SetHandler((InvocationContext context) =>
     var analyseOnly = context.ParseResult.GetValueForOption(analyseOnlyOption);
     var limit       = context.ParseResult.GetValueForOption(limitOption);
     var configPath  = context.ParseResult.GetValueForOption(configOption);
+    var clearExistingOutput = context.ParseResult.GetValueForOption(clearExistingOutputOption);
 
     if (input is null)
     {
@@ -69,6 +75,14 @@ rootCommand.SetHandler((InvocationContext context) =>
     }
 
     output ??= new DirectoryInfo("out");
+
+    if (!PrepareOutputDirectory(output, clearExistingOutput, out var outputPrepareError))
+    {
+        Console.Error.WriteLine($"Error: {outputPrepareError}");
+        context.ExitCode = 1;
+        return;
+    }
+
     var generateFixes = !analyseOnly;
     var effectiveConfigPath = GetEffectiveConfigPath(configPath);
     var appConfig = LoadAppConfig(configPath, out var configError);
@@ -304,4 +318,72 @@ static string DetermineFixScriptExtension(string templatePath)
     }
 
     return ".ps1";
+}
+
+static bool PrepareOutputDirectory(DirectoryInfo outputDirectory, bool clearExistingOutput, out string? error)
+{
+    error = null;
+
+    try
+    {
+        if (!outputDirectory.Exists)
+        {
+            outputDirectory.Create();
+            return true;
+        }
+
+        var hasExistingEntries = outputDirectory.EnumerateFileSystemInfos().Any();
+        if (!hasExistingEntries)
+        {
+            return true;
+        }
+
+        if (clearExistingOutput)
+        {
+            ClearDirectoryContents(outputDirectory);
+            return true;
+        }
+
+        Console.Write($"Output directory '{outputDirectory.FullName}' contains existing files. Clear it before continuing? [y/N]: ");
+        var response = Console.ReadLine();
+        if (!IsAffirmative(response))
+        {
+            error = "run cancelled because output directory has existing files. Re-run with --clear-existing-output to clear automatically.";
+            return false;
+        }
+
+        ClearDirectoryContents(outputDirectory);
+        return true;
+    }
+    catch (Exception exception)
+    {
+        error = $"failed to prepare output directory '{outputDirectory.FullName}': {exception.Message}";
+        return false;
+    }
+}
+
+static void ClearDirectoryContents(DirectoryInfo directory)
+{
+    foreach (var entry in directory.EnumerateFileSystemInfos())
+    {
+        if (entry is DirectoryInfo childDirectory)
+        {
+            childDirectory.Delete(recursive: true);
+            continue;
+        }
+
+        entry.Delete();
+    }
+}
+
+static bool IsAffirmative(string? input)
+{
+    if (string.IsNullOrWhiteSpace(input))
+    {
+        return false;
+    }
+
+    var normalized = input.Trim();
+    return string.Equals(normalized, "y", StringComparison.OrdinalIgnoreCase)
+        || string.Equals(normalized, "yes", StringComparison.OrdinalIgnoreCase);
 }

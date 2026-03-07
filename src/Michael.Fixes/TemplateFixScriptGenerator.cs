@@ -206,19 +206,40 @@ finally {
     private static IReadOnlyList<FileSample> BuildSamples(IReadOnlyList<string> locations)
     {
         var samples = new List<FileSample>();
+        var preferredLineByPath = new Dictionary<string, int?>(StringComparer.Ordinal);
+        var orderedPaths = new List<string>();
 
         foreach (var location in locations)
+        {
+            var (path, lineNumber) = SplitLocation(location);
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                continue;
+            }
+
+            if (!preferredLineByPath.TryGetValue(path, out var currentPreferredLine))
+            {
+                preferredLineByPath[path] = lineNumber;
+                orderedPaths.Add(path);
+                continue;
+            }
+
+            preferredLineByPath[path] = SelectPreferredLine(currentPreferredLine, lineNumber);
+        }
+
+        foreach (var path in orderedPaths)
         {
             if (samples.Count >= MaxSamplesPerIssue)
             {
                 break;
             }
 
-            var (path, lineNumber) = SplitLocation(location);
-            if (string.IsNullOrWhiteSpace(path) || !Path.IsPathRooted(path) || !File.Exists(path))
+            if (!Path.IsPathRooted(path) || !File.Exists(path))
             {
                 continue;
             }
+
+            var lineNumber = preferredLineByPath[path];
 
             var sampleLines = ReadSampleLines(path, lineNumber);
             if (sampleLines.Count == 0)
@@ -232,13 +253,29 @@ finally {
         return samples;
     }
 
+    private static int? SelectPreferredLine(int? currentPreferredLine, int? candidateLine)
+    {
+        if (!currentPreferredLine.HasValue)
+        {
+            return candidateLine;
+        }
+
+        if (!candidateLine.HasValue)
+        {
+            return currentPreferredLine;
+        }
+
+        return Math.Min(currentPreferredLine.Value, candidateLine.Value);
+    }
+
     private static IReadOnlyList<string> BuildTargetLocations(IReadOnlyList<string> locations)
     {
         return locations
             .Where(location => !string.IsNullOrWhiteSpace(location) && location != "(no-file)")
-            .Select(location => location.Trim())
+            .Select(location => SplitLocation(location).Path)
+            .Where(path => !string.IsNullOrWhiteSpace(path))
             .Distinct(StringComparer.Ordinal)
-            .OrderBy(location => location, StringComparer.Ordinal)
+            .OrderBy(path => path, StringComparer.Ordinal)
             .ToArray();
     }
 

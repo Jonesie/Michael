@@ -81,11 +81,22 @@ public class CliValidationTests
     {
         var repoRoot = TestWorkspace.RepoRoot();
         var logPath = Path.Combine(repoRoot, "data", "sample-dotnet-small.log");
+        var outputDir = Path.Combine(Path.GetTempPath(), $"michael-cli-analysis-alias-{Guid.NewGuid():N}");
 
-        var result = RunCli(repoRoot, $"--input \"{logPath}\" --output out-test --analysis-only");
+        try
+        {
+            var result = RunCli(repoRoot, $"--input \"{logPath}\" --output \"{outputDir}\" --analysis-only");
 
-        Assert.Equal(0, result.ExitCode);
-        Assert.Contains("Fixes    : 0", result.Output, StringComparison.OrdinalIgnoreCase);
+            Assert.Equal(0, result.ExitCode);
+            Assert.Contains("Fixes    : 0", result.Output, StringComparison.OrdinalIgnoreCase);
+        }
+        finally
+        {
+            if (Directory.Exists(outputDir))
+            {
+                Directory.Delete(outputDir, recursive: true);
+            }
+        }
     }
 
     [Fact]
@@ -178,7 +189,69 @@ copilot -i "agent --prompt $Prompt"
         }
     }
 
-    private static (int ExitCode, string Output) RunCli(string repoRoot, string arguments)
+    [Fact]
+    public void Cli_WithExistingOutputFiles_DeclineConfirmation_AbortsWithoutClearing()
+    {
+        var repoRoot = TestWorkspace.RepoRoot();
+        var logPath = Path.Combine(repoRoot, "data", "sample-dotnet-small.log");
+        var outputDir = Path.Combine(Path.GetTempPath(), $"michael-cli-existing-decline-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(outputDir);
+        var staleFile = Path.Combine(outputDir, "stale.txt");
+        File.WriteAllText(staleFile, "stale");
+
+        try
+        {
+            var result = RunCli(
+                repoRoot,
+                $"--input \"{logPath}\" --output \"{outputDir}\" --analyse-only",
+                standardInput: "n" + Environment.NewLine);
+
+            Assert.Equal(1, result.ExitCode);
+            Assert.Contains("contains existing files", result.Output, StringComparison.OrdinalIgnoreCase);
+            Assert.Contains("run cancelled", result.Output, StringComparison.OrdinalIgnoreCase);
+            Assert.True(File.Exists(staleFile));
+        }
+        finally
+        {
+            if (Directory.Exists(outputDir))
+            {
+                Directory.Delete(outputDir, recursive: true);
+            }
+        }
+    }
+
+    [Fact]
+    public void Cli_WithClearExistingOutputFlag_ClearsExistingFilesAndContinues()
+    {
+        var repoRoot = TestWorkspace.RepoRoot();
+        var logPath = Path.Combine(repoRoot, "data", "sample-dotnet-small.log");
+        var outputDir = Path.Combine(Path.GetTempPath(), $"michael-cli-existing-clear-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(outputDir);
+        var staleFile = Path.Combine(outputDir, "stale.txt");
+        File.WriteAllText(staleFile, "stale");
+
+        try
+        {
+            var result = RunCli(
+                repoRoot,
+                $"--input \"{logPath}\" --output \"{outputDir}\" --analyse-only --clear-existing-output");
+
+            Assert.Equal(0, result.ExitCode);
+            Assert.False(File.Exists(staleFile));
+            Assert.True(File.Exists(Path.Combine(outputDir, "issues.json")));
+            Assert.True(File.Exists(Path.Combine(outputDir, "summary.md")));
+            Assert.True(File.Exists(Path.Combine(outputDir, "summary.html")));
+        }
+        finally
+        {
+            if (Directory.Exists(outputDir))
+            {
+                Directory.Delete(outputDir, recursive: true);
+            }
+        }
+    }
+
+    private static (int ExitCode, string Output) RunCli(string repoRoot, string arguments, string? standardInput = null)
     {
         var psi = new ProcessStartInfo
         {
@@ -187,11 +260,19 @@ copilot -i "agent --prompt $Prompt"
             WorkingDirectory = repoRoot,
             RedirectStandardOutput = true,
             RedirectStandardError = true,
+            RedirectStandardInput = true,
             UseShellExecute = false,
             CreateNoWindow = true
         };
 
         using var process = Process.Start(psi) ?? throw new InvalidOperationException("Failed to start dotnet process.");
+
+        if (standardInput is not null)
+        {
+            process.StandardInput.Write(standardInput);
+        }
+
+        process.StandardInput.Close();
 
         var standardOutput = process.StandardOutput.ReadToEnd();
         var standardError = process.StandardError.ReadToEnd();
