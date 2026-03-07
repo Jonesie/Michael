@@ -78,6 +78,8 @@ jobs:
       - name: Publish Native AOT binary
         shell: bash
         run: |
+          version="${GITHUB_REF_NAME#v}"
+
           dotnet publish src/Michael.Cli/Michael.Cli.csproj \
             --configuration Release \
             --framework net10.0 \
@@ -87,6 +89,7 @@ jobs:
             -p:PublishSingleFile=true \
             -p:DebugType=None \
             -p:DebugSymbols=false \
+            -p:InformationalVersion="$version" \
             --output artifacts/publish/${{ matrix.rid }}
 
       - name: Package Windows artifact
