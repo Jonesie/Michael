@@ -65,7 +65,7 @@ public class CopilotCliFixScriptGeneratorTests
                     Explanation: "Sample")
             };
 
-            var filesByRank = generator.Generate(tempDir, rankedIssues);
+            var filesByRank = generator.Generate(tempDir, rankedIssues, "copilot -i \"agent --prompt {prompt}\"");
 
             Assert.Equal(2, filesByRank.Count);
             Assert.Equal("fix-rank-1.ps1", filesByRank[1]);
@@ -121,7 +121,7 @@ public class CopilotCliFixScriptGeneratorTests
                     Explanation: "No files")
             };
 
-            var filesByRank = generator.Generate(tempDir, rankedIssues);
+            var filesByRank = generator.Generate(tempDir, rankedIssues, "copilot -i \"agent --prompt {prompt}\"");
             var scriptPath = Path.Combine(tempDir, filesByRank[1]);
             var script = File.ReadAllText(scriptPath);
 
@@ -163,7 +163,7 @@ public class CopilotCliFixScriptGeneratorTests
                     Explanation: "Missing source")
             };
 
-            var filesByRank = generator.Generate(tempDir, rankedIssues);
+            var filesByRank = generator.Generate(tempDir, rankedIssues, "copilot -i \"agent --prompt {prompt}\"");
             var scriptPath = Path.Combine(tempDir, filesByRank[1]);
             var script = File.ReadAllText(scriptPath);
 

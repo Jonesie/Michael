@@ -10,7 +10,7 @@ permissions:
   contents: write
 
 jobs:
-  build-release:
+  test-release:
     runs-on: ubuntu-latest
 
     steps:
@@ -31,34 +31,80 @@ jobs:
       - name: Test Release
         run: dotnet test src/Michael.sln --configuration Release --no-build
 
-      - name: Publish CLI binaries
+      - name: Validate README release asset naming
         run: |
           set -euo pipefail
-          mkdir -p artifacts/publish artifacts/packages
+          readme="README.md"
 
-          for rid in linux-x64 win-x64 osx-x64; do
-            out_dir="artifacts/publish/$rid"
-            dotnet publish src/Michael.Cli/Michael.Cli.csproj \
-              --configuration Release \
-              --framework net10.0 \
-              --runtime "$rid" \
-              --self-contained false \
-              -p:PublishSingleFile=true \
-              -p:DebugType=None \
-              -p:DebugSymbols=false \
-              --output "$out_dir"
+          grep -Fq 'michael-<tag>-linux-x64.tar.gz' "$readme"
+          grep -Fq 'michael-<tag>-osx-arm64.tar.gz' "$readme"
+          grep -Fq 'michael-<tag>-win-x64.zip' "$readme"
 
-            if [[ "$rid" == win-* ]]; then
-              (cd "$out_dir" && zip -r "../../packages/michael-${{ github.ref_name }}-$rid.zip" .)
-            else
-              tar -czf "artifacts/packages/michael-${{ github.ref_name }}-$rid.tar.gz" -C "$out_dir" .
-            fi
-          done
+  publish-native-aot:
+    needs: test-release
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-latest
+            rid: linux-x64
+            package: tar.gz
+          - runner: windows-latest
+            rid: win-x64
+            package: zip
+          - runner: macos-14
+            rid: osx-arm64
+            package: tar.gz
+    runs-on: ${{ matrix.runner }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Install Native AOT prerequisites (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang zlib1g-dev
+
+      - name: Restore for target runtime
+        run: dotnet restore src/Michael.Cli/Michael.Cli.csproj -r ${{ matrix.rid }}
+
+      - name: Publish Native AOT binary
+        run: |
+          dotnet publish src/Michael.Cli/Michael.Cli.csproj \
+            --configuration Release \
+            --framework net10.0 \
+            --runtime ${{ matrix.rid }} \
+            --self-contained true \
+            -p:PublishAot=true \
+            -p:PublishSingleFile=true \
+            -p:DebugType=None \
+            -p:DebugSymbols=false \
+            --output artifacts/publish/${{ matrix.rid }}
+
+      - name: Package Windows artifact
+        if: matrix.package == 'zip'
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Path artifacts/packages -Force | Out-Null
+          Compress-Archive -Path "artifacts/publish/${{ matrix.rid }}/*" -DestinationPath "artifacts/packages/michael-${{ github.ref_name }}-${{ matrix.rid }}.zip" -Force
+
+      - name: Package Unix artifact
+        if: matrix.package == 'tar.gz'
+        run: |
+          mkdir -p artifacts/packages
+          tar -czf "artifacts/packages/michael-${{ github.ref_name }}-${{ matrix.rid }}.tar.gz" -C "artifacts/publish/${{ matrix.rid }}" .
 
       - name: Upload release build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: release-binaries-${{ github.ref_name }}
+          name: release-binaries-${{ matrix.rid }}-${{ github.ref_name }}
           path: artifacts/packages/*
           if-no-files-found: error
 

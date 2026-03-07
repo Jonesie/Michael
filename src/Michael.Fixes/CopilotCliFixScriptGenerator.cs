@@ -9,10 +9,18 @@ public sealed partial class CopilotCliFixScriptGenerator : IFixScriptGenerator
 {
     private const int MaxSamplesPerIssue = 2;
     private const int ContextLineRadius = 2;
+    private const string DefaultAiCommandTemplate = "copilot -i \"agent --prompt {prompt}\"";
 
-    public IReadOnlyDictionary<int, string> Generate(string outputDirectory, IReadOnlyList<RankedIssue> rankedIssues)
+    public IReadOnlyDictionary<int, string> Generate(
+        string outputDirectory,
+        IReadOnlyList<RankedIssue> rankedIssues,
+        string aiCommandTemplate)
     {
         Directory.CreateDirectory(outputDirectory);
+
+        var resolvedAiCommandTemplate = string.IsNullOrWhiteSpace(aiCommandTemplate)
+            ? DefaultAiCommandTemplate
+            : aiCommandTemplate.Trim();
 
         var fileNamesByRank = new Dictionary<int, string>();
 
@@ -22,7 +30,7 @@ public sealed partial class CopilotCliFixScriptGenerator : IFixScriptGenerator
             var fullPath = Path.Combine(outputDirectory, fileName);
             var prompt = BuildPrompt(issue);
             var targetLocations = BuildTargetLocations(issue.Files);
-            var script = BuildScript(issue.Rank, prompt, targetLocations);
+            var script = BuildScript(issue.Rank, prompt, targetLocations, resolvedAiCommandTemplate);
 
             File.WriteAllText(fullPath, script);
             fileNamesByRank[issue.Rank] = fileName;
@@ -31,7 +39,11 @@ public sealed partial class CopilotCliFixScriptGenerator : IFixScriptGenerator
         return fileNamesByRank;
     }
 
-    private static string BuildScript(int rank, string prompt, IReadOnlyList<string> targetLocations)
+    private static string BuildScript(
+        int rank,
+        string prompt,
+        IReadOnlyList<string> targetLocations,
+        string aiCommandTemplate)
     {
         var builder = new StringBuilder();
         builder.AppendLine("# Michael generated fix script");
@@ -51,7 +63,7 @@ public sealed partial class CopilotCliFixScriptGenerator : IFixScriptGenerator
         builder.AppendLine();
         builder.AppendLine("Push-Location $RepoPath");
         builder.AppendLine("try {");
-        builder.AppendLine("    copilot -i \"agent --prompt $Prompt\"");
+        builder.AppendLine($"    {aiCommandTemplate.Replace("{prompt}", "$Prompt", StringComparison.Ordinal)}");
         builder.AppendLine("}");
         builder.AppendLine("finally {");
         builder.AppendLine("    Pop-Location");

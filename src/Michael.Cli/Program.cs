@@ -1,6 +1,7 @@
 ﻿using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.Reflection;
+using System.Text.Json;
 using Michael.Analysis;
 using Michael.Cli;
 using Michael.Cli.Models;
@@ -24,12 +25,17 @@ var limitOption = new Option<int?>(
     name: "--limit",
     description: "Maximum number of issues to include in the report.");
 
+var configOption = new Option<FileInfo?>(
+    name: "--config",
+    description: "Path to CLI JSON config file. Defaults to 'michael.config.json' in the current working directory.");
+
 var rootCommand = new RootCommand("Michael – build log analyser and issue reporter.")
 {
     inputOption,
     outputOption,
     analyseOnlyOption,
     limitOption,
+    configOption,
 };
 
 rootCommand.SetHandler((InvocationContext context) =>
@@ -38,6 +44,7 @@ rootCommand.SetHandler((InvocationContext context) =>
     var output      = context.ParseResult.GetValueForOption(outputOption);
     var analyseOnly = context.ParseResult.GetValueForOption(analyseOnlyOption);
     var limit       = context.ParseResult.GetValueForOption(limitOption);
+    var configPath  = context.ParseResult.GetValueForOption(configOption);
 
     if (input is null)
     {
@@ -62,13 +69,22 @@ rootCommand.SetHandler((InvocationContext context) =>
 
     output ??= new DirectoryInfo("out");
     var generateFixes = !analyseOnly;
+    var appConfig = LoadAppConfig(configPath, out var configError);
+
+    if (configError is not null)
+    {
+        Console.Error.WriteLine($"Error: {configError}");
+        context.ExitCode = 1;
+        return;
+    }
 
     PrintBanner(
         GetVersion(),
         input.Name,
         output.FullName,
         limit,
-        generateFixes);
+        generateFixes,
+        appConfig.Fixes.AiCommandTemplate);
 
     using var stream = input.OpenRead();
     using var reader = new StreamReader(stream);
@@ -86,7 +102,10 @@ rootCommand.SetHandler((InvocationContext context) =>
     if (generateFixes)
     {
         var fixScriptGenerator = new CopilotCliFixScriptGenerator();
-        fixScriptFileNamesByRank = fixScriptGenerator.Generate(output.FullName, rankedIssues);
+        fixScriptFileNamesByRank = fixScriptGenerator.Generate(
+            output.FullName,
+            rankedIssues,
+            appConfig.Fixes.AiCommandTemplate);
     }
 
     var metadata = new ReportMetadata(
@@ -124,7 +143,8 @@ static void PrintBanner(
     string inputName,
     string outputDirectory,
     int? limit,
-    bool generateFixes)
+    bool generateFixes,
+    string aiCommandTemplate)
 {
     Console.WriteLine("  ███╗   ███╗██╗ ██████╗██╗  ██╗ █████╗ ███████╗██╗     ");
     Console.WriteLine("  ████╗ ████║██║██╔════╝██║  ██║██╔══██╗██╔════╝██║     ");
@@ -139,5 +159,49 @@ static void PrintBanner(
     Console.WriteLine($"  Output   : {outputDirectory}");
     if (limit.HasValue) Console.WriteLine($"  Limit    : {limit}");
     Console.WriteLine($"  Generate fixes: {generateFixes}");
+    Console.WriteLine($"  AI command    : {aiCommandTemplate}");
     Console.WriteLine();
+}
+
+static AppConfig LoadAppConfig(FileInfo? configuredPath, out string? error)
+{
+    error = null;
+
+    var fullPath = configuredPath?.FullName
+        ?? Path.Combine(Environment.CurrentDirectory, "michael.config.json");
+
+    if (!File.Exists(fullPath))
+    {
+        return AppConfig.Default;
+    }
+
+    try
+    {
+        using var stream = File.OpenRead(fullPath);
+        var parsed = JsonSerializer.Deserialize<AppConfig>(stream, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        });
+
+        return NormalizeConfig(parsed);
+    }
+    catch (Exception exception)
+    {
+        error = $"failed to read config '{fullPath}': {exception.Message}";
+        return AppConfig.Default;
+    }
+}
+
+static AppConfig NormalizeConfig(AppConfig? raw)
+{
+    if (raw is null)
+    {
+        return AppConfig.Default;
+    }
+
+    var commandTemplate = string.IsNullOrWhiteSpace(raw.Fixes?.AiCommandTemplate)
+        ? AppConfig.DefaultAiCommandTemplate
+        : raw.Fixes.AiCommandTemplate.Trim();
+
+    return new AppConfig(new FixGenerationConfig(commandTemplate));
 }

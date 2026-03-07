@@ -8,39 +8,42 @@
 	╚═╝     ╚═╝╚═╝ ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚══════╝
 ```
 
-CLI-first .NET tool to parse build logs, summarize issues, rank them, and write local reports.
+Michael is a CLI-first .NET build diagnostics assistant for large or noisy build outputs.
 
-Supports .NET build logs only and uses Copilot CLI only for generated fix scripts.
+Releases include prebuilt platform binaries (Linux, macOS, and Windows) so you can download and run Michael directly without building from source.
 
-## Prerequisites
+It ingests .NET build logs, groups repeated warnings and errors into deterministic issue summaries, ranks issues by impact, and writes machine-readable plus human-readable reports you can review quickly.
 
-- .NET SDK 10.0+
-- Linux/macOS/Windows shell
+When fix generation is enabled, Michael also creates one script per ranked issue that sends structured context to your chosen AI CLI command (configured in `michael.config.json`) so you can apply focused fixes in a controlled, scriptable workflow.
 
-## Build and Test
+Current scope is .NET build logs only.
 
-- Restore dependencies:
-	- `dotnet restore src/Michael.sln`
-- Build solution:
-	- `dotnet build src/Michael.sln`
-- Run tests:
-	- `dotnet test src/Michael.sln`
+## Install
 
-## CLI Usage
+- Download latest release: [https://github.com/Jonesie/Michael/releases/latest](https://github.com/Jonesie/Michael/releases/latest)
+- Download the latest release asset for your platform.
+	- Linux x64: `michael-<tag>-linux-x64.tar.gz`
+	- macOS arm64: `michael-<tag>-osx-arm64.tar.gz`
+	- Windows x64: `michael-<tag>-win-x64.zip`
+	- (`<tag>` is the GitHub release tag, for example `v1.2.3`)
+- Extract the archive.
+- Run the `michael` binary (or `michael.exe` on Windows).
+
+## Usage
 
 - Help:
-	- `dotnet run --project src/Michael.Cli/Michael.Cli.csproj -- --help`
+	- `michael --help`
 - Version:
-	- `dotnet run --project src/Michael.Cli/Michael.Cli.csproj -- --version`
+	- `michael --version`
 
 ### Analyse a build log
 
 - Example with provided fixture:
-	- `dotnet run --project src/Michael.Cli/Michael.Cli.csproj -- --input data/build.log --output out --analyse-only`
+	- `michael --input data/build.log --output out --analyse-only`
 - Example with result limit:
-	- `dotnet run --project src/Michael.Cli/Michael.Cli.csproj -- --input data/build.log --output out --analyse-only --limit 5`
+	- `michael --input data/build.log --output out --analyse-only --limit 5`
 - Example generating fix scripts (default behavior):
-	- `dotnet run --project src/Michael.Cli/Michael.Cli.csproj -- --input data/build.log --output out`
+	- `michael --input data/build.log --output out`
 
 ### Output files
 
@@ -49,7 +52,24 @@ After a successful run, the output directory contains:
 - `issues.json` – machine-readable metadata and ranked issues.
 - `summary.md` - Markdown summary with a ranked table and a single `Details` column per row.
 - `summary.html` - preview-friendly interactive report with the same ranked data.
-- `fix-rank-<n>.ps1` - one PowerShell script per ranked issue by default (not generated when using `--analyse-only`) that calls `copilot` with issue context.
+- `fix-rank-<n>.ps1` - one PowerShell script per ranked issue by default (not generated when using `--analyse-only`) that calls the configured AI CLI command with issue context.
+
+### AI CLI command configuration
+
+- Default config file path: `michael.config.json` in the current working directory.
+- Override config path with `--config <file>`.
+- Configure the command template at `fixes.aiCommandTemplate`.
+- Use `{prompt}` as the placeholder for the generated issue prompt. It is replaced with the PowerShell variable `$Prompt` in generated scripts.
+
+Example `michael.config.json`:
+
+```json
+{
+	"fixes": {
+		"aiCommandTemplate": "copilot -i \"agent --prompt {prompt}\""
+	}
+}
+```
 
 ### Report details behavior
 
@@ -67,3 +87,24 @@ After a successful run, the output directory contains:
 - `--output <dir>`: output directory (default: `out`).
 - `--analyse-only` / `--analysis-only`: run parse/analyze/rank/report flow without generating fix scripts.
 - `--limit <n>`: maximum number of ranked issues written (`n > 0`).
+- `--config <file>`: optional path to a CLI JSON config file.
+
+## Development
+
+### Prerequisites
+
+- .NET SDK 10.0+
+- Linux/macOS/Windows shell
+
+### Build and Test from Source
+
+- Restore dependencies:
+	- `dotnet restore src/Michael.sln`
+- Build solution:
+	- `dotnet build src/Michael.sln`
+- Run tests:
+	- `dotnet test src/Michael.sln`
+
+### Run from Source
+
+- `dotnet run --project src/Michael.Cli/Michael.Cli.csproj -- --help`

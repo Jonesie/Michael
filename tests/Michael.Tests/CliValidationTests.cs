@@ -88,6 +88,44 @@ public class CliValidationTests
         Assert.Contains("Fixes    : 0", result.Output, StringComparison.OrdinalIgnoreCase);
     }
 
+    [Fact]
+    public void Cli_UsesConfiguredAiCommandTemplate_ForGeneratedFixScripts()
+    {
+        var repoRoot = TestWorkspace.RepoRoot();
+        var logPath = Path.Combine(repoRoot, "data", "sample-dotnet-small.log");
+        var outputDir = Path.Combine(Path.GetTempPath(), $"michael-cli-config-{Guid.NewGuid():N}");
+        var configPath = Path.Combine(Path.GetTempPath(), $"michael-config-{Guid.NewGuid():N}.json");
+
+        File.WriteAllText(configPath, """
+        {
+          "fixes": {
+            "aiCommandTemplate": "my-ai-tool run --input {prompt} --model fast"
+          }
+        }
+        """);
+
+        try
+        {
+            var result = RunCli(repoRoot, $"--input \"{logPath}\" --output \"{outputDir}\" --config \"{configPath}\"");
+
+            Assert.Equal(0, result.ExitCode);
+            var script = File.ReadAllText(Path.Combine(outputDir, "fix-rank-1.ps1"));
+            Assert.Contains("my-ai-tool run --input $Prompt --model fast", script, StringComparison.Ordinal);
+        }
+        finally
+        {
+            if (Directory.Exists(outputDir))
+            {
+                Directory.Delete(outputDir, recursive: true);
+            }
+
+            if (File.Exists(configPath))
+            {
+                File.Delete(configPath);
+            }
+        }
+    }
+
     private static (int ExitCode, string Output) RunCli(string repoRoot, string arguments)
     {
         var psi = new ProcessStartInfo
