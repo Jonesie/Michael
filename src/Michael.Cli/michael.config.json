@@ -1,5 +1,5 @@
 {
     "fixes": {
-        "aiCommandTemplate": "copilot -i \"agent --prompt {prompt}\""
+        "scriptTemplateFile": "templates/fix-script.ps1.template"
     }
 }

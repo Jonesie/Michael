@@ -89,17 +89,28 @@ public class CliValidationTests
     }
 
     [Fact]
-    public void Cli_UsesConfiguredAiCommandTemplate_ForGeneratedFixScripts()
+    public void Cli_UsesConfiguredScriptTemplate_ForGeneratedFixScripts()
     {
         var repoRoot = TestWorkspace.RepoRoot();
         var logPath = Path.Combine(repoRoot, "data", "sample-dotnet-small.log");
-        var outputDir = Path.Combine(Path.GetTempPath(), $"michael-cli-config-{Guid.NewGuid():N}");
-        var configPath = Path.Combine(Path.GetTempPath(), $"michael-config-{Guid.NewGuid():N}.json");
+        var outputDir = Path.Combine(Path.GetTempPath(), $"michael-cli-template-{Guid.NewGuid():N}");
+        var configDir = Path.Combine(Path.GetTempPath(), $"michael-config-dir-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(configDir);
 
+        var templatePath = Path.Combine(configDir, "custom-template.ps1.template");
+        File.WriteAllText(templatePath, """
+custom-rank=[[rank]]
+custom-files:
+[[fileList]]
+command:
+copilot -i "agent --prompt $Prompt"
+""");
+
+        var configPath = Path.Combine(configDir, "michael.config.json");
         File.WriteAllText(configPath, """
         {
           "fixes": {
-            "aiCommandTemplate": "my-ai-tool run --input {prompt} --model fast"
+            "scriptTemplateFile": "custom-template.ps1.template"
           }
         }
         """);
@@ -110,7 +121,48 @@ public class CliValidationTests
 
             Assert.Equal(0, result.ExitCode);
             var script = File.ReadAllText(Path.Combine(outputDir, "fix-rank-1.ps1"));
-            Assert.Contains("my-ai-tool run --input $Prompt --model fast", script, StringComparison.Ordinal);
+            Assert.Contains("custom-rank=1", script, StringComparison.Ordinal);
+            Assert.Contains("custom-files:", script, StringComparison.Ordinal);
+            Assert.DoesNotContain("[[fileList]]", script, StringComparison.Ordinal);
+        }
+        finally
+        {
+            if (Directory.Exists(outputDir))
+            {
+                Directory.Delete(outputDir, recursive: true);
+            }
+
+            if (Directory.Exists(configDir))
+            {
+                Directory.Delete(configDir, recursive: true);
+            }
+        }
+    }
+
+    [Fact]
+    public void Cli_UsesBashTemplateExtension_ForGeneratedFixScripts()
+    {
+        var repoRoot = TestWorkspace.RepoRoot();
+        var logPath = Path.Combine(repoRoot, "data", "sample-dotnet-small.log");
+                var bashTemplatePath = Path.Combine(repoRoot, "src", "Michael.Cli", "templates", "fix-script.sh.template");
+        var outputDir = Path.Combine(Path.GetTempPath(), $"michael-cli-bash-template-{Guid.NewGuid():N}");
+        var configPath = Path.Combine(Path.GetTempPath(), $"michael-bash-config-{Guid.NewGuid():N}.json");
+
+                File.WriteAllText(configPath, $$"""
+                {
+                    "fixes": {
+                        "scriptTemplateFile": "{{bashTemplatePath.Replace("\\", "\\\\")}}"
+                    }
+                }
+                """);
+
+        try
+        {
+            var result = RunCli(repoRoot, $"--input \"{logPath}\" --output \"{outputDir}\" --config \"{configPath}\"");
+
+            Assert.Equal(0, result.ExitCode);
+            Assert.True(File.Exists(Path.Combine(outputDir, "fix-rank-1.sh")));
+            Assert.False(File.Exists(Path.Combine(outputDir, "fix-rank-1.ps1")));
         }
         finally
         {

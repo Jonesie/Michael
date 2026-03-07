@@ -16,7 +16,9 @@ It ingests .NET build logs, groups repeated warnings and errors into determinist
 
 When fix generation is enabled, Michael also creates one script per ranked issue that sends structured context to your chosen AI CLI command (configured in `michael.config.json` shipped with the CLI binary) so you can apply focused fixes in a controlled, scriptable workflow.
 
-Current scope is .NET build logs only.
+Current analysis scope is .NET build logs only.
+
+Default fix script templates use the GitHub Copilot CLI, but you can customize the command and template format to work with any AI CLI tool that accepts structured input.
 
 ## Install
 
@@ -52,21 +54,25 @@ After a successful run, the output directory contains:
 - `issues.json` – machine-readable metadata and ranked issues.
 - `summary.md` - Markdown summary with a ranked table and a single `Details` column per row.
 - `summary.html` - preview-friendly interactive report with the same ranked data.
-- `fix-rank-<n>.ps1` - one PowerShell script per ranked issue by default (not generated when using `--analyse-only`) that calls the configured AI CLI command with issue context.
+- `fix-rank-<n>.<ext>` - one script per ranked issue (not generated when using `--analyse-only`), where `<ext>` is derived from the template filename (for example `.ps1` or `.sh`).
 
-### AI CLI command configuration
+### Fix script template configuration
 
 - Default config file path: `michael.config.json` next to the executable (included in release packages).
 - Override config path with `--config <file>`.
-- Configure the command template at `fixes.aiCommandTemplate`.
-- Use `{prompt}` as the placeholder for the generated issue prompt. It is replaced with the PowerShell variable `$Prompt` in generated scripts.
+- Configure the fix script template path at `fixes.scriptTemplateFile`.
+- Built-in templates:
+	- PowerShell: `templates/fix-script.ps1.template`
+	- Bash: `templates/fix-script.sh.template`
+- Script templates support placeholders: `[[issueDetails]]`, `[[fileList]]`, and `[[samples]]` (plus `[[rank]]`, `[[targetFileCount]]`).
+- The Copilot command line is hardcoded in each template (`$Prompt` in PowerShell, `$prompt` in Bash).
 
 Example `michael.config.json`:
 
 ```json
 {
 	"fixes": {
-		"aiCommandTemplate": "copilot -i \"agent --prompt {prompt}\""
+		"scriptTemplateFile": "templates/fix-script.sh.template"
 	}
 }
 ```

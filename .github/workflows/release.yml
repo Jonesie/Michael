@@ -116,6 +116,10 @@ jobs:
             if (-not ($entryNames | Where-Object { $_ -match '(^|/)michael\.config\.json$' })) {
               throw "michael.config.json not found in $archive"
             }
+
+            if (-not ($entryNames | Where-Object { $_ -match '(^|/)templates/fix-script\.ps1\.template$' })) {
+              throw "templates/fix-script.ps1.template not found in $archive"
+            }
           }
           finally {
             $zip.Dispose()
@@ -141,6 +145,7 @@ jobs:
 
           tar -tzf "$archive" | grep -E '(^|/)README\.md$' >/dev/null
           tar -tzf "$archive" | grep -E '(^|/)michael\.config\.json$' >/dev/null
+          tar -tzf "$archive" | grep -E '(^|/)templates/fix-script\.ps1\.template$' >/dev/null
 
       - name: Upload release build artifacts
         uses: actions/upload-artifact@v4

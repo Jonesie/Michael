@@ -69,6 +69,7 @@ rootCommand.SetHandler((InvocationContext context) =>
 
     output ??= new DirectoryInfo("out");
     var generateFixes = !analyseOnly;
+    var effectiveConfigPath = GetEffectiveConfigPath(configPath);
     var appConfig = LoadAppConfig(configPath, out var configError);
 
     if (configError is not null)
@@ -78,13 +79,42 @@ rootCommand.SetHandler((InvocationContext context) =>
         return;
     }
 
+    var fixScriptTemplatePath = "(not used in --analyse-only mode)";
+    var fixScriptFileExtension = ".ps1";
+    string? fixScriptTemplateText = null;
+
+    if (generateFixes)
+    {
+        var resolvedTemplatePath = ResolveFixScriptTemplatePath(
+            appConfig,
+            effectiveConfigPath,
+            out var templateResolveError);
+
+        if (templateResolveError is not null)
+        {
+            Console.Error.WriteLine($"Error: {templateResolveError}");
+            context.ExitCode = 1;
+            return;
+        }
+
+        fixScriptTemplatePath = resolvedTemplatePath!;
+        fixScriptFileExtension = DetermineFixScriptExtension(fixScriptTemplatePath);
+        fixScriptTemplateText = LoadFixScriptTemplate(fixScriptTemplatePath, out var templateLoadError);
+        if (templateLoadError is not null)
+        {
+            Console.Error.WriteLine($"Error: {templateLoadError}");
+            context.ExitCode = 1;
+            return;
+        }
+    }
+
     PrintBanner(
         GetVersion(),
         input.Name,
         output.FullName,
         limit,
         generateFixes,
-        appConfig.Fixes.AiCommandTemplate);
+        fixScriptTemplatePath!);
 
     using var stream = input.OpenRead();
     using var reader = new StreamReader(stream);
@@ -101,11 +131,12 @@ rootCommand.SetHandler((InvocationContext context) =>
     IReadOnlyDictionary<int, string> fixScriptFileNamesByRank = new Dictionary<int, string>();
     if (generateFixes)
     {
-        var fixScriptGenerator = new CopilotCliFixScriptGenerator();
+        var fixScriptGenerator = new TemplateFixScriptGenerator();
         fixScriptFileNamesByRank = fixScriptGenerator.Generate(
             output.FullName,
             rankedIssues,
-            appConfig.Fixes.AiCommandTemplate);
+            fixScriptTemplateText!,
+            fixScriptFileExtension);
     }
 
     var metadata = new ReportMetadata(
@@ -144,7 +175,7 @@ static void PrintBanner(
     string outputDirectory,
     int? limit,
     bool generateFixes,
-    string aiCommandTemplate)
+    string fixScriptTemplatePath)
 {
     Console.WriteLine("  ███╗   ███╗██╗ ██████╗██╗  ██╗ █████╗ ███████╗██╗     ");
     Console.WriteLine("  ████╗ ████║██║██╔════╝██║  ██║██╔══██╗██╔════╝██║     ");
@@ -159,16 +190,21 @@ static void PrintBanner(
     Console.WriteLine($"  Output   : {outputDirectory}");
     if (limit.HasValue) Console.WriteLine($"  Limit    : {limit}");
     Console.WriteLine($"  Generate fixes: {generateFixes}");
-    Console.WriteLine($"  AI command    : {aiCommandTemplate}");
+    Console.WriteLine($"  Fix template  : {fixScriptTemplatePath}");
     Console.WriteLine();
+}
+
+static string GetEffectiveConfigPath(FileInfo? configuredPath)
+{
+    return configuredPath?.FullName
+        ?? Path.Combine(AppContext.BaseDirectory, "michael.config.json");
 }
 
 static AppConfig LoadAppConfig(FileInfo? configuredPath, out string? error)
 {
     error = null;
 
-    var fullPath = configuredPath?.FullName
-        ?? Path.Combine(AppContext.BaseDirectory, "michael.config.json");
+    var fullPath = GetEffectiveConfigPath(configuredPath);
 
     if (!File.Exists(fullPath))
     {
@@ -199,9 +235,75 @@ static AppConfig NormalizeConfig(AppConfig? raw)
         return AppConfig.Default;
     }
 
-    var commandTemplate = string.IsNullOrWhiteSpace(raw.Fixes?.AiCommandTemplate)
-        ? AppConfig.DefaultAiCommandTemplate
-        : raw.Fixes.AiCommandTemplate.Trim();
+    var scriptTemplateFile = string.IsNullOrWhiteSpace(raw.Fixes?.ScriptTemplateFile)
+        ? AppConfig.DefaultFixScriptTemplateFile
+        : raw.Fixes.ScriptTemplateFile.Trim();
 
-    return new AppConfig(new FixGenerationConfig(commandTemplate));
+    return new AppConfig(new FixGenerationConfig(scriptTemplateFile));
+}
+
+static string? ResolveFixScriptTemplatePath(AppConfig appConfig, string effectiveConfigPath, out string? error)
+{
+    error = null;
+
+    var configuredTemplatePath = string.IsNullOrWhiteSpace(appConfig.Fixes.ScriptTemplateFile)
+        ? AppConfig.DefaultFixScriptTemplateFile
+        : appConfig.Fixes.ScriptTemplateFile.Trim();
+
+    string resolvedPath;
+    if (Path.IsPathRooted(configuredTemplatePath))
+    {
+        resolvedPath = configuredTemplatePath;
+    }
+    else if (string.Equals(configuredTemplatePath, AppConfig.DefaultFixScriptTemplateFile, StringComparison.Ordinal))
+    {
+        resolvedPath = Path.Combine(AppContext.BaseDirectory, configuredTemplatePath);
+    }
+    else
+    {
+        resolvedPath = Path.Combine(Path.GetDirectoryName(effectiveConfigPath) ?? AppContext.BaseDirectory, configuredTemplatePath);
+    }
+
+    resolvedPath = Path.GetFullPath(resolvedPath);
+
+    if (!File.Exists(resolvedPath))
+    {
+        error = $"fix script template file not found: {resolvedPath}";
+        return null;
+    }
+
+    return resolvedPath;
+}
+
+static string? LoadFixScriptTemplate(string path, out string? error)
+{
+    error = null;
+
+    try
+    {
+        return File.ReadAllText(path);
+    }
+    catch (Exception exception)
+    {
+        error = $"failed to read fix script template '{path}': {exception.Message}";
+        return null;
+    }
+}
+
+static string DetermineFixScriptExtension(string templatePath)
+{
+    var fileName = Path.GetFileName(templatePath);
+    const string templateSuffix = ".template";
+
+    if (fileName.EndsWith(templateSuffix, StringComparison.OrdinalIgnoreCase))
+    {
+        var withoutTemplateSuffix = fileName[..^templateSuffix.Length];
+        var extension = Path.GetExtension(withoutTemplateSuffix);
+        if (!string.IsNullOrWhiteSpace(extension))
+        {
+            return extension;
+        }
+    }
+
+    return ".ps1";
 }

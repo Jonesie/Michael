@@ -5,6 +5,14 @@
         "**/*.rpymc": true,
         "**/cache/": true
     },
+    "files.associations": {
+        "*.sh.template": "plaintext",
+        "*.ps1.template": "plaintext"
+    },
+    "[plaintext]": {
+        "editor.formatOnSave": false,
+        "editor.formatOnPaste": false
+    },
     "chat.tools.terminal.autoApprove": {
         "dotnet run": true
     }

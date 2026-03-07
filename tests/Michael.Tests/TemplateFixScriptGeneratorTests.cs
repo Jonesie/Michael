@@ -3,7 +3,7 @@ using Michael.Fixes;
 
 namespace Michael.Tests;
 
-public class CopilotCliFixScriptGeneratorTests
+public class TemplateFixScriptGeneratorTests
 {
     [Fact]
     public void Generate_WritesPowerShellFiles_PerRank_WithPromptContext()
@@ -40,7 +40,7 @@ public class CopilotCliFixScriptGeneratorTests
 
         try
         {
-            var generator = new CopilotCliFixScriptGenerator();
+            var generator = new TemplateFixScriptGenerator();
             var rankedIssues = new[]
             {
                 new RankedIssue(
@@ -65,7 +65,7 @@ public class CopilotCliFixScriptGeneratorTests
                     Explanation: "Sample")
             };
 
-            var filesByRank = generator.Generate(tempDir, rankedIssues, "copilot -i \"agent --prompt {prompt}\"");
+            var filesByRank = generator.Generate(tempDir, rankedIssues);
 
             Assert.Equal(2, filesByRank.Count);
             Assert.Equal("fix-rank-1.ps1", filesByRank[1]);
@@ -106,7 +106,7 @@ public class CopilotCliFixScriptGeneratorTests
 
         try
         {
-            var generator = new CopilotCliFixScriptGenerator();
+            var generator = new TemplateFixScriptGenerator();
             var rankedIssues = new[]
             {
                 new RankedIssue(
@@ -121,7 +121,7 @@ public class CopilotCliFixScriptGeneratorTests
                     Explanation: "No files")
             };
 
-            var filesByRank = generator.Generate(tempDir, rankedIssues, "copilot -i \"agent --prompt {prompt}\"");
+            var filesByRank = generator.Generate(tempDir, rankedIssues);
             var scriptPath = Path.Combine(tempDir, filesByRank[1]);
             var script = File.ReadAllText(scriptPath);
 
@@ -147,7 +147,7 @@ public class CopilotCliFixScriptGeneratorTests
 
         try
         {
-            var generator = new CopilotCliFixScriptGenerator();
+            var generator = new TemplateFixScriptGenerator();
             var missingPath = Path.Combine(tempDir, "DoesNotExist.cs");
             var rankedIssues = new[]
             {
@@ -163,13 +163,200 @@ public class CopilotCliFixScriptGeneratorTests
                     Explanation: "Missing source")
             };
 
-            var filesByRank = generator.Generate(tempDir, rankedIssues, "copilot -i \"agent --prompt {prompt}\"");
+            var filesByRank = generator.Generate(tempDir, rankedIssues);
             var scriptPath = Path.Combine(tempDir, filesByRank[1]);
             var script = File.ReadAllText(scriptPath);
 
             Assert.Contains("# Target files: 1", script, StringComparison.Ordinal);
             Assert.Contains($"- {missingPath}(10,1)", script, StringComparison.Ordinal);
             Assert.Contains("- No source file sample was available.", script, StringComparison.Ordinal);
+        }
+        finally
+        {
+            if (Directory.Exists(tempDir))
+            {
+                Directory.Delete(tempDir, recursive: true);
+            }
+        }
+    }
+
+    [Fact]
+    public void Generate_AppliesCustomTemplatePlaceholders()
+    {
+        var tempDir = Path.Combine(Path.GetTempPath(), $"michael-fixes-template-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(tempDir);
+
+        try
+        {
+            var generator = new TemplateFixScriptGenerator();
+            var rankedIssues = new[]
+            {
+                new RankedIssue(
+                    Rank: 1,
+                    Key: "CS1002",
+                    Message: "CS1002: ; expected",
+                    Files: new[] { "C:/repo/src/File.cs(10,5)" },
+                    Severity: "error",
+                    Frequency: 2,
+                    Confidence: 0.95,
+                    Score: 300,
+                    Explanation: "Template check")
+            };
+
+            var template = """
+rank=[[rank]]
+targets=[[targetFileCount]]
+details:
+[[issueDetails]]
+files:
+[[fileList]]
+samples:
+[[samples]]
+cmd:
+copilot -i "agent --prompt $Prompt"
+""";
+
+            var filesByRank = generator.Generate(tempDir, rankedIssues, template);
+            var script = File.ReadAllText(Path.Combine(tempDir, filesByRank[1]));
+
+            Assert.Contains("rank=1", script, StringComparison.Ordinal);
+            Assert.Contains("targets=1", script, StringComparison.Ordinal);
+            Assert.Contains("- Rank: 1", script, StringComparison.Ordinal);
+            Assert.Contains("- C:/repo/src/File.cs(10,5)", script, StringComparison.Ordinal);
+            Assert.Contains("- No source file sample was available.", script, StringComparison.Ordinal);
+            Assert.Contains("copilot -i \"agent --prompt $Prompt\"", script, StringComparison.Ordinal);
+            Assert.DoesNotContain("[[issueDetails]]", script, StringComparison.Ordinal);
+            Assert.DoesNotContain("[[fileList]]", script, StringComparison.Ordinal);
+            Assert.DoesNotContain("[[samples]]", script, StringComparison.Ordinal);
+        }
+        finally
+        {
+            if (Directory.Exists(tempDir))
+            {
+                Directory.Delete(tempDir, recursive: true);
+            }
+        }
+    }
+
+    [Fact]
+    public void Generate_WhenTemplateContainsUnknownPlaceholder_Throws()
+    {
+        var tempDir = Path.Combine(Path.GetTempPath(), $"michael-fixes-unresolved-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(tempDir);
+
+        try
+        {
+            var generator = new TemplateFixScriptGenerator();
+            var rankedIssues = new[]
+            {
+                new RankedIssue(
+                    Rank: 1,
+                    Key: "CS0001",
+                    Message: "Sample issue",
+                    Files: new[] { "(no-file)" },
+                    Severity: "error",
+                    Frequency: 1,
+                    Confidence: 0.90,
+                    Score: 100,
+                    Explanation: "Sample")
+            };
+
+            var template = "rank=[[rank]] unknown=[[unknownPlaceholder]]";
+
+            var exception = Assert.Throws<InvalidOperationException>(() =>
+                generator.Generate(tempDir, rankedIssues, template));
+
+            Assert.Contains("Unresolved template placeholders for rank 1", exception.Message, StringComparison.Ordinal);
+            Assert.Contains("[[unknownPlaceholder]]", exception.Message, StringComparison.Ordinal);
+        }
+        finally
+        {
+            if (Directory.Exists(tempDir))
+            {
+                Directory.Delete(tempDir, recursive: true);
+            }
+        }
+    }
+
+    [Fact]
+    public void Generate_WhenTemplateHasWhitespaceBetweenBrackets_ReplacesTokens()
+    {
+        var tempDir = Path.Combine(Path.GetTempPath(), $"michael-fixes-spaced-brackets-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(tempDir);
+
+        try
+        {
+            var generator = new TemplateFixScriptGenerator();
+            var rankedIssues = new[]
+            {
+                new RankedIssue(
+                    Rank: 1,
+                    Key: "CS0003",
+                    Message: "Whitespace token sample",
+                    Files: new[] { "(no-file)" },
+                    Severity: "warning",
+                    Frequency: 1,
+                    Confidence: 0.90,
+                    Score: 90,
+                    Explanation: "Sample")
+            };
+
+            var template = """
+    rank: [
+      [rank
+      ]
+    ]
+    files:
+    [
+      [fileList
+      ]
+    ]
+    """;
+
+            var filesByRank = generator.Generate(tempDir, rankedIssues, template);
+            var script = File.ReadAllText(Path.Combine(tempDir, filesByRank[1]));
+
+            Assert.Contains("rank: 1", script, StringComparison.Ordinal);
+            Assert.DoesNotContain("[\n  [rank", script, StringComparison.Ordinal);
+            Assert.Contains("files:", script, StringComparison.Ordinal);
+            Assert.Contains("- No concrete target files were identified.", script, StringComparison.Ordinal);
+        }
+        finally
+        {
+            if (Directory.Exists(tempDir))
+            {
+                Directory.Delete(tempDir, recursive: true);
+            }
+        }
+    }
+
+    [Fact]
+    public void Generate_WithScriptFileExtension_UsesConfiguredExtension()
+    {
+        var tempDir = Path.Combine(Path.GetTempPath(), $"michael-fixes-extension-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(tempDir);
+
+        try
+        {
+            var generator = new TemplateFixScriptGenerator();
+            var rankedIssues = new[]
+            {
+                new RankedIssue(
+                    Rank: 1,
+                    Key: "EXT",
+                    Message: "Extension sample",
+                    Files: new[] { "(no-file)" },
+                    Severity: "warning",
+                    Frequency: 1,
+                    Confidence: 0.90,
+                    Score: 100,
+                    Explanation: "Sample")
+            };
+
+            var filesByRank = generator.Generate(tempDir, rankedIssues, scriptTemplateText: null, scriptFileExtension: ".sh");
+
+            Assert.Equal("fix-rank-1.sh", filesByRank[1]);
+            Assert.True(File.Exists(Path.Combine(tempDir, "fix-rank-1.sh")));
         }
         finally
         {

@@ -1,0 +1,5 @@
+{
+  "fixes": {
+    "scriptTemplateFile": "src/Michael.Cli/templates/fix-script.sh.template"
+  }
+}

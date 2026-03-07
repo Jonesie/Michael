@@ -7,5 +7,6 @@ public interface IFixScriptGenerator
     IReadOnlyDictionary<int, string> Generate(
         string outputDirectory,
         IReadOnlyList<RankedIssue> rankedIssues,
-        string aiCommandTemplate);
+    string? scriptTemplateText = null,
+    string? scriptFileExtension = null);
 }

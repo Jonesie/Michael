@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+# Michael generated fix script
+# Rank: [[rank]]
+# Target files: [[targetFileCount]]
+
+set -euo pipefail
+
+repo_path="${1:-$(pwd)}"
+
+prompt=$(cat <<'MICHAEL_PROMPT'
+You are generating a safe, minimal code fix suggestion for a .NET build issue.
+
+Issue details:
+[[issueDetails]]
+
+Files that need fixing (apply to all listed files if confirmed):
+[[fileList]]
+
+Required interaction flow: 1) First describe the proposed fix and show the planned edits/diff.
+2) Ask for confirmation before making edits.
+3) Apply the fix across all listed target files only if the user confirms.
+4) If the user declines, do not modify files.
+
+Sample file lines (with line numbers):
+[[samples]]
+
+Include:
+- root-cause explanation,
+- exact file edits (unified diff preferred),
+- validation steps (dotnet build/test commands).
+MICHAEL_PROMPT
+)
+
+pushd "$repo_path" >/dev/null
+trap 'popd >/dev/null' EXIT
+
+copilot -i "agent --prompt $prompt"

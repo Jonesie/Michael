@@ -1,0 +1,41 @@
+# Michael generated fix script
+# Rank: [[rank]]
+# Target files: [[targetFileCount]]
+
+param(
+    [string]$RepoPath = (Get-Location).Path
+)
+
+Set-StrictMode -Version Latest
+$ErrorActionPreference = 'Stop'
+
+$Prompt = @'
+You are generating a safe, minimal code fix suggestion for a .NET build issue.
+
+Issue details:
+[[issueDetails]]
+
+Files that need fixing (apply to all listed files if confirmed):
+[[fileList]]
+
+Required interaction flow: 1) First describe the proposed fix and show the planned edits/diff.
+2) Ask for confirmation before making edits.
+3) Apply the fix across all listed target files only if the user confirms.
+4) If the user declines, do not modify files.
+
+Sample file lines (with line numbers):
+[[samples]]
+
+Include:
+- root-cause explanation,
+- exact file edits (unified diff preferred),
+- validation steps (dotnet build/test commands).
+'@
+
+Push-Location $RepoPath
+try {
+    copilot -i "agent --prompt $Prompt"
+}
+finally {
+    Pop-Location
+}
