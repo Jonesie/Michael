@@ -20,6 +20,10 @@ Current analysis scope is .NET build logs only.
 
 Default fix script templates use the GitHub Copilot CLI, but you can customize the command and template format to work with any AI CLI tool that accepts structured input.
 
+## Author
+
+Peter G. Jones (New Zealand)
+
 ## Install
 
 - Download latest release: [https://github.com/Jonesie/Michael/releases/latest](https://github.com/Jonesie/Michael/releases/latest)
@@ -119,3 +123,9 @@ Example `michael.config.json`:
 ### Run from Source
 
 - `dotnet run --project src/Michael.Cli/Michael.Cli.csproj -- --help`
+
+## License
+
+This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
+
+Copyright (c) 2026 Peter G. Jones, New Zealand.
