@@ -76,6 +76,7 @@ jobs:
         run: dotnet restore src/Michael.Cli/Michael.Cli.csproj -r ${{ matrix.rid }}
 
       - name: Publish Native AOT binary
+        shell: bash
         run: |
           dotnet publish src/Michael.Cli/Michael.Cli.csproj \
             --configuration Release \
@@ -93,13 +94,22 @@ jobs:
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Path artifacts/packages -Force | Out-Null
-          Compress-Archive -Path "artifacts/publish/${{ matrix.rid }}/*" -DestinationPath "artifacts/packages/michael-${{ github.ref_name }}-${{ matrix.rid }}.zip" -Force
+          New-Item -ItemType Directory -Path "artifacts/package-root/${{ matrix.rid }}" -Force | Out-Null
+          Copy-Item -Path "artifacts/publish/${{ matrix.rid }}/*" -Destination "artifacts/package-root/${{ matrix.rid }}" -Recurse -Force
+          Copy-Item -Path "README.md" -Destination "artifacts/package-root/${{ matrix.rid }}/README.md" -Force
+          Compress-Archive -Path "artifacts/package-root/${{ matrix.rid }}/*" -DestinationPath "artifacts/packages/michael-${{ github.ref_name }}-${{ matrix.rid }}.zip" -Force
 
       - name: Package Unix artifact
         if: matrix.package == 'tar.gz'
         run: |
-          mkdir -p artifacts/packages
-          tar -czf "artifacts/packages/michael-${{ github.ref_name }}-${{ matrix.rid }}.tar.gz" -C "artifacts/publish/${{ matrix.rid }}" .
+          set -euo pipefail
+          mkdir -p artifacts/packages "artifacts/package-root/${{ matrix.rid }}"
+          cp -a "artifacts/publish/${{ matrix.rid }}/." "artifacts/package-root/${{ matrix.rid }}/"
+          cp README.md "artifacts/package-root/${{ matrix.rid }}/README.md"
+          (
+            cd "artifacts/package-root/${{ matrix.rid }}"
+            tar -czf "../../../artifacts/packages/michael-${{ github.ref_name }}-${{ matrix.rid }}.tar.gz" *
+          )
 
       - name: Upload release build artifacts
         uses: actions/upload-artifact@v4

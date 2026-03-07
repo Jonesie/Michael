@@ -26,6 +26,15 @@ jobs:
       - name: Build
         run: dotnet build src/Michael.sln --no-restore
 
+      - name: Validate README release asset naming
+        run: |
+          set -euo pipefail
+          readme="README.md"
+
+          grep -Fq 'michael-<tag>-linux-x64.tar.gz' "$readme"
+          grep -Fq 'michael-<tag>-osx-arm64.tar.gz' "$readme"
+          grep -Fq 'michael-<tag>-win-x64.zip' "$readme"
+
       - name: Clean test results directory
         run: |
           rm -rf TestResults/current
