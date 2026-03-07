@@ -5,6 +5,7 @@ using System.Text.Json;
 using Michael.Analysis;
 using Michael.Cli;
 using Michael.Cli.Models;
+using Michael.Cli.Serialization;
 using Michael.Fixes;
 using Michael.Parsing;
 
@@ -214,10 +215,7 @@ static AppConfig LoadAppConfig(FileInfo? configuredPath, out string? error)
     try
     {
         using var stream = File.OpenRead(fullPath);
-        var parsed = JsonSerializer.Deserialize<AppConfig>(stream, new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        });
+        var parsed = JsonSerializer.Deserialize(stream, MichaelCliJsonContext.Default.AppConfig);
 
         return NormalizeConfig(parsed);
     }

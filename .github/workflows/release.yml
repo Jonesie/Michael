@@ -92,6 +92,46 @@ jobs:
             -p:InformationalVersion="$version" \
             --output artifacts/publish/${{ matrix.rid }}
 
+      - name: Smoke test published binary (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $binary = "artifacts/publish/${{ matrix.rid }}/Michael.exe"
+          if (-not (Test-Path $binary)) {
+            throw "Published binary not found: $binary"
+          }
+
+          New-Item -ItemType Directory -Path "artifacts/smoke/${{ matrix.rid }}" -Force | Out-Null
+
+          & $binary --input data/sample-dotnet-small.log --output "artifacts/smoke/${{ matrix.rid }}" --analyse-only
+
+          $versionOutput = (& $binary --version | Out-String)
+          $expected = ($env:GITHUB_REF_NAME -replace '^v', '')
+          if ($versionOutput -notmatch [Regex]::Escape($expected)) {
+            throw "Version output '$versionOutput' does not contain expected release version '$expected'"
+          }
+
+      - name: Smoke test published binary (Unix)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          set -euo pipefail
+          binary="artifacts/publish/${{ matrix.rid }}/Michael"
+
+          if [[ ! -f "$binary" ]]; then
+            echo "Published binary not found: $binary" >&2
+            exit 1
+          fi
+
+          chmod +x "$binary"
+          mkdir -p "artifacts/smoke/${{ matrix.rid }}"
+
+          "$binary" --input data/sample-dotnet-small.log --output "artifacts/smoke/${{ matrix.rid }}" --analyse-only
+
+          version_output="$($binary --version)"
+          expected="${GITHUB_REF_NAME#v}"
+          echo "$version_output" | grep -F "$expected" >/dev/null
+
       - name: Package Windows artifact
         if: matrix.package == 'zip'
         shell: pwsh

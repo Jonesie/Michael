@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 using Michael.Analysis.Models;
 using Michael.Cli.Abstractions;
 using Michael.Cli.Models;
+using Michael.Cli.Serialization;
 
 namespace Michael.Cli;
 
@@ -12,11 +13,6 @@ public sealed class FileReportWriter : IReportWriter
     private static readonly Regex FileLocationWithLineRegex = new(
         @"^(?<path>.+)\((?<line>\d+)(,(?<column>\d+))?\)$",
         RegexOptions.CultureInvariant | RegexOptions.Compiled);
-
-    private static readonly JsonSerializerOptions JsonOptions = new()
-    {
-        WriteIndented = true
-    };
 
     public void Write(
         string outputDirectory,
@@ -30,13 +26,9 @@ public sealed class FileReportWriter : IReportWriter
         var markdownPath = Path.Combine(outputDirectory, "summary.md");
         var htmlPath = Path.Combine(outputDirectory, "summary.html");
 
-        var payload = new
-        {
-            metadata,
-            issues = rankedIssues
-        };
+        var payload = new IssuesReportPayload(metadata, rankedIssues);
 
-        File.WriteAllText(jsonPath, JsonSerializer.Serialize(payload, JsonOptions));
+        File.WriteAllText(jsonPath, JsonSerializer.Serialize(payload, MichaelCliJsonContext.Default.IssuesReportPayload));
         File.WriteAllText(markdownPath, BuildMarkdown(metadata, rankedIssues, fixScriptFileNamesByRank));
         File.WriteAllText(htmlPath, BuildHtml(metadata, rankedIssues, fixScriptFileNamesByRank));
     }
