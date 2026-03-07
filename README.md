@@ -14,7 +14,7 @@ Releases include prebuilt platform binaries (Linux, macOS, and Windows) so you c
 
 It ingests .NET build logs, groups repeated warnings and errors into deterministic issue summaries, ranks issues by impact, and writes machine-readable plus human-readable reports you can review quickly.
 
-When fix generation is enabled, Michael also creates one script per ranked issue that sends structured context to your chosen AI CLI command (configured in `michael.config.json`) so you can apply focused fixes in a controlled, scriptable workflow.
+When fix generation is enabled, Michael also creates one script per ranked issue that sends structured context to your chosen AI CLI command (configured in `michael.config.json` shipped with the CLI binary) so you can apply focused fixes in a controlled, scriptable workflow.
 
 Current scope is .NET build logs only.
 
@@ -56,7 +56,7 @@ After a successful run, the output directory contains:
 
 ### AI CLI command configuration
 
-- Default config file path: `michael.config.json` in the current working directory.
+- Default config file path: `michael.config.json` next to the executable (included in release packages).
 - Override config path with `--config <file>`.
 - Configure the command template at `fixes.aiCommandTemplate`.
 - Use `{prompt}` as the placeholder for the generated issue prompt. It is replaced with the PowerShell variable `$Prompt` in generated scripts.

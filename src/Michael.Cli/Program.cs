@@ -27,7 +27,7 @@ var limitOption = new Option<int?>(
 
 var configOption = new Option<FileInfo?>(
     name: "--config",
-    description: "Path to CLI JSON config file. Defaults to 'michael.config.json' in the current working directory.");
+    description: "Path to CLI JSON config file. Defaults to 'michael.config.json' next to the executable.");
 
 var rootCommand = new RootCommand("Michael – build log analyser and issue reporter.")
 {
@@ -168,7 +168,7 @@ static AppConfig LoadAppConfig(FileInfo? configuredPath, out string? error)
     error = null;
 
     var fullPath = configuredPath?.FullName
-        ?? Path.Combine(Environment.CurrentDirectory, "michael.config.json");
+        ?? Path.Combine(AppContext.BaseDirectory, "michael.config.json");
 
     if (!File.Exists(fullPath))
     {

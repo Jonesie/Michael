@@ -1,0 +1,5 @@
+{
+    "fixes": {
+        "aiCommandTemplate": "copilot -i \"agent --prompt {prompt}\""
+    }
+}

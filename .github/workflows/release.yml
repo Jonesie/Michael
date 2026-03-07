@@ -99,6 +99,28 @@ jobs:
           Copy-Item -Path "README.md" -Destination "artifacts/package-root/${{ matrix.rid }}/README.md" -Force
           Compress-Archive -Path "artifacts/package-root/${{ matrix.rid }}/*" -DestinationPath "artifacts/packages/michael-${{ github.ref_name }}-${{ matrix.rid }}.zip" -Force
 
+      - name: Verify Windows artifact contents
+        if: matrix.package == 'zip'
+        shell: pwsh
+        run: |
+          $archive = "artifacts/packages/michael-${{ github.ref_name }}-${{ matrix.rid }}.zip"
+          Add-Type -AssemblyName System.IO.Compression.FileSystem
+          $zip = [System.IO.Compression.ZipFile]::OpenRead($archive)
+          try {
+            $entryNames = $zip.Entries | ForEach-Object { $_.FullName }
+
+            if (-not ($entryNames | Where-Object { $_ -match '(^|/)README\.md$' })) {
+              throw "README.md not found in $archive"
+            }
+
+            if (-not ($entryNames | Where-Object { $_ -match '(^|/)michael\.config\.json$' })) {
+              throw "michael.config.json not found in $archive"
+            }
+          }
+          finally {
+            $zip.Dispose()
+          }
+
       - name: Package Unix artifact
         if: matrix.package == 'tar.gz'
         run: |
@@ -110,6 +132,15 @@ jobs:
             cd "artifacts/package-root/${{ matrix.rid }}"
             tar -czf "../../../artifacts/packages/michael-${{ github.ref_name }}-${{ matrix.rid }}.tar.gz" *
           )
+
+      - name: Verify Unix artifact contents
+        if: matrix.package == 'tar.gz'
+        run: |
+          set -euo pipefail
+          archive="artifacts/packages/michael-${{ github.ref_name }}-${{ matrix.rid }}.tar.gz"
+
+          tar -tzf "$archive" | grep -E '(^|/)README\.md$' >/dev/null
+          tar -tzf "$archive" | grep -E '(^|/)michael\.config\.json$' >/dev/null
 
       - name: Upload release build artifacts
         uses: actions/upload-artifact@v4
