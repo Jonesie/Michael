@@ -49,6 +49,8 @@ public sealed class FileReportWriter : IReportWriter
         builder.AppendLine($"- Output: {metadata.OutputDirectory}");
         builder.AppendLine($"- Analyse only: {metadata.AnalyseOnly}");
         builder.AppendLine($"- Limit: {(metadata.Limit.HasValue ? metadata.Limit.Value : "none")}");
+        var detectedToolsText = BuildDetectedToolsText(metadata.DetectedTools);
+        builder.AppendLine($"- Detected tools/frameworks: {detectedToolsText}");
         builder.AppendLine($"- Parsed issues: {metadata.ParsedIssueCount}");
         builder.AppendLine($"- Summaries: {metadata.SummaryCount}");
         builder.AppendLine($"- Ranked issues: {metadata.RankedCount}");
@@ -170,6 +172,7 @@ public sealed class FileReportWriter : IReportWriter
         builder.AppendLine($"    <li><strong>Output:</strong> {HtmlEncode(metadata.OutputDirectory)}</li>");
         builder.AppendLine($"    <li><strong>Analyse only:</strong> {metadata.AnalyseOnly}</li>");
         builder.AppendLine($"    <li><strong>Limit:</strong> {(metadata.Limit.HasValue ? metadata.Limit.Value : "none")}</li>");
+        builder.AppendLine($"    <li><strong>Detected tools/frameworks:</strong> {HtmlEncode(BuildDetectedToolsText(metadata.DetectedTools))}</li>");
         builder.AppendLine($"    <li><strong>Parsed issues:</strong> {metadata.ParsedIssueCount}</li>");
         builder.AppendLine($"    <li><strong>Summaries:</strong> {metadata.SummaryCount}</li>");
         builder.AppendLine($"    <li><strong>Ranked issues:</strong> {metadata.RankedCount}</li>");
@@ -325,6 +328,16 @@ public sealed class FileReportWriter : IReportWriter
         }
 
         return $"<strong>Fix</strong><br/><a href=\"{HtmlEncode(uri)}\" target=\"_blank\" rel=\"noopener noreferrer\">{encodedName}</a>";
+    }
+
+    private static string BuildDetectedToolsText(IReadOnlyList<string>? detectedTools)
+    {
+        if (detectedTools is null || detectedTools.Count == 0)
+        {
+            return "none";
+        }
+
+        return string.Join(", ", detectedTools);
     }
 
     private static string BuildFixDetailsHtml(

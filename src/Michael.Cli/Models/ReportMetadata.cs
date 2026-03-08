@@ -9,4 +9,5 @@ public sealed record ReportMetadata(
     int? Limit,
     int ParsedIssueCount,
     int SummaryCount,
-    int RankedCount);
+    int RankedCount,
+    IReadOnlyList<string>? DetectedTools = null);
