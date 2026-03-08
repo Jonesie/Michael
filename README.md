@@ -62,6 +62,8 @@ After a successful run, the output directory contains:
 - `summary.html` - preview-friendly interactive report with the same ranked data.
 - `fix-rank-<n>.<ext>` - one script per ranked issue (not generated when using `--analyse-only`), where `<ext>` is derived from the template filename (for example `.ps1` or `.sh`).
 
+Metadata now includes detected build tools/frameworks (for example `.NET SDK 10.0.100`, `.NET`, `C#`) inferred from the input build log, and this is shown both in CLI console output and in summary reports.
+
 If the output directory already contains files, Michael asks for confirmation before clearing them. Use `--clear-existing-output` to skip the prompt and clear automatically.
 
 ### Fix script template configuration

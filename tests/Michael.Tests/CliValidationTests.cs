@@ -66,6 +66,11 @@ public class CliValidationTests
             Assert.Equal(0, result.ExitCode);
             Assert.False(File.Exists(Path.Combine(outputDir, "fix-rank-1.ps1")));
             Assert.Contains("Fixes    : 0", result.Output, StringComparison.OrdinalIgnoreCase);
+            Assert.Contains("Detected : .NET SDK 9.0.114, .NET, C#", result.Output, StringComparison.OrdinalIgnoreCase);
+
+            var summaryPath = Path.Combine(outputDir, "summary.md");
+            var summary = File.ReadAllText(summaryPath);
+            Assert.Contains("- Detected tools/frameworks: .NET SDK 9.0.114, .NET, C#", summary, StringComparison.Ordinal);
         }
         finally
         {

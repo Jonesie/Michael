@@ -24,7 +24,8 @@ public class FileReportWriterTests
                 2,
                 10,
                 2,
-                2);
+                2,
+                new[] { ".NET SDK 10.0.100", ".NET", "C#" });
 
             var ranked = new[]
             {
@@ -49,6 +50,7 @@ public class FileReportWriterTests
             var html = File.ReadAllText(htmlPath);
             var expectedFixUri = $"vscode://file/{string.Join('/', Path.Combine(tempDir, "fix-rank-1.ps1").Replace('\\', '/').Split('/').Select(Uri.EscapeDataString))}";
             Assert.Contains("| Rank | Severity | Frequency | Details |", markdown, StringComparison.Ordinal);
+            Assert.Contains("- Detected tools/frameworks: .NET SDK 10.0.100, .NET, C#", markdown, StringComparison.Ordinal);
             Assert.Contains("<strong>Error Message</strong><br/>MSB4019: Missing targets", markdown, StringComparison.Ordinal);
             Assert.Contains("<summary><strong>Files</strong> (2)</summary>", markdown, StringComparison.Ordinal);
             Assert.Contains("<a href=\"vscode://file//tmp/a.csproj\" target=\"_blank\" rel=\"noopener noreferrer\">/tmp/a.csproj</a>", markdown, StringComparison.Ordinal);
@@ -57,6 +59,7 @@ public class FileReportWriterTests
             Assert.Contains("<a href=\"vscode://file//tmp/c.cs\" target=\"_blank\" rel=\"noopener noreferrer\">/tmp/c.cs</a>", markdown, StringComparison.Ordinal);
             Assert.Contains($"<strong>Fix</strong><br/><a href=\"{expectedFixUri}\" target=\"_blank\" rel=\"noopener noreferrer\">fix-rank-1.ps1</a>", markdown, StringComparison.Ordinal);
             Assert.Contains("<title>Michael Analysis Summary</title>", html, StringComparison.Ordinal);
+            Assert.Contains("<li><strong>Detected tools/frameworks:</strong> .NET SDK 10.0.100, .NET, C#</li>", html, StringComparison.Ordinal);
             Assert.Contains("<th>Details</th>", html, StringComparison.Ordinal);
             Assert.Contains("<details><summary><strong>Files</strong> (2)</summary><ul>", html, StringComparison.Ordinal);
             Assert.Contains("<li><a href=\"vscode://file//tmp/a.csproj\" target=\"_blank\" rel=\"noopener noreferrer\">/tmp/a.csproj</a></li>", html, StringComparison.Ordinal);

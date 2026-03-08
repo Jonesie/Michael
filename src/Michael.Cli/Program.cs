@@ -131,15 +131,16 @@ rootCommand.SetHandler((InvocationContext context) =>
         generateFixes,
         fixScriptTemplatePath!);
 
-    using var stream = input.OpenRead();
-    using var reader = new StreamReader(stream);
+    var logContent = File.ReadAllText(input.FullName);
 
     var parser = new DotnetBuildLogParser();
+    var toolDetector = new BuildToolDetector();
     var analyzer = new DeterministicIssueAnalyzer();
     var ranker = new DeterministicIssueRanker();
     var writer = new FileReportWriter();
 
-    var parsedIssues = parser.Parse(reader);
+    var parsedIssues = parser.Parse(logContent);
+    var detectedTools = toolDetector.Detect(logContent);
     var summaries = analyzer.Summarize(parsedIssues);
     var rankedIssues = ranker.Rank(summaries, limit);
 
@@ -163,10 +164,12 @@ rootCommand.SetHandler((InvocationContext context) =>
         Limit: limit,
         ParsedIssueCount: parsedIssues.Count,
         SummaryCount: summaries.Count,
-        RankedCount: rankedIssues.Count);
+        RankedCount: rankedIssues.Count,
+        DetectedTools: detectedTools);
 
     writer.Write(output.FullName, metadata, rankedIssues, fixScriptFileNamesByRank);
 
+    Console.WriteLine($"  Detected : {(detectedTools.Count == 0 ? "(none)" : string.Join(", ", detectedTools))}");
     Console.WriteLine($"  Parsed   : {parsedIssues.Count}");
     Console.WriteLine($"  Summaries: {summaries.Count}");
     Console.WriteLine($"  Ranked   : {rankedIssues.Count}");
