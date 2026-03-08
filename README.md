@@ -106,6 +106,62 @@ Example `michael.config.json`:
 - `--config <file>`: optional path to a CLI JSON config file.
 - `--clear-existing-output`: automatically clear existing files in the output directory before writing new results.
 
+## GitHub Action
+
+Michael is also available as a composite GitHub Action you can use directly in your workflows.
+
+### Basic usage
+
+```yaml
+- name: Build
+  run: dotnet build src/MyProject.sln > build.log 2>&1
+  continue-on-error: true
+
+- name: Analyse build log
+  uses: Jonesie/Michael@v1
+  id: michael
+  with:
+    input: build.log
+    output: michael-output
+    analyse-only: 'true'
+
+- name: Upload Michael results
+  if: always()
+  uses: actions/upload-artifact@v4
+  with:
+    name: michael-results
+    path: ${{ steps.michael.outputs.archive }}
+```
+
+### Action inputs
+
+| Input | Required | Default | Description |
+|---|---|---|---|
+| `input` | **yes** | | Path to the build log file. |
+| `output` | no | `michael-output` | Directory for report files. |
+| `analyse-only` | no | `false` | Set to `true` to skip fix-script generation. |
+| `limit` | no | | Maximum number of ranked issues. |
+| `config` | no | | Path to a `michael.config.json` file. |
+| `template-file` | no | | Path to a fix-script template file (overrides config). |
+| `clear-existing-output` | no | `true` | Clear existing output directory before writing. |
+| `version` | no | `latest` | Michael release tag to install (e.g. `v1.0.0`). |
+
+### Action outputs
+
+| Output | Description |
+|---|---|
+| `archive` | Path to a `tar.gz` archive of the output directory. |
+| `output-dir` | Path to the output directory. |
+| `issues-json` | Path to the `issues.json` file. |
+
+### Workflow summary
+
+The action automatically writes `summary.md` to `$GITHUB_STEP_SUMMARY` so the Michael analysis report appears in the workflow run summary page.
+
+### Fix scripts archive
+
+When fix-script generation is enabled (the default), all generated scripts and reports are bundled into a `michael-results.tar.gz` archive. Use the `archive` output with `actions/upload-artifact` to publish it.
+
 ## Development
 
 ### Prerequisites
