@@ -12,11 +12,12 @@ public sealed class DeterministicIssueRanker : IRanker
             return Array.Empty<RankedIssue>();
         }
 
-        var maxItems = limit.GetValueOrDefault(int.MaxValue);
-        if (maxItems <= 0)
+        var maxItems = limit switch
         {
-            return Array.Empty<RankedIssue>();
-        }
+            null => int.MaxValue,
+            < 1 => int.MaxValue,
+            _ => limit.Value
+        };
 
         return summaries
             .Select(summary => new

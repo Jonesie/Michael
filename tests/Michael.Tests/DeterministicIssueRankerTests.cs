@@ -46,15 +46,32 @@ public class DeterministicIssueRankerTests
     }
 
     [Fact]
-    public void Rank_WithNonPositiveLimit_ReturnsEmpty()
+    public void Rank_WithZeroLimit_ReturnsAllItems()
     {
         var ranker = new DeterministicIssueRanker();
         var summaries = new[]
         {
-            new IssueSummary("A", "A", new[] { "/tmp/A.cs" }, "error", "a", 1, 0.99)
+            new IssueSummary("A", "A", new[] { "/tmp/A.cs" }, "error", "a", 1, 0.99),
+            new IssueSummary("B", "B", new[] { "/tmp/B.cs" }, "warning", "b", 1, 0.75)
         };
 
-        Assert.Empty(ranker.Rank(summaries, 0));
-        Assert.Empty(ranker.Rank(summaries, -3));
+        var ranked = ranker.Rank(summaries, 0);
+
+        Assert.Equal(2, ranked.Count);
+    }
+
+    [Fact]
+    public void Rank_WithNegativeLimit_ReturnsAllItems()
+    {
+        var ranker = new DeterministicIssueRanker();
+        var summaries = new[]
+        {
+            new IssueSummary("A", "A", new[] { "/tmp/A.cs" }, "error", "a", 1, 0.99),
+            new IssueSummary("B", "B", new[] { "/tmp/B.cs" }, "warning", "b", 1, 0.75)
+        };
+
+        var ranked = ranker.Rank(summaries, -3);
+
+        Assert.Equal(2, ranked.Count);
     }
 }
