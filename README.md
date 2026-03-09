@@ -106,6 +106,41 @@ Example `michael.config.json`:
 - `--config <file>`: optional path to a CLI JSON config file.
 - `--clear-existing-output`: automatically clear existing files in the output directory before writing new results.
 
+## Samples
+
+- Warning-generating .NET console app for action testing:
+	- `samples/sample-warning-app`
+- Produce a build log for action input:
+	- `dotnet build samples/sample-warning-app/SampleWarningApp.csproj > samples/sample-warning-app/build.log 2>&1`
+- Use this log path with Michael CLI or GitHub Action:
+	- `samples/sample-warning-app/build.log`
+
+### Run sample in GitHub Actions
+
+Use the dispatch workflow at `.github/workflows/sample-action-dispatch.yml` to build the sample and run Michael end-to-end.
+
+```yaml
+name: Sample Action Dispatch
+
+on:
+  workflow_dispatch:
+
+jobs:
+  sample:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - run: dotnet build samples/sample-warning-app/SampleWarningApp.csproj > sample-build.log 2>&1
+      - uses: ./
+        with:
+          input: sample-build.log
+          output: michael-output
+          analyse-only: 'true'
+```
+
 ## GitHub Action
 
 Michael is also available as a composite GitHub Action you can use directly in your workflows.
