@@ -102,7 +102,7 @@ Example `michael.config.json`:
 - `--input <file>`: required path to build log.
 - `--output <dir>`: output directory (default: `out`).
 - `--analyse-only` / `--analysis-only`: run parse/analyze/rank/report flow without generating fix scripts.
-- `--limit <n>`: maximum number of ranked issues written (`n > 0`).
+- `--limit <n>`: maximum number of ranked issues written (default: `10`, use `0` for unlimited).
 - `--config <file>`: optional path to a CLI JSON config file.
 - `--clear-existing-output`: automatically clear existing files in the output directory before writing new results.
 
@@ -175,7 +175,7 @@ Michael is also available as a composite GitHub Action you can use directly in y
 | `input` | **yes** | | Path to the build log file. |
 | `output` | no | `michael-output` | Directory for report files. |
 | `analyse-only` | no | `false` | Set to `true` to skip fix-script generation. |
-| `limit` | no | | Maximum number of ranked issues. |
+| `limit` | no | | Maximum number of ranked issues (CLI default is `10`; use `0` for unlimited). |
 | `config` | no | | Path to a `michael.config.json` file. |
 | `template-file` | no | | Path to a fix-script template file (overrides config). |
 | `clear-existing-output` | no | `true` | Clear existing output directory before writing. |
