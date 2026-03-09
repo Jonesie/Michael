@@ -19,11 +19,6 @@ public sealed class DeterministicIssueRanker : IRanker
             _ => limit.Value
         };
 
-        if (maxItems < 0)
-        {
-            return Array.Empty<RankedIssue>();
-        }
-
         return summaries
             .Select(summary => new
             {

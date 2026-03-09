@@ -47,7 +47,7 @@
 - **Edge cases to handle:**
     - Large logs and repeated issue noise.
     - Existing output directory content (prompt to clear, or `--clear-existing-output`).
-    - Invalid option values (for example, negative limit).
+    - Non-positive limits should map to unlimited result output.
 
 ## 6) Technical Preferences
 - **Preferred language(s):** C#
@@ -68,7 +68,7 @@
 - `--input <file>`: required input build log path.
 - `--output <dir>`: output directory (default: `out`).
 - `--analyse-only` / `--analysis-only`: analyze and report only, skip fix scripts.
-- `--limit <n>`: max ranked issues (default: `10`; `0` means unlimited; negative values invalid).
+- `--limit <n>`: max ranked issues (default: `10`; values less than `1` mean unlimited).
 - `--config <file>`: optional JSON config path for template settings.
 - `--clear-existing-output`: clear existing output files without interactive prompt.
 

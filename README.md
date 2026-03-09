@@ -102,7 +102,7 @@ Example `michael.config.json`:
 - `--input <file>`: required path to build log.
 - `--output <dir>`: output directory (default: `out`).
 - `--analyse-only` / `--analysis-only`: run parse/analyze/rank/report flow without generating fix scripts.
-- `--limit <n>`: maximum number of ranked issues written (default: `10`, use `0` for unlimited).
+- `--limit <n>`: maximum number of ranked issues written (default: `10`; values less than `1` are treated as unlimited).
 - `--config <file>`: optional path to a CLI JSON config file.
 - `--clear-existing-output`: automatically clear existing files in the output directory before writing new results.
 

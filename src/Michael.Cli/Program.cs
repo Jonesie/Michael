@@ -25,7 +25,7 @@ analyseOnlyOption.AddAlias("--analysis-only");
 var limitOption = new Option<int?>(
     name: "--limit",
     getDefaultValue: static () => 10,
-    description: "Maximum number of issues to include in the report. Use 0 for unlimited.");
+    description: "Maximum number of issues to include in the report. Values less than 1 are treated as unlimited.");
 
 var configOption = new Option<FileInfo?>(
     name: "--config",
@@ -64,13 +64,6 @@ rootCommand.SetHandler((InvocationContext context) =>
     if (!input.Exists)
     {
         Console.Error.WriteLine($"Error: input file not found: {input.FullName}");
-        context.ExitCode = 1;
-        return;
-    }
-
-    if (limit is < 0)
-    {
-        Console.Error.WriteLine("Error: --limit must be 0 or greater.");
         context.ExitCode = 1;
         return;
     }
@@ -209,7 +202,7 @@ static void PrintBanner(
     Console.WriteLine($"  Output   : {outputDirectory}");
     if (limit.HasValue)
     {
-        var limitDisplay = limit.Value == 0 ? "unlimited" : limit.Value.ToString();
+        var limitDisplay = limit.Value < 1 ? "unlimited" : limit.Value.ToString();
         Console.WriteLine($"  Limit    : {limitDisplay}");
     }
     Console.WriteLine($"  Generate fixes: {generateFixes}");

@@ -40,7 +40,7 @@ public class CliValidationTests
     }
 
     [Fact]
-    public void Cli_RejectsNegativeLimit()
+    public void Cli_AllowsNegativeLimit_AsUnlimited()
     {
         var repoRoot = TestWorkspace.RepoRoot();
         var logPath = Path.Combine(repoRoot, "data", "sample-dotnet-small.log");
@@ -50,8 +50,8 @@ public class CliValidationTests
         {
             var result = RunCli(repoRoot, $"--input \"{logPath}\" --output \"{outputDir}\" --analyse-only --limit -1");
 
-            Assert.Equal(1, result.ExitCode);
-            Assert.Contains("--limit must be 0 or greater", result.Output, StringComparison.OrdinalIgnoreCase);
+            Assert.Equal(0, result.ExitCode);
+            Assert.Contains("Limit    : unlimited", result.Output, StringComparison.OrdinalIgnoreCase);
         }
         finally
         {
