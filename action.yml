@@ -1,0 +1,211 @@
+name: 'Michael – Build Log Analyser'
+description: >
+  Run Michael against a .NET build log to analyse issues, rank them by impact,
+  and optionally generate AI-assisted fix scripts.  Publishes an archive of the
+  output directory and writes the Markdown summary to the GitHub workflow summary.
+
+branding:
+  icon: 'search'
+  color: 'blue'
+
+inputs:
+  input:
+    description: 'Path to the build log file to analyse (required).'
+    required: true
+
+  output:
+    description: 'Directory to write report files. Defaults to "michael-output".'
+    required: false
+    default: 'michael-output'
+
+  analyse-only:
+    description: 'When "true", parse and analyse only – do not generate fix scripts.'
+    required: false
+    default: 'false'
+
+  limit:
+    description: 'Maximum number of ranked issues to include in the report.'
+    required: false
+    default: ''
+
+  config:
+    description: 'Path to a CLI JSON config file (michael.config.json).'
+    required: false
+    default: ''
+
+  template-file:
+    description: >
+      Path to a fix-script template file.  When provided, a temporary config
+      is generated that points to this template, overriding the default or
+      any file supplied via the "config" input.
+    required: false
+    default: ''
+
+  clear-existing-output:
+    description: 'When "true", automatically clear existing files in the output directory.'
+    required: false
+    default: 'true'
+
+  version:
+    description: >
+      Michael release tag to install (e.g. "v1.0.0").
+      Use "latest" to fetch the most recent release.
+    required: false
+    default: 'latest'
+
+outputs:
+  archive:
+    description: 'Path to the tar.gz archive containing the Michael output directory.'
+    value: ${{ steps.archive.outputs.archive-path }}
+
+  output-dir:
+    description: 'Path to the Michael output directory.'
+    value: ${{ steps.run.outputs.output-dir }}
+
+  issues-json:
+    description: 'Path to the issues.json file inside the output directory.'
+    value: ${{ steps.run.outputs.issues-json }}
+
+runs:
+  using: 'composite'
+  steps:
+    # ── Install Michael ──────────────────────────────────────────────
+    - name: Install Michael
+      id: install
+      shell: bash
+      env:
+        MICHAEL_VERSION: ${{ inputs.version }}
+      run: |
+        set -euo pipefail
+
+        repo="Jonesie/Michael"
+
+        if [[ "$MICHAEL_VERSION" == "latest" ]]; then
+          tag=$(curl -fsSL "https://api.github.com/repos/${repo}/releases/latest" \
+                | grep '"tag_name"' | head -1 | cut -d '"' -f4)
+        else
+          tag="$MICHAEL_VERSION"
+        fi
+
+        echo "Installing Michael ${tag} …"
+        asset="michael-${tag}-linux-x64.tar.gz"
+        url="https://github.com/${repo}/releases/download/${tag}/${asset}"
+
+        install_dir="${RUNNER_TEMP}/michael-install"
+        mkdir -p "$install_dir"
+
+        echo "Downloading ${url}"
+        curl -fsSL "$url" -o "${install_dir}/${asset}"
+        tar -xzf "${install_dir}/${asset}" -C "$install_dir"
+        chmod +x "${install_dir}/Michael"
+
+        echo "${install_dir}" >> "$GITHUB_PATH"
+        echo "michael-bin=${install_dir}/Michael" >> "$GITHUB_OUTPUT"
+
+    # ── Build config (optional template-file override) ───────────────
+    - name: Prepare config
+      id: config
+      shell: bash
+      env:
+        INPUT_CONFIG: ${{ inputs.config }}
+        INPUT_TEMPLATE_FILE: ${{ inputs.template-file }}
+      run: |
+        set -euo pipefail
+
+        if [[ -n "$INPUT_TEMPLATE_FILE" ]]; then
+          cfg="${RUNNER_TEMP}/michael-action-config.json"
+          abs_template="$(realpath "$INPUT_TEMPLATE_FILE")"
+          cat > "$cfg" <<EOF
+        {
+          "fixes": {
+            "scriptTemplateFile": "${abs_template}"
+          }
+        }
+        EOF
+          echo "config-path=${cfg}" >> "$GITHUB_OUTPUT"
+        elif [[ -n "$INPUT_CONFIG" ]]; then
+          echo "config-path=${INPUT_CONFIG}" >> "$GITHUB_OUTPUT"
+        else
+          echo "config-path=" >> "$GITHUB_OUTPUT"
+        fi
+
+    # ── Run Michael ──────────────────────────────────────────────────
+    - name: Run Michael
+      id: run
+      shell: bash
+      env:
+        MICHAEL_BIN: ${{ steps.install.outputs.michael-bin }}
+        INPUT_INPUT: ${{ inputs.input }}
+        INPUT_OUTPUT: ${{ inputs.output }}
+        INPUT_ANALYSE_ONLY: ${{ inputs.analyse-only }}
+        INPUT_LIMIT: ${{ inputs.limit }}
+        INPUT_CLEAR: ${{ inputs.clear-existing-output }}
+        CONFIG_PATH: ${{ steps.config.outputs.config-path }}
+      run: |
+        set -euo pipefail
+
+        args=()
+        args+=(--input "$INPUT_INPUT")
+        args+=(--output "$INPUT_OUTPUT")
+
+        if [[ "$INPUT_ANALYSE_ONLY" == "true" ]]; then
+          args+=(--analyse-only)
+        fi
+
+        if [[ -n "$INPUT_LIMIT" ]]; then
+          args+=(--limit "$INPUT_LIMIT")
+        fi
+
+        if [[ "$INPUT_CLEAR" == "true" ]]; then
+          args+=(--clear-existing-output)
+        fi
+
+        if [[ -n "$CONFIG_PATH" ]]; then
+          args+=(--config "$CONFIG_PATH")
+        fi
+
+        echo "::group::Michael output"
+        "$MICHAEL_BIN" "${args[@]}"
+        echo "::endgroup::"
+
+        echo "output-dir=${INPUT_OUTPUT}" >> "$GITHUB_OUTPUT"
+        echo "issues-json=${INPUT_OUTPUT}/issues.json" >> "$GITHUB_OUTPUT"
+
+    # ── Write summary ────────────────────────────────────────────────
+    - name: Write workflow summary
+      if: always()
+      shell: bash
+      env:
+        INPUT_OUTPUT: ${{ inputs.output }}
+      run: |
+        set -euo pipefail
+
+        summary_md="${INPUT_OUTPUT}/summary.md"
+        if [[ -f "$summary_md" ]]; then
+          cat "$summary_md" >> "$GITHUB_STEP_SUMMARY"
+          echo "✅ Michael summary written to workflow summary."
+        else
+          echo "⚠️ summary.md not found in ${INPUT_OUTPUT} – skipping workflow summary."
+        fi
+
+    # ── Archive output ───────────────────────────────────────────────
+    - name: Archive Michael output
+      id: archive
+      if: always()
+      shell: bash
+      env:
+        INPUT_OUTPUT: ${{ inputs.output }}
+      run: |
+        set -euo pipefail
+
+        archive_name="michael-results.tar.gz"
+        archive_path="${RUNNER_TEMP}/${archive_name}"
+
+        if [[ -d "$INPUT_OUTPUT" ]]; then
+          tar -czf "$archive_path" -C "$INPUT_OUTPUT" .
+          echo "archive-path=${archive_path}" >> "$GITHUB_OUTPUT"
+          echo "📦 Archive created at ${archive_path}"
+        else
+          echo "⚠️ Output directory ${INPUT_OUTPUT} does not exist – skipping archive."
+          echo "archive-path=" >> "$GITHUB_OUTPUT"
+        fi
