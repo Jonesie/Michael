@@ -34,7 +34,7 @@ Include:
 
 Push-Location $RepoPath
 try {
-    copilot -i "agent --prompt $Prompt"
+    copilot --model "claude-sonnet-4.6" -i "agent --prompt $Prompt"
 }
 finally {
     Pop-Location

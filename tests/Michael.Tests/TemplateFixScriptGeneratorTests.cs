@@ -452,7 +452,7 @@ copilot -i "agent --prompt $Prompt"
             var script = File.ReadAllText(scriptPath);
 
             Assert.Contains("# Target files: 21", script, StringComparison.Ordinal);
-            Assert.Contains("Target file list is too long (21 files). See fix-rank-1-files.txt.", script, StringComparison.Ordinal);
+            Assert.Contains("Target file list is too long (21 lines). See fix-rank-1-files.txt.", script, StringComparison.Ordinal);
             Assert.DoesNotContain($"- {Path.Combine(tempDir, "File01.cs")}", script, StringComparison.Ordinal);
 
             var listFilePath = Path.Combine(tempDir, "fix-rank-1-files.txt");
@@ -464,6 +464,59 @@ copilot -i "agent --prompt $Prompt"
             Assert.Contains($"- {Path.Combine(tempDir, "File01.cs")}", listFileContent, StringComparison.Ordinal);
             Assert.Contains($"- {Path.Combine(tempDir, "File01.cs")}(1,1)", listFileContent, StringComparison.Ordinal);
             Assert.Contains("Original log locations (line/column when available):", listFileContent, StringComparison.Ordinal);
+        }
+        finally
+        {
+            if (Directory.Exists(tempDir))
+            {
+                Directory.Delete(tempDir, recursive: true);
+            }
+        }
+    }
+
+    [Fact]
+    public void Generate_WithMoreThanTwentyLocationLinesAcrossSameFile_WritesExternalFileList()
+    {
+        var tempDir = Path.Combine(Path.GetTempPath(), $"michael-fixes-long-lines-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(tempDir);
+
+        try
+        {
+            var generator = new TemplateFixScriptGenerator();
+            var sourcePath = Path.Combine(tempDir, "OnlyFile.cs");
+            var locations = Enumerable.Range(1, 21)
+                .Select(index => $"{sourcePath}({index},1)")
+                .ToArray();
+
+            var rankedIssues = new[]
+            {
+                new RankedIssue(
+                    Rank: 1,
+                    Key: "LONGLINES",
+                    Message: "Many locations for one file",
+                    Files: locations,
+                    Severity: "warning",
+                    Frequency: 1,
+                    Confidence: 0.90,
+                    Score: 200,
+                    Explanation: "Long location list sample")
+            };
+
+            var filesByRank = generator.Generate(tempDir, rankedIssues);
+            var scriptPath = Path.Combine(tempDir, filesByRank[1]);
+            var script = File.ReadAllText(scriptPath);
+
+            Assert.Contains("# Target files: 1", script, StringComparison.Ordinal);
+            Assert.Contains("Target file list is too long (21 lines). See fix-rank-1-files.txt.", script, StringComparison.Ordinal);
+            Assert.DoesNotContain($"- {sourcePath}(1,1)", script, StringComparison.Ordinal);
+
+            var listFilePath = Path.Combine(tempDir, "fix-rank-1-files.txt");
+            Assert.True(File.Exists(listFilePath));
+
+            var listFileContent = File.ReadAllText(listFilePath);
+            Assert.Contains("# Target files: 1", listFileContent, StringComparison.Ordinal);
+            Assert.Contains($"- {sourcePath}(1,1)", listFileContent, StringComparison.Ordinal);
+            Assert.Contains($"- {sourcePath}(21,1)", listFileContent, StringComparison.Ordinal);
         }
         finally
         {
