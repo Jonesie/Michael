@@ -76,6 +76,7 @@ If the output directory already contains files, Michael asks for confirmation be
 	- Bash: `templates/fix-script.sh.template`
 - Script templates support placeholders: `[[issueDetails]]`, `[[fileList]]`, and `[[samples]]` (plus `[[rank]]`, `[[targetFileCount]]`).
 - The Copilot command line is hardcoded in each template (`$Prompt` in PowerShell, `$prompt` in Bash).
+- When a ranked issue has more than `20` target files, `[[fileList]]` is replaced with a reference to `fix-rank-<n>-files.txt`, and the full list is written to that file.
 
 Example `michael.config.json`:
 

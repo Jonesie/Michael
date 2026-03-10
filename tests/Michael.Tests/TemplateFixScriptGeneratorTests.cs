@@ -420,6 +420,60 @@ copilot -i "agent --prompt $Prompt"
         }
     }
 
+    [Fact]
+    public void Generate_WithMoreThanTwentyTargetFiles_WritesExternalFileListAndReferencesIt()
+    {
+        var tempDir = Path.Combine(Path.GetTempPath(), $"michael-fixes-long-list-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(tempDir);
+
+        try
+        {
+            var generator = new TemplateFixScriptGenerator();
+            var locations = Enumerable.Range(1, 21)
+                .Select(index => Path.Combine(tempDir, $"File{index:00}.cs") + $"({index},1)")
+                .ToArray();
+
+            var rankedIssues = new[]
+            {
+                new RankedIssue(
+                    Rank: 1,
+                    Key: "LONGFILELIST",
+                    Message: "Many files",
+                    Files: locations,
+                    Severity: "warning",
+                    Frequency: 1,
+                    Confidence: 0.90,
+                    Score: 200,
+                    Explanation: "Long file list sample")
+            };
+
+            var filesByRank = generator.Generate(tempDir, rankedIssues);
+            var scriptPath = Path.Combine(tempDir, filesByRank[1]);
+            var script = File.ReadAllText(scriptPath);
+
+            Assert.Contains("# Target files: 21", script, StringComparison.Ordinal);
+            Assert.Contains("Target file list is too long (21 files). See fix-rank-1-files.txt.", script, StringComparison.Ordinal);
+            Assert.DoesNotContain($"- {Path.Combine(tempDir, "File01.cs")}", script, StringComparison.Ordinal);
+
+            var listFilePath = Path.Combine(tempDir, "fix-rank-1-files.txt");
+            Assert.True(File.Exists(listFilePath));
+
+            var listFileContent = File.ReadAllText(listFilePath);
+            Assert.Contains("# Michael generated file list", listFileContent, StringComparison.Ordinal);
+            Assert.Contains("# Target files: 21", listFileContent, StringComparison.Ordinal);
+            Assert.Contains($"- {Path.Combine(tempDir, "File01.cs")}", listFileContent, StringComparison.Ordinal);
+            Assert.Contains($"- {Path.Combine(tempDir, "File01.cs")}(1,1)", listFileContent, StringComparison.Ordinal);
+            Assert.Contains("Original log locations (line/column when available):", listFileContent, StringComparison.Ordinal);
+        }
+        finally
+        {
+            if (Directory.Exists(tempDir))
+            {
+                Directory.Delete(tempDir, recursive: true);
+            }
+        }
+    }
+
     private static int CountOccurrences(string text, string value)
     {
         var count = 0;
