@@ -10,6 +10,7 @@ public sealed partial class TemplateFixScriptGenerator : IFixScriptGenerator
 {
     private const int MaxSamplesPerIssue = 2;
     private const int ContextLineRadius = 2;
+    private const int MaxInlineFileListEntries = 20;
     private const string DefaultScriptTemplate = """
 # Michael generated fix script
 # Rank: [[rank]]
@@ -75,8 +76,9 @@ finally {
             var fileName = $"fix-rank-{issue.Rank}{resolvedScriptExtension}";
             var fullPath = Path.Combine(outputDirectory, fileName);
             var targetLocations = BuildTargetLocations(issue.Files);
+            var originalLocations = BuildOriginalLocations(issue.Files);
             var issueDetails = BuildIssueDetails(issue);
-            var fileList = BuildFileList(targetLocations);
+            var fileList = BuildFileList(outputDirectory, issue.Rank, targetLocations, originalLocations);
             var samples = BuildSamplesSection(issue.Files);
             var script = BuildScript(
                 issue.Rank,
@@ -162,7 +164,11 @@ finally {
         return builder.ToString().TrimEnd();
     }
 
-    private static string BuildFileList(IReadOnlyList<string> targetLocations)
+    private static string BuildFileList(
+        string outputDirectory,
+        int rank,
+        IReadOnlyList<string> targetLocations,
+        IReadOnlyList<string> originalLocations)
     {
         var builder = new StringBuilder();
 
@@ -172,9 +178,49 @@ finally {
             return builder.ToString();
         }
 
+        if (targetLocations.Count > MaxInlineFileListEntries)
+        {
+            var longListFileName = $"fix-rank-{rank}-files.txt";
+            var longListPath = Path.Combine(outputDirectory, longListFileName);
+            var longListContent = BuildLongFileListContent(targetLocations, originalLocations);
+            File.WriteAllText(longListPath, longListContent);
+
+            builder.Append($"- Target file list is too long ({targetLocations.Count} files). See {longListFileName}.");
+            return builder.ToString();
+        }
+
         foreach (var location in targetLocations)
         {
             builder.AppendLine($"- {location}");
+        }
+
+        return builder.ToString().TrimEnd();
+    }
+
+    private static string BuildLongFileListContent(
+        IReadOnlyList<string> targetLocations,
+        IReadOnlyList<string> originalLocations)
+    {
+        var builder = new StringBuilder();
+        builder.AppendLine("# Michael generated file list");
+        builder.AppendLine($"# Target files: {targetLocations.Count}");
+        builder.AppendLine();
+        builder.AppendLine("Target files (unique):");
+
+        foreach (var location in targetLocations)
+        {
+            builder.AppendLine($"- {location}");
+        }
+
+        if (originalLocations.Count > 0)
+        {
+            builder.AppendLine();
+            builder.AppendLine("Original log locations (line/column when available):");
+
+            foreach (var location in originalLocations)
+            {
+                builder.AppendLine($"- {location}");
+            }
         }
 
         return builder.ToString().TrimEnd();
@@ -276,6 +322,16 @@ finally {
             .Where(path => !string.IsNullOrWhiteSpace(path))
             .Distinct(StringComparer.Ordinal)
             .OrderBy(path => path, StringComparer.Ordinal)
+            .ToArray();
+    }
+
+    private static IReadOnlyList<string> BuildOriginalLocations(IReadOnlyList<string> locations)
+    {
+        return locations
+            .Where(location => !string.IsNullOrWhiteSpace(location) && location != "(no-file)")
+            .Select(location => location.Trim())
+            .Distinct(StringComparer.Ordinal)
+            .OrderBy(location => location, StringComparer.Ordinal)
             .ToArray();
     }
 
