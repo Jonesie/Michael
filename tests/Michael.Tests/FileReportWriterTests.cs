@@ -20,7 +20,7 @@ public class FileReportWriterTests
                 "1.0.0-test",
                 "input.log",
                 tempDir,
-                true,
+                false,
                 2,
                 10,
                 2,
@@ -75,6 +75,13 @@ public class FileReportWriterTests
             var expectedZipUri = $"vscode://file/{string.Join('/', Path.Combine(tempDir, "fixes.zip").Replace('\\', '/').Split('/').Select(Uri.EscapeDataString))}";
             Assert.Contains($"- Fixes archive: <a href=\"{expectedZipUri}\" target=\"_blank\" rel=\"noopener noreferrer\">fixes.zip</a>", markdown, StringComparison.Ordinal);
             Assert.Contains($"<li><strong>Fixes archive:</strong> <a href=\"{expectedZipUri}\" target=\"_blank\" rel=\"noopener noreferrer\">fixes.zip</a></li>", html, StringComparison.Ordinal);
+            Assert.DoesNotContain("<strong>Fix</strong>", markdown, StringComparison.Ordinal);
+            Assert.DoesNotContain("<strong>Fix</strong>", html, StringComparison.Ordinal);
+
+            writer.Write(tempDir, metadata with { AnalyseOnly = true }, ranked);
+
+            markdown = File.ReadAllText(summaryPath);
+            html = File.ReadAllText(htmlPath);
             Assert.DoesNotContain("<strong>Fix</strong>", markdown, StringComparison.Ordinal);
             Assert.DoesNotContain("<strong>Fix</strong>", html, StringComparison.Ordinal);
 

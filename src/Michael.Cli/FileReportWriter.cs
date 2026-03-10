@@ -78,7 +78,7 @@ public sealed class FileReportWriter : IReportWriter
                 : BuildFilesDetailsMarkdown(issue.Files);
 
             var details = $"<strong>Error Message</strong><br/>{EscapePipe(Truncate(issue.Message, 90))}<br/>{filesDetails}";
-            if (string.IsNullOrWhiteSpace(metadata.FixesZipFile))
+            if (ShouldIncludeFixDetails(metadata, issue.Rank, fixScriptFileNamesByRank))
             {
                 var fixDetails = BuildFixDetailsMarkdown(issue.Rank, metadata.OutputDirectory, fixScriptFileNamesByRank);
                 details += $"<br/>{fixDetails}";
@@ -211,7 +211,7 @@ public sealed class FileReportWriter : IReportWriter
                     : BuildFilesDetailsHtml(issue.Files);
 
                 var details = $"<strong>Error Message</strong><br/>{HtmlEncode(Truncate(issue.Message, 140))}<br/>{filesDetails}";
-                if (string.IsNullOrWhiteSpace(metadata.FixesZipFile))
+                if (ShouldIncludeFixDetails(metadata, issue.Rank, fixScriptFileNamesByRank))
                 {
                     var fixDetails = BuildFixDetailsHtml(issue.Rank, metadata.OutputDirectory, fixScriptFileNamesByRank);
                     details += $"<br/>{fixDetails}";
@@ -368,6 +368,19 @@ public sealed class FileReportWriter : IReportWriter
         }
 
         return string.Join(", ", detectedTools);
+    }
+
+    private static bool ShouldIncludeFixDetails(
+        ReportMetadata metadata,
+        int rank,
+        IReadOnlyDictionary<int, string>? fixScriptFileNamesByRank)
+    {
+        if (metadata.AnalyseOnly || !string.IsNullOrWhiteSpace(metadata.FixesZipFile))
+        {
+            return false;
+        }
+
+        return fixScriptFileNamesByRank is not null && fixScriptFileNamesByRank.ContainsKey(rank);
     }
 
     private static string BuildFixDetailsHtml(
