@@ -34,4 +34,4 @@ MICHAEL_PROMPT
 pushd "$repo_path" >/dev/null
 trap 'popd >/dev/null' EXIT
 
-copilot -i "agent --prompt $prompt"
+copilot --model "claude-sonnet-4.6" -i "agent --prompt $prompt"

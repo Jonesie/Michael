@@ -77,8 +77,9 @@ finally {
             var fullPath = Path.Combine(outputDirectory, fileName);
             var targetLocations = BuildTargetLocations(issue.Files);
             var originalLocations = BuildOriginalLocations(issue.Files);
+            var allLocationLines = BuildAllLocationLines(issue.Files);
             var issueDetails = BuildIssueDetails(issue);
-            var fileList = BuildFileList(outputDirectory, issue.Rank, targetLocations, originalLocations);
+            var fileList = BuildFileList(outputDirectory, issue.Rank, targetLocations, originalLocations, allLocationLines);
             var samples = BuildSamplesSection(issue.Files);
             var script = BuildScript(
                 issue.Rank,
@@ -168,7 +169,8 @@ finally {
         string outputDirectory,
         int rank,
         IReadOnlyList<string> targetLocations,
-        IReadOnlyList<string> originalLocations)
+        IReadOnlyList<string> originalLocations,
+        IReadOnlyList<string> allLocationLines)
     {
         var builder = new StringBuilder();
 
@@ -178,18 +180,18 @@ finally {
             return builder.ToString();
         }
 
-        if (targetLocations.Count > MaxInlineFileListEntries)
+        if (allLocationLines.Count > MaxInlineFileListEntries)
         {
             var longListFileName = $"fix-rank-{rank}-files.txt";
             var longListPath = Path.Combine(outputDirectory, longListFileName);
             var longListContent = BuildLongFileListContent(targetLocations, originalLocations);
             File.WriteAllText(longListPath, longListContent);
 
-            builder.Append($"- Target file list is too long ({targetLocations.Count} files). See {longListFileName}.");
+            builder.Append($"- Target file list is too long ({allLocationLines.Count} lines). See {longListFileName}.");
             return builder.ToString();
         }
 
-        foreach (var location in targetLocations)
+        foreach (var location in allLocationLines)
         {
             builder.AppendLine($"- {location}");
         }
@@ -332,6 +334,14 @@ finally {
             .Select(location => location.Trim())
             .Distinct(StringComparer.Ordinal)
             .OrderBy(location => location, StringComparer.Ordinal)
+            .ToArray();
+    }
+
+    private static IReadOnlyList<string> BuildAllLocationLines(IReadOnlyList<string> locations)
+    {
+        return locations
+            .Where(location => !string.IsNullOrWhiteSpace(location) && location != "(no-file)")
+            .Select(location => location.Trim())
             .ToArray();
     }
 

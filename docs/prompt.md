@@ -71,6 +71,7 @@
 - `--limit <n>`: max ranked issues (default: `10`; values less than `1` mean unlimited).
 - `--config <file>`: optional JSON config path for template settings.
 - `--clear-existing-output`: clear existing output files without interactive prompt.
+- `--zip`: create `fixes.zip` containing generated fix files (no-op in analyse-only mode).
 
 ## 9) Deliverables From AI
 - [X] Folder structure

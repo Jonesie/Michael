@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.IO.Compression;
 
 namespace Michael.Tests;
 
@@ -105,6 +106,65 @@ public class CliValidationTests
             var summaryPath = Path.Combine(outputDir, "summary.md");
             var summary = File.ReadAllText(summaryPath);
             Assert.Contains("- Detected tools/frameworks: .NET SDK 9.0.114, .NET, C#", summary, StringComparison.Ordinal);
+        }
+        finally
+        {
+            if (Directory.Exists(outputDir))
+            {
+                Directory.Delete(outputDir, recursive: true);
+            }
+        }
+    }
+
+    [Fact]
+    public void Cli_WithZipOption_GeneratesFixesZip_WhenFixesAreGenerated()
+    {
+        var repoRoot = TestWorkspace.RepoRoot();
+        var logPath = Path.Combine(repoRoot, "data", "sample-dotnet-small.log");
+        var outputDir = Path.Combine(Path.GetTempPath(), $"michael-cli-zip-{Guid.NewGuid():N}");
+
+        try
+        {
+            var result = RunCli(repoRoot, $"--input \"{logPath}\" --output \"{outputDir}\" --zip");
+
+            Assert.Equal(0, result.ExitCode);
+            var zipPath = Path.Combine(outputDir, "fixes.zip");
+            Assert.True(File.Exists(zipPath));
+            Assert.False(File.Exists(Path.Combine(outputDir, "fix-rank-1.ps1")));
+            Assert.False(File.Exists(Path.Combine(outputDir, "fix-rank-2.ps1")));
+
+            using var archive = ZipFile.OpenRead(zipPath);
+            Assert.Contains(archive.Entries, entry => string.Equals(entry.FullName, "fix-rank-1.ps1", StringComparison.Ordinal));
+            Assert.Contains(archive.Entries, entry => string.Equals(entry.FullName, "fix-rank-2.ps1", StringComparison.Ordinal));
+            Assert.Contains("fixes.zip", result.Output, StringComparison.OrdinalIgnoreCase);
+
+            var summaryPath = Path.Combine(outputDir, "summary.md");
+            var summary = File.ReadAllText(summaryPath);
+            Assert.Contains("- Fixes archive:", summary, StringComparison.Ordinal);
+            Assert.DoesNotContain("<strong>Fix</strong>", summary, StringComparison.Ordinal);
+        }
+        finally
+        {
+            if (Directory.Exists(outputDir))
+            {
+                Directory.Delete(outputDir, recursive: true);
+            }
+        }
+    }
+
+    [Fact]
+    public void Cli_WithZipOption_InAnalyseOnlyMode_DoesNotCreateFixesZip()
+    {
+        var repoRoot = TestWorkspace.RepoRoot();
+        var logPath = Path.Combine(repoRoot, "data", "sample-dotnet-small.log");
+        var outputDir = Path.Combine(Path.GetTempPath(), $"michael-cli-zip-analysis-only-{Guid.NewGuid():N}");
+
+        try
+        {
+            var result = RunCli(repoRoot, $"--input \"{logPath}\" --output \"{outputDir}\" --analyse-only --zip");
+
+            Assert.Equal(0, result.ExitCode);
+            Assert.False(File.Exists(Path.Combine(outputDir, "fixes.zip")));
         }
         finally
         {
