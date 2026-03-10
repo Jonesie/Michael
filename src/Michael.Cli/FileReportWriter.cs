@@ -54,6 +54,10 @@ public sealed class FileReportWriter : IReportWriter
         builder.AppendLine($"- Parsed issues: {metadata.ParsedIssueCount}");
         builder.AppendLine($"- Summaries: {metadata.SummaryCount}");
         builder.AppendLine($"- Ranked issues: {metadata.RankedCount}");
+        if (!string.IsNullOrWhiteSpace(metadata.FixesZipFile))
+        {
+            builder.AppendLine($"- Fixes archive: {BuildFixesZipLinkMarkdown(metadata.OutputDirectory, metadata.FixesZipFile)}");
+        }
         builder.AppendLine();
         builder.AppendLine("## Ranked Issues");
         builder.AppendLine();
@@ -73,9 +77,13 @@ public sealed class FileReportWriter : IReportWriter
                 ? "<details><summary><strong>Files</strong></summary>(no-file)</details>"
                 : BuildFilesDetailsMarkdown(issue.Files);
 
-            var fixDetails = BuildFixDetailsMarkdown(issue.Rank, metadata.OutputDirectory, fixScriptFileNamesByRank);
+            var details = $"<strong>Error Message</strong><br/>{EscapePipe(Truncate(issue.Message, 90))}<br/>{filesDetails}";
+            if (string.IsNullOrWhiteSpace(metadata.FixesZipFile))
+            {
+                var fixDetails = BuildFixDetailsMarkdown(issue.Rank, metadata.OutputDirectory, fixScriptFileNamesByRank);
+                details += $"<br/>{fixDetails}";
+            }
 
-            var details = $"<strong>Error Message</strong><br/>{EscapePipe(Truncate(issue.Message, 90))}<br/>{filesDetails}<br/>{fixDetails}";
             builder.AppendLine($"| {issue.Rank} | {issue.Severity} | {issue.Frequency} | {details} |");
         }
 
@@ -176,6 +184,10 @@ public sealed class FileReportWriter : IReportWriter
         builder.AppendLine($"    <li><strong>Parsed issues:</strong> {metadata.ParsedIssueCount}</li>");
         builder.AppendLine($"    <li><strong>Summaries:</strong> {metadata.SummaryCount}</li>");
         builder.AppendLine($"    <li><strong>Ranked issues:</strong> {metadata.RankedCount}</li>");
+        if (!string.IsNullOrWhiteSpace(metadata.FixesZipFile))
+        {
+            builder.AppendLine($"    <li><strong>Fixes archive:</strong> {BuildFixesZipLinkHtml(metadata.OutputDirectory, metadata.FixesZipFile)}</li>");
+        }
         builder.AppendLine("  </ul>");
 
         builder.AppendLine("  <h2>Ranked Issues</h2>");
@@ -198,8 +210,12 @@ public sealed class FileReportWriter : IReportWriter
                     ? "<details><summary><strong>Files</strong></summary><div>(no-file)</div></details>"
                     : BuildFilesDetailsHtml(issue.Files);
 
-                var fixDetails = BuildFixDetailsHtml(issue.Rank, metadata.OutputDirectory, fixScriptFileNamesByRank);
-                var details = $"<strong>Error Message</strong><br/>{HtmlEncode(Truncate(issue.Message, 140))}<br/>{filesDetails}<br/>{fixDetails}";
+                var details = $"<strong>Error Message</strong><br/>{HtmlEncode(Truncate(issue.Message, 140))}<br/>{filesDetails}";
+                if (string.IsNullOrWhiteSpace(metadata.FixesZipFile))
+                {
+                    var fixDetails = BuildFixDetailsHtml(issue.Rank, metadata.OutputDirectory, fixScriptFileNamesByRank);
+                    details += $"<br/>{fixDetails}";
+                }
 
                 builder.AppendLine("        <tr>");
                 builder.AppendLine($"          <td class=\"num\">{issue.Rank}</td>");
@@ -330,6 +346,20 @@ public sealed class FileReportWriter : IReportWriter
         return $"<strong>Fix</strong><br/><a href=\"{HtmlEncode(uri)}\" target=\"_blank\" rel=\"noopener noreferrer\">{encodedName}</a>";
     }
 
+    private static string BuildFixesZipLinkMarkdown(string outputDirectory, string fixesZipFile)
+    {
+        var fullPath = Path.Combine(outputDirectory, fixesZipFile);
+        var uri = BuildFileUri(fullPath);
+        var encodedName = HtmlEncode(fixesZipFile);
+
+        if (string.IsNullOrEmpty(uri))
+        {
+            return encodedName;
+        }
+
+        return $"<a href=\"{HtmlEncode(uri)}\" target=\"_blank\" rel=\"noopener noreferrer\">{encodedName}</a>";
+    }
+
     private static string BuildDetectedToolsText(IReadOnlyList<string>? detectedTools)
     {
         if (detectedTools is null || detectedTools.Count == 0)
@@ -360,5 +390,10 @@ public sealed class FileReportWriter : IReportWriter
         }
 
         return $"<strong>Fix</strong><br/><a href=\"{HtmlEncode(uri)}\" target=\"_blank\" rel=\"noopener noreferrer\">{encodedName}</a>";
+    }
+
+    private static string BuildFixesZipLinkHtml(string outputDirectory, string fixesZipFile)
+    {
+        return BuildFixesZipLinkMarkdown(outputDirectory, fixesZipFile);
     }
 }

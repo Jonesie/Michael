@@ -150,6 +150,8 @@ runs:
 
         if [[ "$INPUT_ANALYSE_ONLY" == "true" ]]; then
           args+=(--analyse-only)
+        else
+          args+=(--zip)
         fi
 
         if [[ -n "$INPUT_LIMIT" ]]; then

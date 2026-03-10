@@ -67,6 +67,17 @@ public class FileReportWriterTests
             Assert.DoesNotContain("<details open", markdown, StringComparison.OrdinalIgnoreCase);
             Assert.DoesNotContain("<details open", html, StringComparison.OrdinalIgnoreCase);
 
+            var zipMetadata = metadata with { FixesZipFile = "fixes.zip" };
+            writer.Write(tempDir, zipMetadata, ranked, fixFileNamesByRank);
+
+            markdown = File.ReadAllText(summaryPath);
+            html = File.ReadAllText(htmlPath);
+            var expectedZipUri = $"vscode://file/{string.Join('/', Path.Combine(tempDir, "fixes.zip").Replace('\\', '/').Split('/').Select(Uri.EscapeDataString))}";
+            Assert.Contains($"- Fixes archive: <a href=\"{expectedZipUri}\" target=\"_blank\" rel=\"noopener noreferrer\">fixes.zip</a>", markdown, StringComparison.Ordinal);
+            Assert.Contains($"<li><strong>Fixes archive:</strong> <a href=\"{expectedZipUri}\" target=\"_blank\" rel=\"noopener noreferrer\">fixes.zip</a></li>", html, StringComparison.Ordinal);
+            Assert.DoesNotContain("<strong>Fix</strong>", markdown, StringComparison.Ordinal);
+            Assert.DoesNotContain("<strong>Fix</strong>", html, StringComparison.Ordinal);
+
             writer.Write(tempDir, metadata with { RankedCount = 1 },
                 new[]
                 {

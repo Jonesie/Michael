@@ -1,5 +1,6 @@
 ﻿using System.CommandLine;
 using System.CommandLine.Invocation;
+using System.IO.Compression;
 using System.Reflection;
 using System.Text.Json;
 using Michael.Analysis;
@@ -35,6 +36,10 @@ var clearExistingOutputOption = new Option<bool>(
     name: "--clear-existing-output",
     description: "Automatically clear existing files in the output directory before writing reports.");
 
+var zipOption = new Option<bool>(
+    name: "--zip",
+    description: "Create fixes.zip in the output directory containing generated fix files.");
+
 var rootCommand = new RootCommand("Michael – build log analyser and issue reporter.")
 {
     inputOption,
@@ -43,6 +48,7 @@ var rootCommand = new RootCommand("Michael – build log analyser and issue repo
     limitOption,
     configOption,
     clearExistingOutputOption,
+    zipOption,
 };
 
 rootCommand.SetHandler((InvocationContext context) =>
@@ -53,6 +59,7 @@ rootCommand.SetHandler((InvocationContext context) =>
     var limit       = context.ParseResult.GetValueForOption(limitOption);
     var configPath  = context.ParseResult.GetValueForOption(configOption);
     var clearExistingOutput = context.ParseResult.GetValueForOption(clearExistingOutputOption);
+    var createZip = context.ParseResult.GetValueForOption(zipOption);
 
     if (input is null)
     {
@@ -139,14 +146,50 @@ rootCommand.SetHandler((InvocationContext context) =>
     var rankedIssues = ranker.Rank(summaries, limit);
 
     IReadOnlyDictionary<int, string> fixScriptFileNamesByRank = new Dictionary<int, string>();
-    if (generateFixes)
+    string? zipFilePath = null;
+    string? tempFixOutputDirectory = null;
+
+    try
     {
-        var fixScriptGenerator = new TemplateFixScriptGenerator();
-        fixScriptFileNamesByRank = fixScriptGenerator.Generate(
-            output.FullName,
-            rankedIssues,
-            fixScriptTemplateText!,
-            fixScriptFileExtension);
+        if (generateFixes)
+        {
+            var fixScriptGenerator = new TemplateFixScriptGenerator();
+            var fixOutputDirectory = output.FullName;
+
+            if (createZip)
+            {
+                tempFixOutputDirectory = Path.Combine(Path.GetTempPath(), $"michael-fixes-{Guid.NewGuid():N}");
+                Directory.CreateDirectory(tempFixOutputDirectory);
+                fixOutputDirectory = tempFixOutputDirectory;
+            }
+
+            fixScriptFileNamesByRank = fixScriptGenerator.Generate(
+                fixOutputDirectory,
+                rankedIssues,
+                fixScriptTemplateText!,
+                fixScriptFileExtension);
+        }
+
+        if (createZip && generateFixes)
+        {
+            var candidateZipFilePath = Path.Combine(output.FullName, "fixes.zip");
+
+            if (!TryCreateFixesZip(tempFixOutputDirectory ?? output.FullName, candidateZipFilePath, out var zipError))
+            {
+                Console.Error.WriteLine($"Error: {zipError}");
+                context.ExitCode = 1;
+                return;
+            }
+
+            zipFilePath = File.Exists(candidateZipFilePath) ? candidateZipFilePath : null;
+        }
+    }
+    finally
+    {
+        if (tempFixOutputDirectory is not null && Directory.Exists(tempFixOutputDirectory))
+        {
+            Directory.Delete(tempFixOutputDirectory, recursive: true);
+        }
     }
 
     var metadata = new ReportMetadata(
@@ -159,7 +202,8 @@ rootCommand.SetHandler((InvocationContext context) =>
         ParsedIssueCount: parsedIssues.Count,
         SummaryCount: summaries.Count,
         RankedCount: rankedIssues.Count,
-        DetectedTools: detectedTools);
+        DetectedTools: detectedTools,
+        FixesZipFile: zipFilePath is null ? null : Path.GetFileName(zipFilePath));
 
     writer.Write(output.FullName, metadata, rankedIssues, fixScriptFileNamesByRank);
 
@@ -171,6 +215,10 @@ rootCommand.SetHandler((InvocationContext context) =>
     Console.WriteLine($"  Wrote    : {Path.Combine(output.FullName, "issues.json")}");
     Console.WriteLine($"  Wrote    : {Path.Combine(output.FullName, "summary.md")}");
     Console.WriteLine($"  Wrote    : {Path.Combine(output.FullName, "summary.html")}");
+    if (zipFilePath is not null)
+    {
+        Console.WriteLine($"  Wrote    : {zipFilePath}");
+    }
 });
 
 return await rootCommand.InvokeAsync(args);
@@ -359,6 +407,43 @@ static bool PrepareOutputDirectory(DirectoryInfo outputDirectory, bool clearExis
     catch (Exception exception)
     {
         error = $"failed to prepare output directory '{outputDirectory.FullName}': {exception.Message}";
+        return false;
+    }
+}
+
+static bool TryCreateFixesZip(string fixesDirectory, string zipFilePath, out string? error)
+{
+    error = null;
+
+    try
+    {
+        var fixFiles = Directory
+            .EnumerateFiles(fixesDirectory, "fix-rank-*")
+            .Where(file => !string.Equals(Path.GetExtension(file), ".zip", StringComparison.OrdinalIgnoreCase))
+            .OrderBy(file => file, StringComparer.Ordinal)
+            .ToList();
+
+        if (fixFiles.Count == 0)
+        {
+            return true;
+        }
+
+        if (File.Exists(zipFilePath))
+        {
+            File.Delete(zipFilePath);
+        }
+
+        using var archive = ZipFile.Open(zipFilePath, ZipArchiveMode.Create);
+        foreach (var fixFile in fixFiles)
+        {
+            archive.CreateEntryFromFile(fixFile, Path.GetFileName(fixFile), CompressionLevel.Optimal);
+        }
+
+        return true;
+    }
+    catch (Exception exception)
+    {
+        error = $"failed to create fixes.zip: {exception.Message}";
         return false;
     }
 }

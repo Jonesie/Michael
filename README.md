@@ -52,6 +52,8 @@ Peter G. Jones (New Zealand)
 	- `michael --input data/build.log --output out --analyse-only --limit 5`
 - Example generating fix scripts (default behavior):
 	- `michael --input data/build.log --output out`
+- Example generating fix scripts and bundling them:
+	- `michael --input data/build.log --output out --zip`
 
 ### Output files
 
@@ -60,7 +62,8 @@ After a successful run, the output directory contains:
 - `issues.json` – machine-readable metadata and ranked issues.
 - `summary.md` - Markdown summary with a ranked table and a single `Details` column per row.
 - `summary.html` - preview-friendly interactive report with the same ranked data.
-- `fix-rank-<n>.<ext>` - one script per ranked issue (not generated when using `--analyse-only`), where `<ext>` is derived from the template filename (for example `.ps1` or `.sh`).
+- `fix-rank-<n>.<ext>` - one script per ranked issue when fix generation is enabled without `--zip`, where `<ext>` is derived from the template filename (for example `.ps1` or `.sh`).
+- `fixes.zip` - optional archive created with `--zip`, containing generated `fix-rank-*` files; when this mode is used, individual `fix-rank-*` files are not written to the output directory.
 
 Metadata now includes detected build tools/frameworks (for example `.NET SDK 10.0.100`, `.NET`, `C#`) inferred from the input build log, and this is shown both in CLI console output and in summary reports.
 
@@ -93,7 +96,8 @@ Example `michael.config.json`:
 - `Details` column format:
 	- `Error Message` heading + truncated issue message.
 	- expandable `Files` section (collapsed by default).
-	- `Fix` section with generated fix script file name (or `(not generated)` in `--analyse-only` mode).
+	- `Fix` section with generated fix script file name (or `(not generated)` in `--analyse-only` mode) when not using `--zip`.
+- In `--zip` mode, the `Fix` section is omitted from each row and metadata includes a `Fixes archive` link to `fixes.zip`.
 - File entries are clickable links using VS Code URI schema (`vscode://file/...`).
 - When line/column data exists in logs, links include location suffixes (for example `:127:23`).
 - `summary.html` is recommended when you want stable expand/collapse behavior while opening links.
@@ -106,6 +110,7 @@ Example `michael.config.json`:
 - `--limit <n>`: maximum number of ranked issues written (default: `10`; values less than `1` are treated as unlimited).
 - `--config <file>`: optional path to a CLI JSON config file.
 - `--clear-existing-output`: automatically clear existing files in the output directory before writing new results.
+- `--zip`: create `fixes.zip` in the output directory containing generated fix files.
 
 ## Samples
 
@@ -196,7 +201,7 @@ The action automatically writes `summary.md` to `$GITHUB_STEP_SUMMARY` so the Mi
 
 ### Fix scripts archive
 
-When fix-script generation is enabled (the default), all generated scripts and reports are bundled into a `michael-results.tar.gz` archive. Use the `archive` output with `actions/upload-artifact` to publish it.
+When fix-script generation is enabled (the default), the action runs Michael with `--zip`, which creates `fixes.zip` in the output directory containing generated fix files. The action also bundles the full output directory into `michael-results.tar.gz`. Use the `archive` output with `actions/upload-artifact` to publish it.
 
 ## Development
 
