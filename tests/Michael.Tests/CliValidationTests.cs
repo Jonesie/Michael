@@ -106,6 +106,7 @@ public class CliValidationTests
             var summaryPath = Path.Combine(outputDir, "summary.md");
             var summary = File.ReadAllText(summaryPath);
             Assert.Contains("- Detected tools/frameworks: .NET SDK 9.0.114, .NET, C#", summary, StringComparison.Ordinal);
+            Assert.DoesNotContain("<strong>Fix</strong>", summary, StringComparison.Ordinal);
         }
         finally
         {
