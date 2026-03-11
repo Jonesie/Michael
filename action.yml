@@ -3,6 +3,9 @@ description: >
   Run Michael against a .NET build log to analyse issues, rank them by impact,
   and optionally generate AI-assisted fix scripts.  Publishes an archive of the
   output directory and writes the Markdown summary to the GitHub workflow summary.
+  Customisable fix prompts supports any CLI AI tools (CoPilot default) and other required steps
+  to run a fix - eg, git branching, ticket creation etc.
+  Currently supports only dotnet projects - other language support coming - contributions welcome!
 
 branding:
   icon: 'search'
