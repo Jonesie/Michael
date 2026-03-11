@@ -8,52 +8,72 @@
 	╚═╝     ╚═╝╚═╝ ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚══════╝
 ```
 
-Michael is a CLI-first .NET build diagnostics assistant for large or noisy build outputs.
+Michael turns noisy .NET build logs into a focused, ranked action plan in seconds.
 
-Releases include prebuilt platform binaries (Linux, macOS, and Windows) so you can download and run Michael directly without building from source.
+Key features:
 
-It ingests .NET build logs, groups repeated warnings and errors into deterministic issue summaries, ranks issues by impact, and writes machine-readable plus human-readable reports you can review quickly.
+- Parses .NET build logs and groups repeated warnings and errors deterministically.
+- Ranks issues by impact so you can fix the most important problems first.
+- Generates clear artifacts: `issues.json`, `summary.md`, and `summary.html`.
+- Optionally creates AI-ready fix scripts per ranked issue for controlled remediation.
+- Runs as a CLI and as a GitHub Action for local and CI workflows.
+- Ships prebuilt binaries for Linux, macOS, and Windows.
 
-When fix generation is enabled, Michael also creates one script per ranked issue that sends structured context to your chosen AI CLI command (configured in `michael.config.json` shipped with the CLI binary) so you can apply focused fixes in a controlled, scriptable workflow.
+Current analysis scope is .NET build logs only. Default fix script templates use the GitHub Copilot CLI, but you can customize templates and command format to work with other AI CLIs.
 
-Current analysis scope is .NET build logs only.
+## Quick Start
 
-Default fix script templates use the GitHub Copilot CLI, but you can customize the command and template format to work with any AI CLI tool that accepts structured input.
+Follow this flow for a first run in a few minutes.
 
-## Author
-
-Peter G. Jones (New Zealand)
-
-## Install
+### 1) Download and install
 
 - Download latest release: [https://github.com/Jonesie/Michael/releases/latest](https://github.com/Jonesie/Michael/releases/latest)
-- Download the latest release asset for your platform.
 	- Linux x64: `michael-<tag>-linux-x64.tar.gz`
 	- macOS arm64: `michael-<tag>-osx-arm64.tar.gz`
 	- Windows x64: `michael-<tag>-win-x64.zip`
 	- (`<tag>` is the GitHub release tag, for example `v1.2.3`)
 - Extract the archive.
-- Run the `michael` binary (or `michael.exe` on Windows).
+- Run the `Michael` binary (or `Michael.exe` on Windows).
+
+### 2) Run a build and capture a log
+
+- macOS/Linux:
+	- `dotnet build | tee build.log`
+- PowerShell:
+	- `dotnet build *>&1 | Tee-Object -FilePath build.log`
+
+### 3) Run Michael
+
+- Analyse only:
+	- `Michael --input build.log --output out --analyse-only`
+- Analyse and clear existing output automatically:
+	- `Michael --input build.log --output out --analyse-only --clear-existing-output`
+- Analyse with a result limit:
+	- `Michael --input build.log --output out --analyse-only --limit 5`
+- Generate fix scripts (default mode):
+	- `Michael --input build.log --output out`
+- Generate fix scripts and bundle them:
+	- `Michael --input build.log --output out --zip`
 
 ## Usage
 
 - Help:
-	- `michael --help`
+	- `Michael --help`
 - Version:
-	- `michael --version`
+	- `Michael --version`
 
 ### Analyse a build log
 
 - Example with provided fixture:
-	- `michael --input data/build.log --output out --analyse-only`
+	- `Michael --input data/build.log --output out --analyse-only`
 - Example with automatic output cleanup:
-	- `michael --input data/build.log --output out --analyse-only --clear-existing-output`
+	- `Michael --input data/build.log --output out --analyse-only --clear-existing-output`
 - Example with result limit:
-	- `michael --input data/build.log --output out --analyse-only --limit 5`
+	- `Michael --input data/build.log --output out --analyse-only --limit 5`
 - Example generating fix scripts (default behavior):
-	- `michael --input data/build.log --output out`
+	- `Michael --input data/build.log --output out`
 - Example generating fix scripts and bundling them:
-	- `michael --input data/build.log --output out --zip`
+	- `Michael --input data/build.log --output out --zip`
 
 ### Output files
 
@@ -112,18 +132,16 @@ Example `michael.config.json`:
 - `--clear-existing-output`: automatically clear existing files in the output directory before writing new results.
 - `--zip`: create `fixes.zip` in the output directory containing generated fix files.
 
-## Samples
+## GitHub Action
 
-- Warning-generating .NET console app for action testing:
-	- `samples/sample-warning-app`
-- Produce a build log for action input:
-	- `dotnet build samples/sample-warning-app/SampleWarningApp.csproj > samples/sample-warning-app/build.log 2>&1`
-- Use this log path with Michael CLI or GitHub Action:
-	- `samples/sample-warning-app/build.log`
+Michael is also available as a composite GitHub Action you can use directly in your workflows.
+
 
 ### Run sample in GitHub Actions
 
 Use the dispatch workflow at `.github/workflows/sample-action-dispatch.yml` to build the sample and run Michael end-to-end.
+
+Copy this workflow:
 
 ```yaml
 name: Sample Action Dispatch
@@ -131,48 +149,47 @@ name: Sample Action Dispatch
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
-  sample:
+  run-sample-and-michael:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-dotnet@v4
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: '10.0.x'
-      - run: dotnet build samples/sample-warning-app/SampleWarningApp.csproj > sample-build.log 2>&1
-      - uses: ./
+
+      - name: Build sample app and capture log
+        run: dotnet build samples/sample-warning-app/SampleWarningApp.csproj > sample-build.log 2>&1
+
+      - name: Run Michael action (local)
+        id: michael
+        uses: ./
         with:
           input: sample-build.log
           output: michael-output
           analyse-only: 'true'
+          clear-existing-output: 'true'
+
+      - name: Upload Michael results archive
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: michael-sample-results
+          path: ${{ steps.michael.outputs.archive }}
+          if-no-files-found: warn
 ```
 
-## GitHub Action
+Sample run screenshot:
 
-Michael is also available as a composite GitHub Action you can use directly in your workflows.
+![Sample workflow run](https://github.com/user-attachments/assets/b5976671-a172-4540-b473-f2bd64bef795)
 
-### Basic usage
-
-```yaml
-- name: Build
-  run: dotnet build src/MyProject.sln > build.log 2>&1
-  continue-on-error: true
-
-- name: Analyse build log
-  uses: Jonesie/Michael@v1
-  id: michael
-  with:
-    input: build.log
-    output: michael-output
-    analyse-only: 'true'
-
-- name: Upload Michael results
-  if: always()
-  uses: actions/upload-artifact@v4
-  with:
-    name: michael-results
-    path: ${{ steps.michael.outputs.archive }}
-```
 
 ### Action inputs
 
@@ -222,6 +239,15 @@ When fix-script generation is enabled (the default), the action runs Michael wit
 ### Run from Source
 
 - `dotnet run --project src/Michael.Cli/Michael.Cli.csproj -- --help`
+
+
+## Author
+
+Peter G. Jones (New Zealand)
+
+If Michael helps your team, you can support ongoing development:
+
+- Buy me a coffee: https://buymeacoffee.com/jonesie
 
 ## License
 
