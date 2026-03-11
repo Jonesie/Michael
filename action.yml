@@ -1,7 +1,7 @@
 name: 'Michael – Build Log Analyser'
 description: >
   Run Michael against a .NET build log to analyse issues, rank them by impact,
-  and optionally generate AI-assisted fix scripts.  
+  and optional AI-assisted fixes.  
 branding:
   icon: 'search'
   color: 'blue'
