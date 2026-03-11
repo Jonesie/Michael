@@ -24,7 +24,17 @@ Default fix script templates use the GitHub Copilot CLI, but you can customize t
 
 Peter G. Jones (New Zealand)
 
-## Install
+## Support
+
+If Michael helps your team, you can support ongoing development:
+
+- Buy me a coffee: https://buymeacoffee.com/jonesie
+
+## Quick Start
+
+Follow this flow for a first run in a few minutes.
+
+### 1) Download and install
 
 - Download latest release: [https://github.com/Jonesie/Michael/releases/latest](https://github.com/Jonesie/Michael/releases/latest)
 - Download the latest release asset for your platform.
@@ -34,6 +44,26 @@ Peter G. Jones (New Zealand)
 	- (`<tag>` is the GitHub release tag, for example `v1.2.3`)
 - Extract the archive.
 - Run the `michael` binary (or `michael.exe` on Windows).
+
+### 2) Run a build and capture a log
+
+- macOS/Linux:
+	- `dotnet build | tee build.log`
+- PowerShell:
+	- `dotnet build *>&1 | Tee-Object -FilePath build.log`
+
+### 3) Run Michael
+
+- Analyse only:
+	- `michael --input build.log --output out --analyse-only`
+- Analyse and clear existing output automatically:
+	- `michael --input build.log --output out --analyse-only --clear-existing-output`
+- Analyse with a result limit:
+	- `michael --input build.log --output out --analyse-only --limit 5`
+- Generate fix scripts (default mode):
+	- `michael --input build.log --output out`
+- Generate fix scripts and bundle them:
+	- `michael --input build.log --output out --zip`
 
 ## Usage
 
@@ -125,27 +155,54 @@ Example `michael.config.json`:
 
 Use the dispatch workflow at `.github/workflows/sample-action-dispatch.yml` to build the sample and run Michael end-to-end.
 
+Copy this workflow:
+
 ```yaml
 name: Sample Action Dispatch
 
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
-  sample:
+  run-sample-and-michael:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-dotnet@v4
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: '10.0.x'
-      - run: dotnet build samples/sample-warning-app/SampleWarningApp.csproj > sample-build.log 2>&1
-      - uses: ./
+
+      - name: Build sample app and capture log
+        run: dotnet build samples/sample-warning-app/SampleWarningApp.csproj > sample-build.log 2>&1
+
+      - name: Run Michael action (local)
+        id: michael
+        uses: ./
         with:
           input: sample-build.log
           output: michael-output
           analyse-only: 'true'
+          clear-existing-output: 'true'
+
+      - name: Upload Michael results archive
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: michael-sample-results
+          path: ${{ steps.michael.outputs.archive }}
+          if-no-files-found: warn
 ```
+
+Sample run screenshot:
+
+![Sample workflow run](https://github.com/user-attachments/assets/b5976671-a172-4540-b473-f2bd64bef795)
 
 ## GitHub Action
 
