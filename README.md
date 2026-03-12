@@ -247,7 +247,7 @@ Peter G. Jones (New Zealand)
 
 If Michael helps your team, you can support ongoing development:
 
-[![Buy me a coffee](buymecoffee.png)](https://buymeacoffee.com/jonesie)
+<a href="https://buymeacoffee.com/jonesie"><img src="buymecoffee.png" alt="Buy me a coffee" width="100"></a>
 
 ## License
 
