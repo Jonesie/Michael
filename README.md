@@ -134,6 +134,7 @@ Example `michael.config.json`:
 - `--zip`: create `fixes.zip` in the output directory containing generated fix files.
 - `--ci`: run in CI-friendly mode — skip the ASCII banner and reduce summary verbosity (suppress file links, show counts instead).
 - `--version`: print the raw CLI version string and exit (also available as `-v`).
+ - `--limitfixfiles`: limit the number of distinct files passed to generated fix prompts. Values less than `1` are treated as unlimited.
 
 ## GitHub Action
 

@@ -8,5 +8,6 @@ public interface IFixScriptGenerator
         string outputDirectory,
         IReadOnlyList<RankedIssue> rankedIssues,
     string? scriptTemplateText = null,
-    string? scriptFileExtension = null);
+    string? scriptFileExtension = null,
+    int? limitFixFiles = null);
 }

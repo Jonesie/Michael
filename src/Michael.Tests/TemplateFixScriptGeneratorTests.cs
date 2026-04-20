@@ -421,6 +421,50 @@ copilot -i "agent --prompt $Prompt"
     }
 
     [Fact]
+    public void Generate_RespectsLimitFixFiles()
+    {
+        var tempDir = Path.Combine(Path.GetTempPath(), $"michael-fixes-limit-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(tempDir);
+
+        var sourceFile = Path.Combine(tempDir, "Sample.cs");
+        var secondSourceFile = Path.Combine(tempDir, "Sample2.cs");
+        File.WriteAllLines(sourceFile, new[] { "namespace Demo;", "public class Sample {}" });
+        File.WriteAllLines(secondSourceFile, new[] { "namespace Demo;", "public class Sample2 {}" });
+
+        try
+        {
+            var generator = new TemplateFixScriptGenerator();
+            var rankedIssues = new[]
+            {
+                new RankedIssue(
+                    Rank: 1,
+                    Key: "CS0219",
+                    Message: "Sample",
+                    Files: new[] { $"{sourceFile}(1,1)", $"{secondSourceFile}(1,1)" },
+                    Severity: "warning",
+                    Frequency: 1,
+                    Confidence: 0.9,
+                    Score: 100,
+                    Explanation: "Sample")
+            };
+
+            var filesByRank = generator.Generate(tempDir, rankedIssues, limitFixFiles: 1);
+            var script = File.ReadAllText(Path.Combine(tempDir, filesByRank[1]));
+
+            Assert.Contains("# Target files: 1", script, StringComparison.Ordinal);
+            Assert.Contains(sourceFile, script, StringComparison.Ordinal);
+            Assert.DoesNotContain(secondSourceFile, script, StringComparison.Ordinal);
+        }
+        finally
+        {
+            if (Directory.Exists(tempDir))
+            {
+                Directory.Delete(tempDir, recursive: true);
+            }
+        }
+    }
+
+    [Fact]
     public void Generate_WithMoreThanTwentyTargetFiles_WritesExternalFileListAndReferencesIt()
     {
         var tempDir = Path.Combine(Path.GetTempPath(), $"michael-fixes-long-list-{Guid.NewGuid():N}");

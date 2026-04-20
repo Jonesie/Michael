@@ -60,7 +60,8 @@ finally {
         string outputDirectory,
         IReadOnlyList<RankedIssue> rankedIssues,
         string? scriptTemplateText = null,
-        string? scriptFileExtension = null)
+        string? scriptFileExtension = null,
+        int? limitFixFiles = null)
     {
         Directory.CreateDirectory(outputDirectory);
 
@@ -75,12 +76,23 @@ finally {
         {
             var fileName = $"fix-rank-{issue.Rank}{resolvedScriptExtension}";
             var fullPath = Path.Combine(outputDirectory, fileName);
-            var targetLocations = BuildTargetLocations(issue.Files);
-            var originalLocations = BuildOriginalLocations(issue.Files);
-            var allLocationLines = BuildAllLocationLines(issue.Files);
+            var targetLocationsFull = BuildTargetLocations(issue.Files);
+            var targetLocations = (limitFixFiles.HasValue && limitFixFiles.Value >= 1)
+                ? targetLocationsFull.Take(limitFixFiles.Value).ToArray()
+                : targetLocationsFull;
+            var filteredLocationLines = issue.Files
+                .Where(loc =>
+                {
+                    var (path, _) = SplitLocation(loc);
+                    return !string.IsNullOrWhiteSpace(path) && targetLocations.Contains(path);
+                })
+                .ToArray();
+
+            var originalLocations = BuildOriginalLocations(filteredLocationLines);
+            var allLocationLines = BuildAllLocationLines(filteredLocationLines);
             var issueDetails = BuildIssueDetails(issue);
             var fileList = BuildFileList(outputDirectory, issue.Rank, targetLocations, originalLocations, allLocationLines);
-            var samples = BuildSamplesSection(issue.Files);
+            var samples = BuildSamplesSection(filteredLocationLines);
             var script = BuildScript(
                 issue.Rank,
                 targetLocations.Count,
