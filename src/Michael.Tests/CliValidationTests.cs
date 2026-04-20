@@ -351,6 +351,71 @@ copilot -i "agent --prompt $Prompt"
         }
     }
 
+    [Fact]
+    public void Cli_CiMode_SkipsAsciiBanner_And_SuppressesFileListsInSummary()
+    {
+        var repoRoot = TestWorkspace.RepoRoot();
+        var logPath = Path.Combine(repoRoot, "data", "sample-dotnet-small.log");
+        var outputDir = Path.Combine(Path.GetTempPath(), $"michael-cli-ci-{Guid.NewGuid():N}");
+
+        try
+        {
+            var result = RunCli(repoRoot, $"--input \"{logPath}\" --output \"{outputDir}\" --ci");
+
+            Assert.Equal(0, result.ExitCode);
+            // ASCII art should be skipped in CI mode
+            Assert.DoesNotContain("███", result.Output, StringComparison.Ordinal);
+
+            var summaryPath = Path.Combine(outputDir, "summary.md");
+            Assert.True(File.Exists(summaryPath));
+            var summary = File.ReadAllText(summaryPath);
+
+            // File lists should be suppressed: summary contains the count but not file links
+            Assert.Matches(@"<strong>Files</strong> \([0-9]+\)", summary);
+            Assert.DoesNotContain("vscode://file", summary, StringComparison.Ordinal);
+        }
+        finally
+        {
+            if (Directory.Exists(outputDir))
+            {
+                Directory.Delete(outputDir, recursive: true);
+            }
+        }
+    }
+
+    [Fact]
+    public void Cli_VersionOption_PrintsRawVersionAndExits()
+    {
+        var repoRoot = TestWorkspace.RepoRoot();
+        var outputDir = Path.Combine(Path.GetTempPath(), $"michael-cli-version-{Guid.NewGuid():N}");
+
+        try
+        {
+            var result = RunCli(repoRoot, "--version --input dummy --output out-nop");
+
+            Assert.Equal(0, result.ExitCode);
+
+            var expectedVersion = typeof(Michael.Cli.FileReportWriter).Assembly
+                .GetCustomAttributes(false)
+                .OfType<System.Reflection.AssemblyInformationalVersionAttribute>()
+                .FirstOrDefault()
+                ?.InformationalVersion
+                ?? "0.0.0";
+
+            Assert.Equal(expectedVersion, result.Output.Trim());
+
+            // Ensure no output directory was created
+            Assert.False(Directory.Exists(outputDir));
+        }
+        finally
+        {
+            if (Directory.Exists(outputDir))
+            {
+                Directory.Delete(outputDir, recursive: true);
+            }
+        }
+    }
+
     private static (int ExitCode, string Output) RunCli(string repoRoot, string arguments, string? standardInput = null)
     {
         var psi = new ProcessStartInfo

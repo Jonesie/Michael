@@ -5,7 +5,7 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Michael.Cli", "Michael.Cli\Michael.Cli.csproj", "{0764E712-FC75-479E-A617-3750B93713C8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Michael.Tests", "..\tests\Michael.Tests\Michael.Tests.csproj", "{F37D2C1A-4632-407A-A641-8D111D123BA7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Michael.Tests", "Michael.Tests\Michael.Tests.csproj", "{F37D2C1A-4632-407A-A641-8D111D123BA7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Michael.Parsing", "Michael.Parsing\Michael.Parsing.csproj", "{C9BD8A07-906C-466E-AE45-DD7A7F984232}"
 EndProject

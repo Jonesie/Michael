@@ -11,4 +11,5 @@ public sealed record ReportMetadata(
     int SummaryCount,
     int RankedCount,
     IReadOnlyList<string>? DetectedTools = null,
-    string? FixesZipFile = null);
+    string? FixesZipFile = null,
+    bool Ci = false);

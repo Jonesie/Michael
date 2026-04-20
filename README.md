@@ -245,7 +245,7 @@ When fix-script generation is enabled (the default), the action runs Michael wit
 
 Peter G. Jones (New Zealand)
 
-If Michael helps your team, you can support ongoing development:
+If Michael helps your team, you can support ongoing development by buying me a coffee:
 
 <a href="https://buymeacoffee.com/jonesie"><img src="buymecoffee.png" alt="Buy me a coffee" width="100"></a>
 
