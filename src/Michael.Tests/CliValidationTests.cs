@@ -371,7 +371,7 @@ copilot -i "agent --prompt $Prompt"
             var summary = File.ReadAllText(summaryPath);
 
             // File lists should be suppressed: summary contains the count but not file links
-            Assert.Matches(@"<summary><strong>Files</strong> \([0-9]+\)</summary>", summary);
+            Assert.Matches(@"<strong>Files</strong> \([0-9]+\)", summary);
             Assert.DoesNotContain("vscode://file", summary, StringComparison.Ordinal);
         }
         finally

@@ -73,9 +73,17 @@ public sealed class FileReportWriter : IReportWriter
 
         foreach (var issue in rankedIssues)
         {
-            var filesDetails = issue.Files.Count == 0
-                ? "<details><summary><strong>Files</strong></summary>(no-file)</details>"
-                : BuildFilesDetailsMarkdown(issue.Files, metadata.Ci);
+            string filesDetails;
+            if (issue.Files.Count == 0)
+            {
+                filesDetails = metadata.Ci
+                    ? "<strong>Files</strong> (no-file)"
+                    : "<details><summary><strong>Files</strong></summary>(no-file)</details>";
+            }
+            else
+            {
+                filesDetails = BuildFilesDetailsMarkdown(issue.Files, metadata.Ci);
+            }
 
             var details = $"<strong>Error Message</strong><br/>{EscapePipe(Truncate(issue.Message, 90))}<br/>{filesDetails}";
             if (ShouldIncludeFixDetails(metadata, issue.Rank, fixScriptFileNamesByRank))
@@ -122,7 +130,7 @@ public sealed class FileReportWriter : IReportWriter
 
         if (ci)
         {
-            return $"<details><summary><strong>Files</strong> ({normalized.Length})</summary></details>";
+            return $"<strong>Files</strong> ({normalized.Length})";
         }
 
         var content = string.Join("<br/>", normalized.Select(BuildFileLinkMarkdown));
@@ -139,7 +147,7 @@ public sealed class FileReportWriter : IReportWriter
 
         if (ci)
         {
-            return $"<details><summary><strong>Files</strong> ({normalized.Length})</summary></details>";
+            return $"<strong>Files</strong> ({normalized.Length})";
         }
 
         var builder = new StringBuilder();
@@ -216,9 +224,17 @@ public sealed class FileReportWriter : IReportWriter
 
             foreach (var issue in rankedIssues)
             {
-                var filesDetails = issue.Files.Count == 0
-                    ? "<details><summary><strong>Files</strong></summary><div>(no-file)</div></details>"
-                    : BuildFilesDetailsHtml(issue.Files, metadata.Ci);
+                string filesDetails;
+                if (issue.Files.Count == 0)
+                {
+                    filesDetails = metadata.Ci
+                        ? "<strong>Files</strong> (no-file)"
+                        : "<details><summary><strong>Files</strong></summary><div>(no-file)</div></details>";
+                }
+                else
+                {
+                    filesDetails = BuildFilesDetailsHtml(issue.Files, metadata.Ci);
+                }
 
                 var details = $"<strong>Error Message</strong><br/>{HtmlEncode(Truncate(issue.Message, 140))}<br/>{filesDetails}";
                 if (ShouldIncludeFixDetails(metadata, issue.Rank, fixScriptFileNamesByRank))
