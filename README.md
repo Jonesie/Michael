@@ -59,8 +59,8 @@ Follow this flow for a first run in a few minutes.
 
 - Help:
 	- `Michael --help`
-- Version:
-	- `Michael --version`
+	- Version:
+		- `Michael --version` (or `-v`) — prints the raw CLI version string and exits.
 
 ### Analyse a build log
 
@@ -121,6 +121,7 @@ Example `michael.config.json`:
 - File entries are clickable links using VS Code URI schema (`vscode://file/...`).
 - When line/column data exists in logs, links include location suffixes (for example `:127:23`).
 - `summary.html` is recommended when you want stable expand/collapse behavior while opening links.
+- In CI mode (`--ci`), file lists in `summary.md` are suppressed and shown as counts only to keep reports compact and machine-friendly.
 
 ## CLI Options
 
@@ -131,6 +132,8 @@ Example `michael.config.json`:
 - `--config <file>`: optional path to a CLI JSON config file.
 - `--clear-existing-output`: automatically clear existing files in the output directory before writing new results.
 - `--zip`: create `fixes.zip` in the output directory containing generated fix files.
+- `--ci`: run in CI-friendly mode — skip the ASCII banner and reduce summary verbosity (suppress file links, show counts instead).
+- `--version`: print the raw CLI version string and exit (also available as `-v`).
 
 ## GitHub Action
 
