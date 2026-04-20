@@ -15,5 +15,6 @@
     },
     "chat.tools.terminal.autoApprove": {
         "dotnet run": true
-    }
+    },
+    "dotnet-test-explorer.testProjectPath": "src/Michael.Tests"
 }

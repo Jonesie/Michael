@@ -1,4 +1,5 @@
 ﻿using System.CommandLine;
+using System.Linq;
 using System.CommandLine.Invocation;
 using System.IO.Compression;
 using System.Reflection;
@@ -40,6 +41,17 @@ var zipOption = new Option<bool>(
     name: "--zip",
     description: "Create fixes.zip in the output directory containing generated fix files.");
 
+var ciOption = new Option<bool>(
+    name: "--ci",
+    description: "Run in CI-friendly mode: skip ASCII banner and reduce summary verbosity.");
+
+// Support raw `--version` early to avoid System.CommandLine duplicate-option edge cases
+if (args.Contains("--version") || args.Contains("-v"))
+{
+    Console.WriteLine(GetVersion());
+    Environment.Exit(0);
+}
+
 var rootCommand = new RootCommand("Michael – build log analyser and issue reporter.")
 {
     inputOption,
@@ -49,6 +61,7 @@ var rootCommand = new RootCommand("Michael – build log analyser and issue repo
     configOption,
     clearExistingOutputOption,
     zipOption,
+    ciOption,
 };
 
 rootCommand.SetHandler((InvocationContext context) =>
@@ -60,6 +73,7 @@ rootCommand.SetHandler((InvocationContext context) =>
     var configPath  = context.ParseResult.GetValueForOption(configOption);
     var clearExistingOutput = context.ParseResult.GetValueForOption(clearExistingOutputOption);
     var createZip = context.ParseResult.GetValueForOption(zipOption);
+    var ci = context.ParseResult.GetValueForOption(ciOption);
 
     if (input is null)
     {
@@ -130,7 +144,8 @@ rootCommand.SetHandler((InvocationContext context) =>
         output.FullName,
         limit,
         generateFixes,
-        fixScriptTemplatePath!);
+        fixScriptTemplatePath!,
+        ci);
 
     var logContent = File.ReadAllText(input.FullName);
 
@@ -203,7 +218,8 @@ rootCommand.SetHandler((InvocationContext context) =>
         SummaryCount: summaries.Count,
         RankedCount: rankedIssues.Count,
         DetectedTools: detectedTools,
-        FixesZipFile: zipFilePath is null ? null : Path.GetFileName(zipFilePath));
+        FixesZipFile: zipFilePath is null ? null : Path.GetFileName(zipFilePath),
+        Ci: ci);
 
     writer.Write(output.FullName, metadata, rankedIssues, fixScriptFileNamesByRank);
 
@@ -235,16 +251,21 @@ static void PrintBanner(
     string outputDirectory,
     int? limit,
     bool generateFixes,
-    string fixScriptTemplatePath)
+    string fixScriptTemplatePath,
+    bool ci)
 {
-    Console.WriteLine("  ███╗   ███╗██╗ ██████╗██╗  ██╗ █████╗ ███████╗██╗     ");
-    Console.WriteLine("  ████╗ ████║██║██╔════╝██║  ██║██╔══██╗██╔════╝██║     ");
-    Console.WriteLine("  ██╔████╔██║██║██║     ███████║███████║█████╗  ██║     ");
-    Console.WriteLine("  ██║╚██╔╝██║██║██║     ██╔══██║██╔══██║██╔══╝  ██║     ");
-    Console.WriteLine("  ██║ ╚═╝ ██║██║╚██████╗██║  ██║██║  ██║███████╗███████╗");
-    Console.WriteLine("  ╚═╝     ╚═╝╚═╝ ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚══════╝");
-    Console.WriteLine("  GitHub: https://github.com/Jonesie/Michael");
-    Console.WriteLine();
+    if (!ci)
+    {
+        Console.WriteLine("  ███╗   ███╗██╗ ██████╗██╗  ██╗ █████╗ ███████╗██╗     ");
+        Console.WriteLine("  ████╗ ████║██║██╔════╝██║  ██║██╔══██╗██╔════╝██║     ");
+        Console.WriteLine("  ██╔████╔██║██║██║     ███████║███████║█████╗  ██║     ");
+        Console.WriteLine("  ██║╚██╔╝██║██║██║     ██╔══██║██╔══██║██╔══╝  ██║     ");
+        Console.WriteLine("  ██║ ╚═╝ ██║██║╚██████╗██║  ██║██║  ██║███████╗███████╗");
+        Console.WriteLine("  ╚═╝     ╚═╝╚═╝ ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚══════╝");
+        Console.Write("  ");
+    }
+
+    Console.WriteLine("GitHub: https://github.com/Jonesie/Michael");
     Console.WriteLine($"  Michael {version}");
     Console.WriteLine($"  Analysing: {inputName}");
     Console.WriteLine($"  Output   : {outputDirectory}");

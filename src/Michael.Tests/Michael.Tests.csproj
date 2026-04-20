@@ -19,10 +19,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Michael.Cli\Michael.Cli.csproj" />
-    <ProjectReference Include="..\..\src\Michael.Analysis\Michael.Analysis.csproj" />
-    <ProjectReference Include="..\..\src\Michael.Fixes\Michael.Fixes.csproj" />
-    <ProjectReference Include="..\..\src\Michael.Parsing\Michael.Parsing.csproj" />
+    <ProjectReference Include="..\Michael.Cli\Michael.Cli.csproj" />
+    <ProjectReference Include="..\Michael.Analysis\Michael.Analysis.csproj" />
+    <ProjectReference Include="..\Michael.Fixes\Michael.Fixes.csproj" />
+    <ProjectReference Include="..\Michael.Parsing\Michael.Parsing.csproj" />
   </ItemGroup>
 
 </Project>
