@@ -416,6 +416,29 @@ copilot -i "agent --prompt $Prompt"
         }
     }
 
+    [Fact]
+    public void Cli_DisplaysLimitFixFiles_InBanner()
+    {
+        var repoRoot = TestWorkspace.RepoRoot();
+        var logPath = Path.Combine(repoRoot, "data", "sample-dotnet-small.log");
+        var outputDir = Path.Combine(Path.GetTempPath(), $"michael-cli-limitfixfiles-{Guid.NewGuid():N}");
+
+        try
+        {
+            var result = RunCli(repoRoot, $"--input \"{logPath}\" --output \"{outputDir}\" --analyse-only --limitfixfiles 1");
+
+            Assert.Equal(0, result.ExitCode);
+            Assert.Contains("Fix file limit: 1", result.Output, StringComparison.OrdinalIgnoreCase);
+        }
+        finally
+        {
+            if (Directory.Exists(outputDir))
+            {
+                Directory.Delete(outputDir, recursive: true);
+            }
+        }
+    }
+
     private static (int ExitCode, string Output) RunCli(string repoRoot, string arguments, string? standardInput = null)
     {
         var psi = new ProcessStartInfo

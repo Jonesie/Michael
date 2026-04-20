@@ -29,6 +29,11 @@ var limitOption = new Option<int?>(
     getDefaultValue: static () => 10,
     description: "Maximum number of issues to include in the report. Values less than 1 are treated as unlimited.");
 
+var limitFixFilesOption = new Option<int?>(
+    name: "--limitfixfiles",
+    getDefaultValue: static () => null,
+    description: "Maximum number of distinct files to include in generated fix prompts. Values less than 1 are treated as unlimited.");
+
 var configOption = new Option<FileInfo?>(
     name: "--config",
     description: "Path to CLI JSON config file. Defaults to 'michael.config.json' next to the executable.");
@@ -58,6 +63,7 @@ var rootCommand = new RootCommand("Michael – build log analyser and issue repo
     outputOption,
     analyseOnlyOption,
     limitOption,
+    limitFixFilesOption,
     configOption,
     clearExistingOutputOption,
     zipOption,
@@ -70,6 +76,7 @@ rootCommand.SetHandler((InvocationContext context) =>
     var output      = context.ParseResult.GetValueForOption(outputOption);
     var analyseOnly = context.ParseResult.GetValueForOption(analyseOnlyOption);
     var limit       = context.ParseResult.GetValueForOption(limitOption);
+    var limitFixFiles = context.ParseResult.GetValueForOption(limitFixFilesOption);
     var configPath  = context.ParseResult.GetValueForOption(configOption);
     var clearExistingOutput = context.ParseResult.GetValueForOption(clearExistingOutputOption);
     var createZip = context.ParseResult.GetValueForOption(zipOption);
@@ -143,6 +150,7 @@ rootCommand.SetHandler((InvocationContext context) =>
         input.Name,
         output.FullName,
         limit,
+        limitFixFiles,
         generateFixes,
         fixScriptTemplatePath!,
         ci);
@@ -182,7 +190,8 @@ rootCommand.SetHandler((InvocationContext context) =>
                 fixOutputDirectory,
                 rankedIssues,
                 fixScriptTemplateText!,
-                fixScriptFileExtension);
+                fixScriptFileExtension,
+                limitFixFiles);
         }
 
         if (createZip && generateFixes)
@@ -250,6 +259,7 @@ static void PrintBanner(
     string inputName,
     string outputDirectory,
     int? limit,
+    int? limitFixFiles,
     bool generateFixes,
     string fixScriptTemplatePath,
     bool ci)
@@ -273,6 +283,11 @@ static void PrintBanner(
     {
         var limitDisplay = limit.Value < 1 ? "unlimited" : limit.Value.ToString();
         Console.WriteLine($"  Limit    : {limitDisplay}");
+    }
+    if (limitFixFiles.HasValue)
+    {
+        var limitDisplay = limitFixFiles.Value < 1 ? "unlimited" : limitFixFiles.Value.ToString();
+        Console.WriteLine($"  Fix file limit: {limitDisplay}");
     }
     Console.WriteLine($"  Generate fixes: {generateFixes}");
     Console.WriteLine($"  Fix template  : {fixScriptTemplatePath}");
