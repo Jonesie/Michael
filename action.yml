@@ -26,6 +26,11 @@ inputs:
     required: false
     default: ''
 
+  limitfixfiles:
+    description: 'Maximum number of distinct files to include in generated fix prompts (passes --limitfixfiles).'
+    required: false
+    default: ''
+
   config:
     description: 'Path to a CLI JSON config file (michael.config.json).'
     required: false
@@ -137,6 +142,7 @@ runs:
         INPUT_OUTPUT: ${{ inputs.output }}
         INPUT_ANALYSE_ONLY: ${{ inputs.analyse-only }}
         INPUT_LIMIT: ${{ inputs.limit }}
+        INPUT_LIMITFIXFILES: ${{ inputs.limitfixfiles }}
         INPUT_CLEAR: ${{ inputs.clear-existing-output }}
         CONFIG_PATH: ${{ steps.config.outputs.config-path }}
       run: |
@@ -154,6 +160,10 @@ runs:
 
         if [[ -n "$INPUT_LIMIT" ]]; then
           args+=(--limit "$INPUT_LIMIT")
+        fi
+
+        if [[ -n "$INPUT_LIMITFIXFILES" ]]; then
+          args+=(--limitfixfiles "$INPUT_LIMITFIXFILES")
         fi
 
         if [[ "$INPUT_CLEAR" == "true" ]]; then
