@@ -130,6 +130,8 @@ Example `michael.config.json`:
 - `--analyse-only` / `--analysis-only`: run parse/analyze/rank/report flow without generating fix scripts.
 - `--limit <n>`: maximum number of ranked issues written (default: `10`; values less than `1` are treated as unlimited).
 - `--config <file>`: optional path to a CLI JSON config file.
+ - `--config <file>`: optional path to a CLI JSON config file.
+ - `--template-file <file>`: optional path to a fix-script template file. When provided this overrides the configured template file in `michael.config.json`.
 - `--clear-existing-output`: automatically clear existing files in the output directory before writing new results.
 - `--zip`: create `fixes.zip` in the output directory containing generated fix files.
 - `--ci`: run in CI-friendly mode — skip the ASCII banner and reduce summary verbosity (suppress file links, show counts instead).
@@ -203,6 +205,7 @@ Sample run screenshot:
 | `output` | no | `michael-output` | Directory for report files. |
 | `analyse-only` | no | `false` | Set to `true` to skip fix-script generation. |
 | `limit` | no | | Maximum number of ranked issues (CLI default is `10`; use `0` for unlimited). |
+| `limitfixfiles` | no | | Maximum number of distinct files included in generated fix prompts (passes `--limitfixfiles`). |
 | `config` | no | | Path to a `michael.config.json` file. |
 | `template-file` | no | | Path to a fix-script template file (overrides config). |
 | `clear-existing-output` | no | `true` | Clear existing output directory before writing. |

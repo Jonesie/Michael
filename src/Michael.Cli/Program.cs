@@ -38,6 +38,10 @@ var configOption = new Option<FileInfo?>(
     name: "--config",
     description: "Path to CLI JSON config file. Defaults to 'michael.config.json' next to the executable.");
 
+var templateFileOption = new Option<FileInfo?>(
+    name: "--template-file",
+    description: "Path to a fix-script template file. When provided this overrides the configured template.");
+
 var clearExistingOutputOption = new Option<bool>(
     name: "--clear-existing-output",
     description: "Automatically clear existing files in the output directory before writing reports.");
@@ -64,6 +68,7 @@ var rootCommand = new RootCommand("Michael – build log analyser and issue repo
     analyseOnlyOption,
     limitOption,
     limitFixFilesOption,
+    templateFileOption,
     configOption,
     clearExistingOutputOption,
     zipOption,
@@ -77,6 +82,7 @@ rootCommand.SetHandler((InvocationContext context) =>
     var analyseOnly = context.ParseResult.GetValueForOption(analyseOnlyOption);
     var limit       = context.ParseResult.GetValueForOption(limitOption);
     var limitFixFiles = context.ParseResult.GetValueForOption(limitFixFilesOption);
+    var templateFile = context.ParseResult.GetValueForOption(templateFileOption);
     var configPath  = context.ParseResult.GetValueForOption(configOption);
     var clearExistingOutput = context.ParseResult.GetValueForOption(clearExistingOutputOption);
     var createZip = context.ParseResult.GetValueForOption(zipOption);
@@ -122,26 +128,48 @@ rootCommand.SetHandler((InvocationContext context) =>
 
     if (generateFixes)
     {
-        var resolvedTemplatePath = ResolveFixScriptTemplatePath(
-            appConfig,
-            effectiveConfigPath,
-            out var templateResolveError);
-
-        if (templateResolveError is not null)
+        if (templateFile is not null)
         {
-            Console.Error.WriteLine($"Error: {templateResolveError}");
-            context.ExitCode = 1;
-            return;
+            if (!templateFile.Exists)
+            {
+                Console.Error.WriteLine($"Error: template file not found: {templateFile.FullName}");
+                context.ExitCode = 1;
+                return;
+            }
+
+            fixScriptTemplatePath = templateFile.FullName;
+            fixScriptFileExtension = DetermineFixScriptExtension(fixScriptTemplatePath);
+            fixScriptTemplateText = LoadFixScriptTemplate(fixScriptTemplatePath, out var templateLoadError2);
+            if (templateLoadError2 is not null)
+            {
+                Console.Error.WriteLine($"Error: {templateLoadError2}");
+                context.ExitCode = 1;
+                return;
+            }
         }
-
-        fixScriptTemplatePath = resolvedTemplatePath!;
-        fixScriptFileExtension = DetermineFixScriptExtension(fixScriptTemplatePath);
-        fixScriptTemplateText = LoadFixScriptTemplate(fixScriptTemplatePath, out var templateLoadError);
-        if (templateLoadError is not null)
+        else
         {
-            Console.Error.WriteLine($"Error: {templateLoadError}");
-            context.ExitCode = 1;
-            return;
+            var resolvedTemplatePath = ResolveFixScriptTemplatePath(
+                appConfig,
+                effectiveConfigPath,
+                out var templateResolveError);
+
+            if (templateResolveError is not null)
+            {
+                Console.Error.WriteLine($"Error: {templateResolveError}");
+                context.ExitCode = 1;
+                return;
+            }
+
+            fixScriptTemplatePath = resolvedTemplatePath!;
+            fixScriptFileExtension = DetermineFixScriptExtension(fixScriptTemplatePath);
+            fixScriptTemplateText = LoadFixScriptTemplate(fixScriptTemplatePath, out var templateLoadError);
+            if (templateLoadError is not null)
+            {
+                Console.Error.WriteLine($"Error: {templateLoadError}");
+                context.ExitCode = 1;
+                return;
+            }
         }
     }
 

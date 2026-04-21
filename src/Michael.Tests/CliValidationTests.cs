@@ -251,6 +251,30 @@ copilot -i "agent --prompt $Prompt"
     }
 
     [Fact]
+    public void Cli_AcceptsTemplateFile_AndGeneratesFixes()
+    {
+        var repoRoot = TestWorkspace.RepoRoot();
+        var logPath = Path.Combine(repoRoot, "data", "sample-dotnet-small.log");
+        var outputDir = Path.Combine(Path.GetTempPath(), $"michael-cli-templatefile-{Guid.NewGuid():N}");
+        var templatePath = Path.Combine(repoRoot, "src", "Michael.Cli", "templates", "fix-script.sh.template");
+
+        try
+        {
+            var result = RunCli(repoRoot, $"--input \"{logPath}\" --output \"{outputDir}\" --template-file \"{templatePath}\"");
+
+            Assert.Equal(0, result.ExitCode);
+            Assert.True(File.Exists(Path.Combine(outputDir, "fix-rank-1.sh")));
+        }
+        finally
+        {
+            if (Directory.Exists(outputDir))
+            {
+                Directory.Delete(outputDir, recursive: true);
+            }
+        }
+    }
+
+    [Fact]
     public void Cli_UsesBashTemplateExtension_ForGeneratedFixScripts()
     {
         var repoRoot = TestWorkspace.RepoRoot();
